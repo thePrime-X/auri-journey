@@ -1,5 +1,9 @@
 import 'dart:async';
+
 import 'package:flutter/material.dart';
+
+import '../../../shared/widgets/auri_ui.dart';
+import '../../onboarding/presentation/puzzle_completion_feedback_screen.dart';
 import '../widgets/command_chip.dart';
 import '../widgets/corridor_view.dart';
 
@@ -14,6 +18,7 @@ class _FirstPuzzleScreenState extends State<FirstPuzzleScreen> {
   final List<String> queue = [];
   int auriPosition = 0;
   bool isRunning = false;
+  bool _didComplete = false;
   String feedback = 'Build a sequence to move Auri to the goal.';
   static const int goalPosition = 3;
 
@@ -43,7 +48,7 @@ class _FirstPuzzleScreenState extends State<FirstPuzzleScreen> {
     });
 
     for (final command in queue) {
-      await Future.delayed(const Duration(milliseconds: 500));
+      await Future<void>.delayed(const Duration(milliseconds: 500));
 
       if (!mounted) return;
 
@@ -54,7 +59,7 @@ class _FirstPuzzleScreenState extends State<FirstPuzzleScreen> {
       });
     }
 
-    await Future.delayed(const Duration(milliseconds: 300));
+    await Future<void>.delayed(const Duration(milliseconds: 300));
     if (!mounted) return;
 
     final bool success =
@@ -70,33 +75,19 @@ class _FirstPuzzleScreenState extends State<FirstPuzzleScreen> {
     });
 
     if (success) {
-      _showSuccessDialog();
+      _goToNextScreen();
     }
   }
 
-  void _showSuccessDialog() {
-    showDialog(
-      context: context,
-      builder: (_) => AlertDialog(
-        backgroundColor: const Color(0xFF11161C),
-        title: const Text(
-          'Mission Complete',
-          style: TextStyle(color: Colors.white),
-        ),
-        content: const Text(
-          'You restored Auri’s basic movement sequence.',
-          style: TextStyle(color: Colors.white70),
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(context).pop(),
-            child: const Text(
-              'CONTINUE',
-              style: TextStyle(color: Colors.tealAccent),
-            ),
-          ),
-        ],
-      ),
+  Future<void> _goToNextScreen() async {
+    if (_didComplete || !mounted) return;
+    _didComplete = true;
+
+    await Future<void>.delayed(const Duration(milliseconds: 450));
+    if (!mounted) return;
+
+    Navigator.of(context).pushReplacement(
+      buildAuriRoute(page: const PuzzleCompletionFeedbackScreen()),
     );
   }
 

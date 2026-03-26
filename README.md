@@ -1,1 +1,1 @@
-# 🤖 Auri's Journey
+# 🤖 Auri's Journey is a mobile game

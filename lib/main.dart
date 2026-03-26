@@ -1,11 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'firebase_options.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+
+Future<void> signInAnonymously() async {
+  final credential = await FirebaseAuth.instance.signInAnonymously();
+  print('Signed in: ${credential.user?.uid}');
+}
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+
+  await signInAnonymously(); // 👈 ADD THIS
 
   runApp(const MyApp());
 }

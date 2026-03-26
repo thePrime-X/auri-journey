@@ -1,2 +1,1 @@
-# Auri's Journey
-
+# 🤖 Auri's Journey

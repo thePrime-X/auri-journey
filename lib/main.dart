@@ -2,6 +2,18 @@ import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'firebase_options.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+
+class FirestoreService {
+  final FirebaseFirestore _db = FirebaseFirestore.instance;
+
+  Future<void> testWrite() async {
+    await _db.collection('test').add({
+      'message': 'Firestore connected',
+      'createdAt': FieldValue.serverTimestamp(),
+    });
+  }
+}
 
 class AuthService {
   final FirebaseAuth _auth = FirebaseAuth.instance;
@@ -20,6 +32,8 @@ Future<void> main() async {
   );
 
   await AuthService().signInAnonymously();
+  
+  await FirestoreService().testWrite();
 
   runApp(const MyApp());
 }

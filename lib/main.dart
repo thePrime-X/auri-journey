@@ -1,19 +1,25 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
-import 'firebase_options.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'firebase_options.dart';
 
-Future<void> signInAnonymously() async {
-  final credential = await FirebaseAuth.instance.signInAnonymously();
-  print('Signed in: ${credential.user?.uid}');
+class AuthService {
+  final FirebaseAuth _auth = FirebaseAuth.instance;
+
+  Future<User?> signInAnonymously() async {
+    final result = await _auth.signInAnonymously();
+    return result.user;
+  }
 }
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
 
-  await signInAnonymously(); // 👈 ADD THIS
+  await AuthService().signInAnonymously();
 
   runApp(const MyApp());
 }
@@ -63,6 +69,8 @@ class _MyHomePageState extends State<MyHomePage> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             const Text('Firebase is connected ✅'),
+            const SizedBox(height: 8),
+            const Text('Anonymous auth is working 👤'),
             Text(
               '$_counter',
               style: Theme.of(context).textTheme.headlineMedium,

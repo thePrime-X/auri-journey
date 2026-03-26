@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "722925529716",
+    "project_id": "auri-app-dev",
+    "storage_bucket": "auri-app-dev.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:722925529716:android:9bcdbc238ed44177f17f21",
+        "android_client_info": {
+          "package_name": "com.example.auri_app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD1BRdWSJycBX-iyofz7q2efPVKp6pcXK8"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -1,0 +1,1 @@
+{"flutter":{"platforms":{"android":{"default":{"projectId":"auri-app-dev","appId":"1:722925529716:android:9bcdbc238ed44177f17f21","fileOutput":"android/app/google-services.json"}},"dart":{"lib/firebase_options.dart":{"projectId":"auri-app-dev","configurations":{"android":"1:722925529716:android:9bcdbc238ed44177f17f21","ios":"1:722925529716:ios:8bff328020e6ce95f17f21"}}}}}}

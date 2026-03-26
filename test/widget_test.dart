@@ -6,10 +6,7 @@ void main() {
     await tester.pumpWidget(const MyApp());
 
     expect(find.text('App loads successfully'), findsOneWidget);
-    expect(
-      find.text('You have pushed the button this many times:'),
-      findsOneWidget,
-    );
+    expect(find.text('Firebase is connected ✅'), findsOneWidget);
     expect(find.text('1'), findsOneWidget);
   });
 }

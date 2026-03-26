@@ -1,8 +1,9 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'firebase_options.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'firebase_options.dart';
 
 class FirestoreService {
   final FirebaseFirestore _db = FirebaseFirestore.instance;
@@ -27,11 +28,11 @@ class AuthService {
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
 
   await AuthService().signInAnonymously();
-
-  await FirestoreService().testWrite();
 
   runApp(const MyApp());
 }
@@ -62,11 +63,29 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   int _counter = 1;
+  String _firestoreStatus = 'Firestore test not run';
 
   void _incrementCounter() {
     setState(() {
       _counter++;
     });
+  }
+
+  Future<void> _runDebugFirestoreTest() async {
+    try {
+      await FirestoreService().testWrite();
+
+      if (!mounted) return;
+      setState(() {
+        _firestoreStatus = 'Firestore test write successful ✅';
+      });
+    } catch (e) {
+      if (!mounted) return;
+      setState(() {
+        _firestoreStatus = 'Firestore test failed ❌';
+      });
+      debugPrint('Firestore error: $e');
+    }
   }
 
   @override
@@ -83,10 +102,19 @@ class _MyHomePageState extends State<MyHomePage> {
             const Text('Firebase is connected ✅'),
             const SizedBox(height: 8),
             const Text('Anonymous auth is working 👤'),
+            const SizedBox(height: 8),
             Text(
               '$_counter',
               style: Theme.of(context).textTheme.headlineMedium,
             ),
+            const SizedBox(height: 16),
+            Text(_firestoreStatus),
+            const SizedBox(height: 16),
+            if (kDebugMode)
+              ElevatedButton(
+                onPressed: _runDebugFirestoreTest,
+                child: const Text('Test Firestore Write'),
+              ),
           ],
         ),
       ),

@@ -5,6 +5,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'firebase_options.dart';
 
+// This is a simple Flutter app to verify Firebase integration
 class FirestoreService {
   final FirebaseFirestore _db = FirebaseFirestore.instance;
 
@@ -16,6 +17,7 @@ class FirestoreService {
   }
 }
 
+// Simple authentication service to sign in anonymously
 class AuthService {
   final FirebaseAuth _auth = FirebaseAuth.instance;
 

@@ -2,693 +2,799 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Auri's Journey — UI Redesign</title>
-<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;700;900&family=Exo+2:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Auri's Journey — UI v3</title>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;700;900&family=Exo+2:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
 <style>
-  *{margin:0;padding:0;box-sizing:border-box}
-  body{background:#070B14;font-family:'Exo 2',sans-serif;display:flex;flex-direction:column;align-items:center;min-height:100vh;padding:24px 16px 40px;color:#E0E1DD}
-  h1{font-family:'Orbitron',monospace;color:#00D4FF;font-size:22px;margin-bottom:4px;letter-spacing:2px}
-  .subtitle{color:#6B7280;font-size:13px;margin-bottom:28px;letter-spacing:1px}
-  .nav-tabs{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:28px;justify-content:center}
-  .tab{padding:7px 14px;border-radius:8px;border:1.5px solid #1E293B;background:#0F172A;color:#6B7280;font-family:'Exo 2',sans-serif;font-size:12px;font-weight:600;cursor:pointer;letter-spacing:.5px;transition:all .2s}
-  .tab.active{background:#00D4FF;color:#070B14;border-color:#00D4FF}
-  .tab:hover:not(.active){border-color:#00D4FF;color:#00D4FF}
-  .screens-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:32px;width:100%;max-width:1400px}
-  .phone{width:295px;height:620px;background:#070B14;border-radius:36px;border:2px solid #1E293B;overflow:hidden;position:relative;display:flex;flex-direction:column;margin:0 auto;box-shadow:0 0 0 1px #0F172A,0 32px 80px rgba(0,0,0,.6)}
-  .phone-inner{flex:1;overflow:hidden;position:relative}
-  .screen{position:absolute;inset:0;overflow-y:auto;overflow-x:hidden;display:flex;flex-direction:column;background:#070B14;scrollbar-width:none}
-  .screen::-webkit-scrollbar{display:none}
-  .screen-label{text-align:center;color:#4B5563;font-size:11px;letter-spacing:1px;margin-top:8px;font-family:'Orbitron',monospace}
+*{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --bg:#070B14;--bg2:#0D1424;--bg3:#111827;--bg4:#162032;--bg5:#1A2740;
+  --cyan:#00D4FF;--cyan2:#0891B2;--cyan-g:rgba(0,212,255,.12);--cyan-b:rgba(0,212,255,.25);
+  --purple:#7C5EFF;--purple2:#5B3FCC;--purple-g:rgba(124,94,255,.12);--purple-b:rgba(124,94,255,.28);
+  --green:#10B981;--green2:#059669;--green-g:rgba(16,185,129,.12);
+  --amber:#F59E0B;--amber-g:rgba(245,158,11,.12);--amber-b:rgba(245,158,11,.28);
+  --red:#EF4444;--red2:#DC2626;--red-g:rgba(239,68,68,.12);--red-b:rgba(239,68,68,.28);
+  --t1:#E8EAE6;--t2:#94A3B8;--t3:#546070;--t4:#2D3A4A;
+  --bdr:#1A2535;--bdr2:#243044;
+  --r8:8px;--r12:12px;--r16:16px;--r24:24px
+}
+body{background:#04060D;font-family:'Exo 2',sans-serif;min-height:100vh;padding:28px 16px 48px;display:flex;flex-direction:column;align-items:center}
+#app-title{font-family:'Orbitron',monospace;color:var(--cyan);font-size:20px;letter-spacing:3px;margin-bottom:4px}
+#app-sub{font-size:11px;color:var(--t3);letter-spacing:1.5px;margin-bottom:24px}
+.nav-strip{display:flex;flex-wrap:wrap;gap:6px;justify-content:center;margin-bottom:28px;max-width:900px}
+.tab{padding:6px 13px;border-radius:6px;border:1px solid var(--bdr2);background:var(--bg2);color:var(--t3);font-family:'Exo 2',sans-serif;font-size:11px;font-weight:600;cursor:pointer;letter-spacing:.4px;transition:all .15s}
+.tab:hover{border-color:var(--cyan);color:var(--cyan)}
+.tab.on{background:var(--cyan);color:#04060D;border-color:var(--cyan)}
+#grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(278px,1fr));gap:28px;width:100%;max-width:1360px}
+.phone-wrap{display:flex;flex-direction:column;align-items:center;gap:10px}
+.phone{width:278px;height:598px;background:var(--bg);border-radius:34px;border:1.5px solid var(--bdr2);overflow:hidden;position:relative;box-shadow:0 0 0 1px #090E18,0 28px 70px rgba(0,0,0,.7)}
+.pinner{height:100%;overflow:hidden;position:relative}
+.sc{position:absolute;inset:0;overflow-y:auto;overflow-x:hidden;display:flex;flex-direction:column;scrollbar-width:none}
+.sc::-webkit-scrollbar{display:none}
+.plabel{font-family:'Orbitron',monospace;font-size:10px;color:var(--t4);letter-spacing:1px;text-align:center}
 
-  /* TOKENS */
-  :root{
-    --bg:#070B14;--bg2:#0D1424;--bg3:#111827;--bg4:#1A2235;
-    --cyan:#00D4FF;--cyan-dim:#0891B2;--cyan-glow:rgba(0,212,255,.15);
-    --purple:#7C5EFF;--purple-dim:#5B3FCC;--purple-glow:rgba(124,94,255,.15);
-    --green:#10B981;--amber:#F59E0B;--red:#EF4444;
-    --txt1:#E0E1DD;--txt2:#94A3B8;--txt3:#4B5563;
-    --border:#1E293B;--border2:#263245;
-    --r-sm:8px;--r-md:12px;--r-lg:16px;--r-xl:24px;
-  }
+/* ── NAV BAR ── */
+.bnav{display:flex;border-top:1px solid var(--bdr);background:var(--bg2);padding:7px 0 5px;flex-shrink:0}
+.ni{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer}
+.ni svg{width:19px;height:19px;stroke:var(--t3);fill:none;stroke-width:1.8}
+.ni span{font-size:9px;color:var(--t3);letter-spacing:.4px;font-weight:600;text-transform:uppercase}
+.ni.on svg{stroke:var(--cyan)}
+.ni.on span{color:var(--cyan)}
 
-  /* SHARED COMPONENTS */
-  .top-bar{padding:16px 16px 0;display:flex;align-items:center;justify-content:space-between}
-  .xp-badge{display:flex;align-items:center;gap:5px;font-family:'Orbitron',monospace;font-size:12px;color:var(--amber);font-weight:700}
-  .xp-badge svg{width:14px;height:14px}
-  .btn-primary{width:100%;padding:14px;border-radius:var(--r-lg);background:linear-gradient(135deg,var(--cyan),#0891B2);color:#070B14;font-family:'Exo 2',sans-serif;font-size:15px;font-weight:700;border:none;cursor:pointer;letter-spacing:.5px}
-  .btn-secondary{width:100%;padding:12px;border-radius:var(--r-lg);background:transparent;color:var(--txt2);font-family:'Exo 2',sans-serif;font-size:14px;font-weight:600;border:1.5px solid var(--border2);cursor:pointer}
-  .btn-purple{background:linear-gradient(135deg,var(--purple),var(--purple-dim))}
-  .bottom-nav{display:flex;border-top:1px solid var(--border);background:var(--bg2);padding:8px 0 4px}
-  .nav-item{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;padding:4px 0}
-  .nav-item svg{width:20px;height:20px;stroke:var(--txt3);fill:none;stroke-width:1.8}
-  .nav-item span{font-size:9px;color:var(--txt3);letter-spacing:.5px;font-weight:600}
-  .nav-item.active svg{stroke:var(--cyan)}
-  .nav-item.active span{color:var(--cyan)}
-  .card{background:var(--bg3);border-radius:var(--r-lg);border:1px solid var(--border)}
-  .tag{display:inline-flex;align-items:center;padding:2px 8px;border-radius:4px;font-size:10px;font-weight:700;letter-spacing:.5px}
-  .tag-cyan{background:rgba(0,212,255,.12);color:var(--cyan);border:1px solid rgba(0,212,255,.25)}
-  .tag-purple{background:rgba(124,94,255,.12);color:var(--purple);border:1px solid rgba(124,94,255,.25)}
-  .tag-amber{background:rgba(245,158,11,.12);color:var(--amber);border:1px solid rgba(245,158,11,.25)}
+/* ── COMMON ── */
+.hdr{padding:14px 16px 0;display:flex;align-items:center;justify-content:space-between}
+.xpbadge{display:flex;align-items:center;gap:4px;font-family:'Orbitron',monospace;font-size:11px;color:var(--amber);font-weight:700}
+.card{background:var(--bg3);border:1px solid var(--bdr);border-radius:var(--r16)}
+.tag{display:inline-flex;align-items:center;padding:2px 7px;border-radius:4px;font-size:9px;font-weight:700;letter-spacing:.4px}
+.tc{background:var(--cyan-g);color:var(--cyan);border:1px solid var(--cyan-b)}
+.tp{background:var(--purple-g);color:var(--purple);border:1px solid var(--purple-b)}
+.ta{background:var(--amber-g);color:var(--amber);border:1px solid var(--amber-b)}
+.tg{background:var(--green-g);color:var(--green);border:1px solid rgba(16,185,129,.28)}
+.tr{background:var(--red-g);color:var(--red);border:1px solid var(--red-b)}
+.ts{background:rgba(84,96,112,.12);color:var(--t3);border:1px solid var(--bdr)}
+.xpbar-wrap{margin:0 16px}
+.xpbar-lbl{display:flex;justify-content:space-between;font-size:10px;color:var(--t3);margin-bottom:5px;letter-spacing:.4px}
+.xpbar-track{height:5px;background:var(--bg4);border-radius:3px;overflow:hidden}
+.xpbar-fill{height:100%;border-radius:3px;background:linear-gradient(90deg,var(--cyan),var(--purple))}
+.btn-p{width:100%;padding:13px;border-radius:var(--r12);background:linear-gradient(135deg,var(--cyan),var(--cyan2));color:#04060D;font-family:'Exo 2',sans-serif;font-size:14px;font-weight:800;border:none;cursor:pointer;letter-spacing:.4px}
+.btn-pu{background:linear-gradient(135deg,var(--purple),var(--purple2));color:#E8EAE6}
+.btn-s{background:transparent;color:var(--t2);border:1.5px solid var(--bdr2)}
+.btn-dead{background:transparent;color:var(--t4);border:1px solid var(--bdr);opacity:.55}
 
-  /* ===== SCREEN 1: SIGN IN ===== */
-  .auth-bg{flex:1;display:flex;flex-direction:column;align-items:center;padding:24px 20px 20px;position:relative;overflow:hidden}
-  .auth-bg::before{content:'';position:absolute;top:-60px;left:50%;transform:translateX(-50%);width:260px;height:260px;background:radial-gradient(circle,rgba(0,212,255,.06) 0%,transparent 70%);pointer-events:none}
-  .logo-wrap{width:90px;height:90px;background:radial-gradient(circle at 40% 35%,#0F4A6E,#051929);border-radius:20px;border:1.5px solid rgba(0,212,255,.3);display:flex;align-items:center;justify-content:center;margin-bottom:10px;position:relative}
-  .logo-wrap::after{content:'';position:absolute;inset:-4px;border-radius:24px;border:1px solid rgba(0,212,255,.1)}
-  .app-name{font-family:'Orbitron',monospace;font-size:13px;color:var(--txt2);letter-spacing:2px;margin-bottom:20px}
-  .auth-form{width:100%;flex:1;display:flex;flex-direction:column}
-  .auth-title{font-size:26px;font-weight:700;color:var(--txt1);letter-spacing:.5px;margin-bottom:2px}
-  .auth-sub{font-size:13px;color:var(--txt2);margin-bottom:20px}
-  .input-wrap{position:relative;margin-bottom:12px}
-  .input-icon{position:absolute;left:14px;top:50%;transform:translateY(-50%);width:16px;height:16px;stroke:var(--txt3);fill:none;stroke-width:1.8}
-  .field{width:100%;padding:13px 14px 13px 42px;background:var(--bg3);border:1.5px solid var(--border2);border-radius:var(--r-md);color:var(--txt1);font-family:'Exo 2',sans-serif;font-size:14px;outline:none;transition:border-color .2s}
-  .field::placeholder{color:#4B6280}
-  .field:focus{border-color:var(--cyan);box-shadow:0 0 0 3px var(--cyan-glow)}
-  .forgot{text-align:right;margin-bottom:16px;margin-top:-4px}
-  .forgot a{color:var(--txt3);font-size:12px;text-decoration:none}
-  .forgot a:hover{color:var(--cyan)}
-  .signup-link{text-align:center;margin-top:14px;font-size:13px;color:var(--txt3)}
-  .signup-link a{color:var(--cyan);font-weight:600;text-decoration:none}
+/* ── AUTH ── */
+.auth-shell{flex:1;display:flex;flex-direction:column;align-items:center;padding:20px 20px 16px;position:relative;overflow:hidden}
+.auth-shell::before{content:'';position:absolute;top:-40px;left:50%;transform:translateX(-50%);width:220px;height:220px;background:radial-gradient(circle,rgba(0,212,255,.05) 0%,transparent 70%);pointer-events:none}
+.logo-box{width:80px;height:80px;background:radial-gradient(circle at 38% 32%,#0A3D5C,#030C18);border-radius:18px;border:1.5px solid rgba(0,212,255,.28);display:flex;align-items:center;justify-content:center;margin-bottom:8px;position:relative;flex-shrink:0}
+.logo-box::after{content:'';position:absolute;inset:-5px;border-radius:22px;border:1px solid rgba(0,212,255,.07)}
+.logo-box-p{background:radial-gradient(circle at 38% 32%,#1A0A4A,#06030F);border-color:rgba(124,94,255,.3)}
+.logo-box-p::after{border-color:rgba(124,94,255,.07)}
+.app-name{font-family:'Orbitron',monospace;font-size:11px;color:var(--t3);letter-spacing:2px;margin-bottom:16px}
+.af{width:100%;flex:1;display:flex;flex-direction:column}
+.at{font-size:24px;font-weight:700;color:var(--t1);margin-bottom:2px}
+.as{font-size:12px;color:var(--t2);margin-bottom:18px}
+.kicker{font-size:9px;color:var(--t3);letter-spacing:1.5px;margin-bottom:3px}
+.iw{position:relative;margin-bottom:11px}
+.ii{position:absolute;left:13px;top:50%;transform:translateY(-50%);width:15px;height:15px;stroke:var(--t3);fill:none;stroke-width:1.8}
+.ifield{width:100%;padding:12px 13px 12px 40px;background:var(--bg3);border:1.5px solid var(--bdr2);border-radius:var(--r12);color:var(--t1);font-family:'Exo 2',sans-serif;font-size:13px;outline:none;transition:border-color .2s,box-shadow .2s}
+.ifield::placeholder{color:#3A5068}
+.ifield:focus{border-color:var(--cyan);box-shadow:0 0 0 3px rgba(0,212,255,.1)}
+.ifield.err{border-color:var(--red);box-shadow:0 0 0 3px var(--red-g)}
+.forgot{text-align:right;margin:-4px 0 14px}
+.forgot a{font-size:12px;color:var(--cyan);text-decoration:none;font-weight:600;opacity:.8}
+.auth-alt{text-align:center;margin-top:12px;font-size:12px;color:var(--t3)}
+.auth-alt a{color:var(--cyan);font-weight:700;text-decoration:none}
+.auth-alt a.pa{color:var(--purple)}
 
-  /* ===== SCREEN 2: SIGN UP ===== */
-  .logo-wrap-purple{background:radial-gradient(circle at 40% 35%,#2D1A6E,#0F0529);border:1.5px solid rgba(124,94,255,.35)}
-  .logo-wrap-purple::after{border-color:rgba(124,94,255,.12)}
-  .btn-purple-solid{background:linear-gradient(135deg,var(--purple),var(--purple-dim));color:#E0E1DD}
+/* ── MISSION ── */
+.mc{display:flex;align-items:center;gap:10px;padding:11px 13px;margin:0 14px 7px;background:var(--bg3);border:1px solid var(--bdr);border-radius:var(--r12);cursor:pointer}
+.mc.act{border-color:var(--purple);background:linear-gradient(135deg,rgba(124,94,255,.1),rgba(92,63,204,.06));box-shadow:0 0 0 1px rgba(124,94,255,.15),0 4px 20px rgba(124,94,255,.12)}
+.mc.done{border-color:rgba(16,185,129,.22);background:rgba(16,185,129,.03)}
+.mc.locked{opacity:.22}
+.mbar{width:3px;height:38px;border-radius:2px;background:var(--bdr2);flex-shrink:0}
+.mbar.d{background:var(--green)}
+.mbar.a{background:var(--purple)}
+.mt{font-size:13px;font-weight:700;color:var(--t1);margin-bottom:1px}
+.ms{font-size:11px;color:var(--t2);margin-bottom:4px}
+.mt.g{color:var(--t3)}
+.ms.g{color:var(--t4)}
 
-  /* ===== SCREEN 3: MISSION ===== */
-  .mission-card{display:flex;align-items:center;gap:12px;padding:12px 14px;margin:0 14px 8px;background:var(--bg3);border:1px solid var(--border);border-radius:var(--r-md);cursor:pointer;transition:border-color .2s}
-  .mission-card.active-mission{border-color:var(--purple);background:rgba(124,94,255,.08)}
-  .mission-card.done{border-color:rgba(16,185,129,.25)}
-  .mission-dot{width:4px;height:40px;border-radius:2px;background:var(--border);flex-shrink:0}
-  .mission-dot.c-done{background:var(--green)}
-  .mission-dot.c-active{background:var(--purple)}
-  .mission-title{font-size:13px;font-weight:700;color:var(--txt1);margin-bottom:2px}
-  .mission-title.muted{color:var(--txt3)}
-  .mission-sub{font-size:11px;color:var(--txt2);margin-bottom:4px}
-  .mission-sub.muted{color:var(--txt3)}
-  .profile-btn{width:38px;height:38px;border-radius:50%;background:var(--bg4);border:1.5px solid var(--border2);display:flex;align-items:center;justify-content:center}
-  .profile-btn svg{width:18px;height:18px;stroke:var(--txt2);fill:none;stroke-width:1.8}
-  .xp-bar-wrap{margin:0 14px;padding:10px 0}
-  .xp-label{display:flex;justify-content:space-between;font-size:10px;color:var(--txt3);margin-bottom:6px;letter-spacing:.5px}
-  .xp-track{height:6px;background:var(--bg4);border-radius:3px;overflow:hidden}
-  .xp-fill{height:100%;border-radius:3px;background:linear-gradient(90deg,var(--cyan),var(--purple))}
+/* ── GAME ── */
+.ghdr{padding:12px 16px 8px}
+.ghdr-r1{display:flex;align-items:center;gap:10px;margin-bottom:3px}
+.ghdr-r2{display:flex;align-items:center;gap:0;padding-left:40px}
+.back{width:30px;height:30px;border-radius:var(--r8);background:var(--bg3);border:1px solid var(--bdr);display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.back svg{width:14px;height:14px;stroke:var(--t2);fill:none;stroke-width:2.2}
+.stitle{font-family:'Orbitron',monospace;font-size:13px;color:var(--t1);flex:1;letter-spacing:.5px}
+.msub{font-size:10px;color:var(--t3)}
+.grid-section{padding:0 14px;margin-bottom:9px}
+.grid-lbl{font-size:8px;color:var(--t3);letter-spacing:2px;text-align:center;margin-bottom:7px}
+.egrid{display:grid;grid-template-columns:repeat(5,1fr);gap:3px}
+.cell{aspect-ratio:1;background:var(--bg3);border:1px solid var(--bdr);border-radius:5px;display:flex;align-items:center;justify-content:center;font-size:13px}
+.cell.rob{background:rgba(0,212,255,.06);border-color:rgba(0,212,255,.22)}
+.cell.tgt{background:rgba(245,158,11,.06);border-color:rgba(245,158,11,.22)}
+.cell.haz{background:rgba(239,68,68,.06);border-color:rgba(239,68,68,.2)}
+.cmds{padding:0 14px;margin-bottom:9px}
+.clbl{font-size:9px;color:var(--cyan);font-weight:700;letter-spacing:1.2px;margin-bottom:7px}
+.crow{display:flex;gap:5px;flex-wrap:wrap}
+.chip{padding:6px 10px;border-radius:7px;font-size:10px;font-weight:700;cursor:pointer;border:1px solid transparent;white-space:nowrap;letter-spacing:.2px}
+.ch-c{background:var(--cyan-g);color:var(--cyan);border-color:var(--cyan-b)}
+.ch-p{background:var(--purple-g);color:var(--purple);border-color:var(--purple-b)}
+.ch-a{background:var(--amber-g);color:var(--amber);border-color:var(--amber-b)}
+.ch-g{background:var(--green-g);color:var(--green);border-color:rgba(16,185,129,.28)}
+.ch-u{background:transparent;color:var(--t4);border-color:var(--bdr);font-size:9px;opacity:.6;padding:6px 8px}
+.qsec{margin:0 14px 9px;background:var(--bg3);border:1px solid var(--bdr2);border-radius:var(--r12);padding:9px 12px}
+.qtop{display:flex;justify-content:space-between;align-items:center;margin-bottom:7px}
+.qcount{font-size:10px;color:var(--t2);font-weight:600}
+.qclear{font-size:9px;color:var(--t3);background:transparent;border:none;cursor:pointer;font-family:'Exo 2',sans-serif;font-weight:600;opacity:.7}
+.qrow{display:flex;gap:5px}
+.qi{flex:1;background:var(--bg4);border-radius:6px;border:1px solid var(--bdr);padding:5px;display:flex;flex-direction:column;align-items:center;gap:3px}
+.qn{font-size:8px;color:var(--t3);font-weight:700}
+.re{display:flex;gap:8px;padding:0 14px;margin-bottom:9px}
+.run{flex:2;padding:11px;border-radius:var(--r12);background:linear-gradient(135deg,var(--cyan),var(--cyan2));color:#04060D;font-weight:800;border:none;cursor:pointer;font-family:'Exo 2',sans-serif;font-size:12px;display:flex;align-items:center;justify-content:center;gap:5px}
+.exit{flex:1;padding:11px;border-radius:var(--r12);background:transparent;color:var(--t4);font-weight:600;border:1.5px solid var(--bdr);cursor:pointer;font-family:'Exo 2',sans-serif;font-size:11px}
+.echo{margin:0 14px 14px;background:var(--bg3);border-left:2.5px solid var(--cyan);border:1px solid var(--bdr2);border-left:2.5px solid var(--cyan);border-radius:var(--r8);padding:9px 12px}
+.echt{font-size:8px;color:var(--cyan);font-weight:700;letter-spacing:1.5px;margin-bottom:4px}
+.echb{font-size:11px;color:var(--t1);line-height:1.55}
 
-  /* ===== SCREEN 4: GAME ===== */
-  .game-header{padding:12px 14px 8px;display:flex;flex-direction:column}
-  .game-header-row1{display:flex;align-items:center;gap:10px;margin-bottom:4px}
-  .back-btn{width:30px;height:30px;border-radius:8px;background:var(--bg3);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;flex-shrink:0}
-  .back-btn svg{width:14px;height:14px;stroke:var(--txt2);fill:none;stroke-width:2}
-  .sector-title{font-family:'Orbitron',monospace;font-size:13px;color:var(--txt1);flex:1}
-  .grid-wrap{padding:0 14px;margin-bottom:10px}
-  .grid-label{font-size:9px;color:var(--txt3);letter-spacing:2px;text-align:center;margin-bottom:8px}
-  .exec-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:4px}
-  .cell{aspect-ratio:1;background:var(--bg3);border:1px solid var(--border);border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:14px}
-  .cell.robot{background:rgba(0,212,255,.06);border-color:rgba(0,212,255,.2)}
-  .cell.target{background:rgba(245,158,11,.06);border-color:rgba(245,158,11,.2)}
-  .cell.hazard{background:rgba(239,68,68,.06);border-color:rgba(239,68,68,.2)}
-  .cmd-section{padding:0 14px;margin-bottom:10px}
-  .cmd-label{font-size:10px;color:var(--cyan);font-weight:700;letter-spacing:1px;margin-bottom:8px}
-  .cmd-row{display:flex;gap:6px;flex-wrap:wrap}
-  .chip{padding:7px 11px;border-radius:8px;font-size:11px;font-weight:700;cursor:pointer;letter-spacing:.3px;border:1px solid transparent;white-space:nowrap}
-  .chip-cyan{background:rgba(0,212,255,.12);color:var(--cyan);border-color:rgba(0,212,255,.25)}
-  .chip-purple{background:rgba(124,94,255,.12);color:var(--purple);border-color:rgba(124,94,255,.25)}
-  .chip-amber{background:rgba(245,158,11,.12);color:var(--amber);border-color:rgba(245,158,11,.25)}
-  .chip-green{background:rgba(16,185,129,.12);color:var(--green);border-color:rgba(16,185,129,.25)}
-  .chip-undo{background:transparent;color:var(--txt3);border-color:var(--border);font-size:10px;padding:7px 9px}
-  .queue-section{margin:0 14px 10px;background:var(--bg3);border:1px solid var(--border2);border-radius:var(--r-md);padding:10px 12px}
-  .queue-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px}
-  .queue-count{font-size:11px;color:var(--txt2);font-weight:600}
-  .clear-btn{font-size:10px;color:var(--red);background:transparent;border:none;cursor:pointer;opacity:.7;font-family:'Exo 2',sans-serif;font-weight:600}
-  .queue-items{display:flex;gap:6px}
-  .q-item{flex:1;background:var(--bg4);border-radius:6px;border:1px solid var(--border);padding:5px 6px;display:flex;flex-direction:column;align-items:center;gap:3px}
-  .q-num{font-size:9px;color:var(--txt3);font-weight:700}
-  .q-chip{font-size:10px;font-weight:700;color:var(--cyan)}
-  .run-exit{display:flex;gap:8px;padding:0 14px;margin-bottom:10px}
-  .btn-run{flex:2;padding:12px;border-radius:var(--r-md);background:linear-gradient(135deg,var(--cyan),#0891B2);color:#070B14;font-weight:800;border:none;cursor:pointer;font-family:'Exo 2',sans-serif;font-size:13px;display:flex;align-items:center;justify-content:center;gap:6px}
-  .btn-exit{flex:1;padding:12px;border-radius:var(--r-md);background:transparent;color:var(--txt3);font-weight:700;border:1.5px solid var(--border2);cursor:pointer;font-family:'Exo 2',sans-serif;font-size:13px}
-  .echo-box{margin:0 14px 14px;background:var(--bg3);border:1px solid var(--border2);border-left:3px solid var(--cyan);border-radius:var(--r-md);padding:10px 12px}
-  .echo-title{font-size:9px;color:var(--cyan);font-weight:700;letter-spacing:1.5px;margin-bottom:5px}
-  .echo-text{font-size:12px;color:var(--txt1);line-height:1.5}
+/* ── COMPLETE ── */
+.comph{padding:12px 16px;display:flex;justify-content:space-between;align-items:flex-start}
+.sring{width:88px;height:88px;border-radius:50%;background:radial-gradient(circle,rgba(16,185,129,.12),transparent 72%);border:1.5px solid rgba(16,185,129,.35);display:flex;align-items:center;justify-content:center;margin:0 auto 12px}
+.scheck{width:44px;height:44px;border-radius:50%;background:rgba(16,185,129,.15);border:1.5px solid var(--green);display:flex;align-items:center;justify-content:center}
+.ctitle{font-family:'Orbitron',monospace;font-size:16px;color:var(--t1);text-align:center;margin-bottom:3px;letter-spacing:.5px}
+.csub{font-size:12px;color:var(--t2);text-align:center;margin-bottom:10px}
+.xpr{display:inline-flex;align-items:center;gap:5px;background:var(--amber-g);border:1px solid var(--amber-b);padding:5px 14px;border-radius:20px;font-size:13px;font-weight:700;color:var(--amber)}
+.mcard{display:flex;background:var(--bg3);border:1px solid var(--bdr);border-radius:var(--r16);margin:0 14px 12px;overflow:hidden}
+.mb{flex:1;padding:12px;text-align:center}
+.mdiv{width:1px;background:var(--bdr)}
+.mn{font-family:'Orbitron',monospace;font-size:22px;font-weight:700;color:var(--t1);margin-bottom:2px}
+.ml{font-size:9px;color:var(--t3);letter-spacing:.5px;margin-bottom:3px}
+.mbadge{font-size:9px;font-weight:700;padding:2px 7px;border-radius:20px;display:inline-block}
+.bg{background:rgba(16,185,129,.14);color:#34D399}
+.bc{background:rgba(0,212,255,.14);color:var(--cyan)}
+.conccard{margin:0 14px 12px;background:rgba(0,212,255,.04);border:1px solid rgba(0,212,255,.18);border-radius:var(--r12);padding:11px 13px}
+.conclbl{font-size:8px;color:var(--cyan);font-weight:700;letter-spacing:1.5px;margin-bottom:5px}
+.conct{font-size:15px;font-weight:700;color:var(--t1);margin-bottom:2px}
+.concd{font-size:11px;color:var(--t2);line-height:1.4}
 
-  /* ===== SCREEN 5: MISSION COMPLETE ===== */
-  .complete-header{padding:14px 16px;display:flex;justify-content:space-between;align-items:flex-start}
-  .complete-sector{font-size:11px;color:var(--txt2);letter-spacing:.5px}
-  .complete-mission{font-size:13px;color:var(--cyan);font-weight:700;margin-top:2px}
-  .complete-sub{font-size:11px;color:var(--txt3)}
-  .success-ring{width:100px;height:100px;border-radius:50%;background:radial-gradient(circle,rgba(16,185,129,.15),transparent 70%);border:2px solid rgba(16,185,129,.4);display:flex;align-items:center;justify-content:center;margin:0 auto 16px}
-  .success-check{width:48px;height:48px;border-radius:50%;background:rgba(16,185,129,.2);border:2px solid var(--green);display:flex;align-items:center;justify-content:center}
-  .mission-complete-title{text-align:center;font-family:'Orbitron',monospace;font-size:17px;color:var(--txt1);margin-bottom:4px}
-  .mission-complete-sub{text-align:center;font-size:13px;color:var(--txt2);margin-bottom:12px}
-  .xp-reward{display:inline-flex;align-items:center;gap:6px;background:rgba(245,158,11,.12);border:1px solid rgba(245,158,11,.3);padding:6px 16px;border-radius:20px;font-size:14px;font-weight:700;color:var(--amber);margin-bottom:16px}
-  .metrics-card{display:flex;background:var(--bg3);border:1px solid var(--border);border-radius:var(--r-lg);margin:0 16px 14px;overflow:hidden}
-  .metric-block{flex:1;padding:14px;text-align:center}
-  .metric-divider{width:1px;background:var(--border)}
-  .metric-num{font-family:'Orbitron',monospace;font-size:24px;font-weight:700;color:var(--txt1);margin-bottom:2px}
-  .metric-label{font-size:11px;color:var(--txt3);margin-bottom:4px;letter-spacing:.5px}
-  .metric-badge{font-size:10px;font-weight:700;padding:2px 8px;border-radius:20px;display:inline-block}
-  .badge-green{background:rgba(16,185,129,.15);color:#34D399}
-  .badge-cyan{background:rgba(0,212,255,.15);color:var(--cyan)}
-  .concept-card{margin:0 16px 14px;background:rgba(0,212,255,.05);border:1px solid rgba(0,212,255,.2);border-radius:var(--r-lg);padding:12px 14px}
-  .concept-label{font-size:9px;color:var(--cyan);font-weight:700;letter-spacing:1.5px;margin-bottom:6px}
-  .concept-title{font-size:15px;font-weight:700;color:var(--txt1);margin-bottom:3px}
-  .concept-desc{font-size:12px;color:var(--txt2);line-height:1.4}
-  .xp-progress-bar{margin:0 16px 14px}
-  .xp-prog-label{display:flex;justify-content:space-between;font-size:11px;color:var(--txt3);margin-bottom:6px}
-  .xp-prog-label span:last-child{color:var(--green)}
-  .complete-btns{padding:0 16px;display:flex;flex-direction:column;gap:8px;padding-bottom:16px}
-  .btn-replay{background:transparent;border:1.5px solid var(--border2);color:var(--txt2)}
+/* ── WORLD MAP ── */
+.mapsvg{display:block;margin:0 auto}
 
-  /* ===== SCREEN 6: WORLD MAP ===== */
-  .map-area{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:16px;position:relative}
-  .map-svg{width:220px;height:280px}
-  .map-info{margin:0 14px;text-align:center;margin-bottom:14px}
-  .map-location{display:inline-flex;align-items:center;gap:6px;padding:6px 14px;background:rgba(124,94,255,.1);border:1px solid rgba(124,94,255,.3);border-radius:20px;font-size:12px;color:var(--purple);font-weight:600}
+/* ── HUB ── */
+.hbhdr{padding:12px 16px 10px;display:flex;justify-content:space-between;align-items:flex-start}
+.hbtitle{font-family:'Orbitron',monospace;font-size:10px;color:var(--cyan);letter-spacing:1.5px;margin-bottom:2px}
+.hbgreet{font-size:15px;font-weight:700;color:var(--t1)}
+.chall{margin:0 14px 10px;background:rgba(16,185,129,.05);border:1px solid rgba(16,185,129,.22);border-radius:var(--r16);padding:12px 14px}
+.challt{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px}
+.challlbl{font-size:8px;font-weight:700;color:var(--green);letter-spacing:1.5px}
+.challpill{padding:3px 10px;background:rgba(16,185,129,.12);border:1px solid rgba(16,185,129,.28);border-radius:10px;font-size:10px;color:var(--green);font-weight:700}
+.challname{font-size:15px;font-weight:700;color:var(--t1);margin-bottom:3px}
+.challreset{font-size:10px;color:var(--t3)}
+.goplay{margin:0 14px 12px;padding:13px;border-radius:var(--r12);background:linear-gradient(135deg,var(--cyan),var(--cyan2));color:#04060D;font-family:'Exo 2',sans-serif;font-size:14px;font-weight:800;border:none;cursor:pointer;width:calc(100% - 28px);letter-spacing:.4px}
+.echohub{margin:0 14px 10px;background:var(--bg3);border:1px solid var(--bdr2);border-left:2.5px solid var(--purple);border-radius:var(--r8);padding:9px 12px}
+.echohublbl{font-size:8px;color:var(--purple);font-weight:700;letter-spacing:1.5px;margin-bottom:4px}
+.echohubtext{font-size:11px;color:var(--t1);line-height:1.5}
+.stats2{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:0 14px 10px}
+.scard{background:var(--bg3);border:1px solid var(--bdr);border-radius:var(--r8);padding:10px;text-align:center}
+.snum{font-family:'Orbitron',monospace;font-size:18px;font-weight:700;margin-bottom:2px}
+.slbl{font-size:9px;color:var(--t3);letter-spacing:.4px}
+.act-sec{margin:0 14px 10px}
+.act-lbl{font-size:9px;color:var(--t3);letter-spacing:1px;font-weight:700;margin-bottom:6px}
+.act-row{display:flex;justify-content:space-between;align-items:center;padding:5px 0;border-bottom:1px solid var(--bdr)}
+.act-row:last-child{border:none}
+.act-t{font-size:11px;color:var(--t3)}
+.act-time{font-size:10px;color:var(--t4)}
 
-  /* ===== SCREEN 7: HUB ===== */
-  .hub-header{padding:14px 16px 10px;display:flex;justify-content:space-between;align-items:flex-start}
-  .hub-title{font-family:'Orbitron',monospace;font-size:11px;color:var(--cyan);letter-spacing:1.5px;margin-bottom:2px}
-  .hub-greet{font-size:16px;font-weight:700;color:var(--txt1)}
-  .challenge-card{margin:0 14px 12px;background:rgba(16,185,129,.05);border:1px solid rgba(16,185,129,.25);border-radius:var(--r-lg);padding:14px}
-  .challenge-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}
-  .challenge-label{font-size:9px;font-weight:700;color:var(--green);letter-spacing:1.5px}
-  .play-pill{padding:4px 12px;background:rgba(16,185,129,.15);border:1px solid rgba(16,185,129,.3);border-radius:12px;font-size:11px;color:var(--green);font-weight:700}
-  .challenge-title{font-size:16px;font-weight:700;color:var(--txt1);margin-bottom:4px}
-  .challenge-reset{font-size:11px;color:var(--txt3)}
-  .go-play{margin:0 14px 12px;padding:14px;border-radius:var(--r-lg);background:linear-gradient(135deg,var(--cyan),#0891B2);color:#070B14;font-family:'Exo 2',sans-serif;font-size:15px;font-weight:800;border:none;cursor:pointer;width:calc(100% - 28px);letter-spacing:.5px}
-  .stats-row{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:0 14px 12px}
-  .stat-card{background:var(--bg3);border:1px solid var(--border);border-radius:var(--r-md);padding:12px;text-align:center}
-  .stat-num{font-family:'Orbitron',monospace;font-size:22px;font-weight:700}
-  .stat-label{font-size:10px;color:var(--txt3);margin-top:2px;letter-spacing:.5px}
-  .echo-hub{margin:0 14px 12px;background:var(--bg3);border:1px solid var(--border2);border-left:3px solid var(--purple);border-radius:var(--r-md);padding:10px 12px}
-  .echo-hub-label{font-size:9px;color:var(--purple);font-weight:700;letter-spacing:1.5px;margin-bottom:5px}
-  .echo-hub-text{font-size:12px;color:var(--txt1);line-height:1.5}
-  .activity-section{margin:0 14px 10px}
-  .activity-label{font-size:10px;color:var(--txt3);letter-spacing:1px;font-weight:700;margin-bottom:8px}
-  .activity-row{display:flex;justify-content:space-between;align-items:center;padding:7px 0;border-bottom:1px solid var(--border)}
-  .activity-row:last-child{border-bottom:none}
-  .activity-text{font-size:12px;color:var(--txt2)}
-  .activity-time{font-size:11px;color:var(--txt3)}
+/* ── PROFILE ── */
+.prohero{padding:16px 16px 10px;display:flex;flex-direction:column;align-items:center}
+.avring{width:72px;height:72px;border-radius:50%;background:var(--bg3);border:2px solid var(--purple);display:flex;align-items:center;justify-content:center;margin-bottom:8px;position:relative;flex-shrink:0}
+.odot{width:11px;height:11px;border-radius:50%;background:var(--green);border:2px solid var(--bg);position:absolute;bottom:2px;right:2px}
+.uname{font-size:13px;font-weight:700;color:var(--t1);margin-bottom:1px}
+.urank{font-size:10px;color:var(--purple);font-weight:600;letter-spacing:.5px;margin-bottom:7px}
+.lvpill{display:inline-flex;align-items:center;gap:5px;padding:4px 12px;background:var(--amber-g);border:1px solid var(--amber-b);border-radius:20px;font-size:10px;color:var(--amber);font-weight:700}
+.prostats{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin:0 14px 12px}
+.psc{background:var(--bg3);border:1px solid var(--bdr);border-radius:var(--r8);padding:9px;text-align:center}
+.psn{font-family:'Orbitron',monospace;font-size:16px;font-weight:700;color:var(--t1);margin-bottom:1px}
+.psl{font-size:8px;color:var(--t3);letter-spacing:.4px;line-height:1.3}
+.procont{padding:0 14px 14px}
+.sectitle{font-size:9px;font-weight:700;color:var(--cyan);letter-spacing:1.5px;margin-bottom:8px;display:flex;align-items:center;gap:6px}
+.sectitle::after{content:'';flex:1;height:1px;background:var(--bdr)}
+.skillrow{display:flex;align-items:center;gap:8px;margin-bottom:9px}
+.sknm{font-size:10px;color:var(--t2);width:64px;flex-shrink:0}
+.sktrack{flex:1;height:5px;background:var(--bg4);border-radius:3px;overflow:hidden}
+.skfill{height:100%;border-radius:3px}
+.skpct{font-size:9px;color:var(--t3);width:26px;text-align:right;flex-shrink:0;font-weight:600}
 
-  /* ===== SCREEN 8: PROFILE ===== */
-  .profile-hero{padding:20px 16px 14px;display:flex;flex-direction:column;align-items:center}
-  .profile-hero-title{font-family:'Orbitron',monospace;font-size:12px;color:var(--txt2);letter-spacing:2px;margin-bottom:12px}
-  .avatar-ring{width:80px;height:80px;border-radius:50%;background:var(--bg3);border:2px solid var(--purple);display:flex;align-items:center;justify-content:center;margin-bottom:10px;position:relative}
-  .online-dot{width:12px;height:12px;border-radius:50%;background:var(--green);border:2px solid var(--bg);position:absolute;bottom:3px;right:3px}
-  .username{font-size:14px;font-weight:700;color:var(--txt1);margin-bottom:2px}
-  .user-rank{font-size:11px;color:var(--purple);font-weight:600;letter-spacing:.5px;margin-bottom:8px}
-  .lvl-pill{display:inline-flex;align-items:center;gap:6px;padding:5px 14px;background:rgba(245,158,11,.1);border:1px solid rgba(245,158,11,.25);border-radius:20px;font-size:11px;color:var(--amber);font-weight:700}
-  .profile-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:0 14px 14px}
-  .p-stat{background:var(--bg3);border:1px solid var(--border);border-radius:var(--r-md);padding:10px;text-align:center}
-  .p-stat-num{font-family:'Orbitron',monospace;font-size:18px;font-weight:700;color:var(--txt1);margin-bottom:2px}
-  .p-stat-label{font-size:9px;color:var(--txt3);letter-spacing:.5px}
-  .section-title{font-size:10px;font-weight:700;color:var(--cyan);letter-spacing:1.5px;margin-bottom:8px}
-  .skill-row{display:flex;align-items:center;gap:8px;margin-bottom:8px}
-  .skill-name{font-size:11px;color:var(--txt2);width:68px;flex-shrink:0}
-  .skill-track{flex:1;height:6px;background:var(--bg4);border-radius:3px;overflow:hidden}
-  .skill-fill{height:100%;border-radius:3px}
-  .skill-pct{font-size:10px;color:var(--txt3);width:30px;text-align:right;flex-shrink:0}
-  .profile-content{padding:0 14px 14px}
+/* ── LOADING STATES ── */
+@keyframes spin{to{transform:rotate(360deg)}}
+@keyframes pulse{0%,100%{opacity:.4}50%{opacity:1}}
+@keyframes pulsescale{0%,100%{transform:scale(.96);opacity:.7}50%{transform:scale(1);opacity:1}}
+@keyframes shimmer{0%{background-position:-200% 0}100%{background-position:200% 0}}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.3}}
+.spinner{width:32px;height:32px;border:2.5px solid var(--bdr2);border-top-color:var(--cyan);border-radius:50%;animation:spin .8s linear infinite}
+.spinner-sm{width:18px;height:18px;border:2px solid var(--bdr2);border-top-color:var(--cyan);border-radius:50%;animation:spin .8s linear infinite}
+.pulse-ring{width:64px;height:64px;border-radius:50%;background:rgba(0,212,255,.06);border:2px solid rgba(0,212,255,.25);display:flex;align-items:center;justify-content:center;animation:pulsescale 1.5s ease-in-out infinite}
+.skel{background:linear-gradient(90deg,var(--bg3) 25%,var(--bg4) 50%,var(--bg3) 75%);background-size:200% 100%;animation:shimmer 1.4s infinite;border-radius:6px}
+.dots{display:flex;gap:5px;align-items:center}
+.dot{width:7px;height:7px;border-radius:50%;background:var(--cyan);animation:blink 1.2s ease-in-out infinite}
+.dot:nth-child(2){animation-delay:.2s}
+.dot:nth-child(3){animation-delay:.4s}
+.run-anim{width:100%;height:5px;background:var(--bg3);border-radius:3px;overflow:hidden;position:relative}
+.run-bar{height:100%;width:40%;background:linear-gradient(90deg,transparent,var(--cyan),transparent);animation:shimmer 1.2s linear infinite;background-size:200% 100%}
+
+/* ── ERROR STATES ── */
+.err-banner{background:var(--red-g);border:1px solid var(--red-b);border-radius:var(--r8);padding:9px 12px;display:flex;align-items:flex-start;gap:8px;margin:0 0 10px}
+.err-icon{width:16px;height:16px;border-radius:50%;background:var(--red);display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px}
+.err-icon span{font-size:9px;color:#fff;font-weight:700}
+.err-text{font-size:11px;color:#FCA5A5;line-height:1.45}
+.err-field{border-color:var(--red)!important;box-shadow:0 0 0 3px var(--red-g)!important}
+.warn-banner{background:var(--amber-g);border:1px solid var(--amber-b);border-radius:var(--r8);padding:9px 12px;display:flex;align-items:flex-start;gap:8px}
+.fail-ring{width:88px;height:88px;border-radius:50%;background:rgba(239,68,68,.1);border:1.5px solid rgba(239,68,68,.3);display:flex;align-items:center;justify-content:center}
+.fail-x{width:44px;height:44px;border-radius:50%;background:var(--red-g);border:1.5px solid var(--red);display:flex;align-items:center;justify-content:center}
+
+/* ── ONBOARDING ── */
+.ob-hero{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:20px}
+.ob-icon{width:80px;height:80px;border-radius:20px;display:flex;align-items:center;justify-content:center;margin-bottom:16px;position:relative}
+.ob-icon::before{content:'';position:absolute;inset:-1px;border-radius:21px;border:1px solid rgba(0,212,255,.2)}
+.ob-title{font-family:'Orbitron',monospace;font-size:18px;color:var(--t1);text-align:center;margin-bottom:8px;letter-spacing:.5px}
+.ob-desc{font-size:13px;color:var(--t2);text-align:center;line-height:1.6;max-width:220px;margin:0 auto}
+.ob-dots{display:flex;gap:7px;justify-content:center;margin-top:20px}
+.ob-dot{width:7px;height:7px;border-radius:50%;background:var(--bdr2)}
+.ob-dot.on{background:var(--cyan);width:22px;border-radius:4px}
+.ob-dots2 .ob-dot.on{background:var(--purple);width:22px}
+.ob-dots3 .ob-dot.on{background:var(--green);width:22px}
+.ob-bot{padding:16px;flex-shrink:0}
+.ob-skip{display:block;text-align:center;font-size:11px;color:var(--t3);margin-top:8px;cursor:pointer}
+.feat-row{display:flex;align-items:flex-start;gap:12px;padding:12px;background:var(--bg3);border:1px solid var(--bdr);border-radius:var(--r12);margin-bottom:8px}
+.feat-icon{width:36px;height:36px;border-radius:10px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.feat-t{font-size:13px;font-weight:700;color:var(--t1);margin-bottom:2px}
+.feat-d{font-size:11px;color:var(--t2);line-height:1.4}
 </style>
 </head>
 <body>
-<h1>AURI'S JOURNEY</h1>
-<p class="subtitle">UI MOCKUP DESIGN</p>
+<div id="app-title">AURI'S JOURNEY</div>
+<p id="app-sub">UI MOCKUP DESIGN</p>
 
-<div class="nav-tabs">
-  <button class="tab active" onclick="showAll()">All Screens</button>
-  <button class="tab" onclick="showSingle(0)">Sign In</button>
-  <button class="tab" onclick="showSingle(1)">Sign Up</button>
-  <button class="tab" onclick="showSingle(2)">Missions</button>
-  <button class="tab" onclick="showSingle(3)">Game</button>
-  <button class="tab" onclick="showSingle(4)">Complete</button>
-  <button class="tab" onclick="showSingle(5)">World Map</button>
-  <button class="tab" onclick="showSingle(6)">Hub</button>
-  <button class="tab" onclick="showSingle(7)">Profile</button>
-</div>
-
-<div class="screens-grid" id="grid"></div>
+<div class="nav-strip" id="tabs"></div>
+<div id="grid"></div>
 
 <script>
-const screens = [
-  {label:"01 · Sign In", html: buildSignIn()},
-  {label:"02 · Sign Up", html: buildSignUp()},
-  {label:"03 · Missions", html: buildMissions()},
-  {label:"04 · Game", html: buildGame()},
-  {label:"05 · Complete", html: buildComplete()},
-  {label:"06 · World Map", html: buildWorldMap()},
-  {label:"07 · Hub", html: buildHub()},
-  {label:"08 · Profile", html: buildProfile()},
-];
-
-function cpuSVG(color1,color2,glow){
-  return `<svg width="52" height="52" viewBox="0 0 52 52" fill="none">
-    <rect x="14" y="14" width="24" height="24" rx="4" fill="${color1}" stroke="${color2}" stroke-width="1.5"/>
-    <rect x="18" y="18" width="16" height="16" rx="2" fill="${color2}" opacity=".4"/>
-    ${[8,15,22,29].map(y=>`<line x1="8" y1="${y}" x2="14" y2="${y}" stroke="${color2}" stroke-width="1.5"/><line x1="38" y1="${y}" x2="44" y2="${y}" stroke="${color2}" stroke-width="1.5"/>`).join('')}
-    ${[8,15,22,29].map(x=>`<line x1="${x}" y1="8" x2="${x}" y2="14" stroke="${color2}" stroke-width="1.5"/><line x1="${x}" y1="38" x2="${x}" y2="44" stroke="${color2}" stroke-width="1.5"/>`).join('')}
-  </svg>`;
-}
-
-function navBar(active){
+/* ─── HELPERS ─── */
+const bol = `<polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2" fill="var(--amber)" stroke="none"/>`;
+const xpBadge = (n) => `<div class="xpbadge"><svg width="13" height="13" viewBox="0 0 24 24">${bol}</svg>${n}</div>`;
+const navBar = (a) => {
   const items=[
-    {icon:`<path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/>`,label:'Game'},
-    {icon:`<rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/>`,label:'Mission'},
-    {icon:`<circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 010 20M12 2a15.3 15.3 0 000 20"/>`,label:'World'},
-    {icon:`<path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5M2 12l10 5 10-5"/>`,label:'Hub'},
+    [`<path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/>`,'Game'],
+    [`<rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/>`,'Mission'],
+    [`<circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 010 20M12 2a15.3 15.3 0 000 20"/>`,'World'],
+    [`<path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5M2 12l10 5 10-5"/>`,'Hub'],
   ];
-  return `<div class="bottom-nav">${items.map((it,i)=>`<div class="nav-item${i===active?' active':''}">
-    <svg viewBox="0 0 24 24">${it.icon}</svg>
-    <span>${it.label}</span>
-  </div>`).join('')}</div>`;
-}
+  return `<div class="bnav">${items.map((it,i)=>`<div class="ni${i===a?' on':''}"><svg viewBox="0 0 24 24">${it[0]}</svg><span>${it[1]}</span></div>`).join('')}</div>`;
+};
+const cpu = (c1,c2) => `<svg width="44" height="44" viewBox="0 0 52 52" fill="none">
+  <rect x="14" y="14" width="24" height="24" rx="4" fill="${c1}" stroke="${c2}" stroke-width="1.5"/>
+  <rect x="18" y="18" width="16" height="16" rx="2" fill="${c2}" opacity=".35"/>
+  ${[8,15,22,29].map(y=>`<line x1="8" y1="${y}" x2="14" y2="${y}" stroke="${c2}" stroke-width="1.5"/><line x1="38" y1="${y}" x2="44" y2="${y}" stroke="${c2}" stroke-width="1.5"/>`).join('')}
+  ${[8,15,22,29].map(x=>`<line x1="${x}" y1="8" x2="${x}" y2="14" stroke="${c2}" stroke-width="1.5"/><line x1="${x}" y1="38" x2="${x}" y2="44" stroke="${c2}" stroke-width="1.5"/>`).join('')}
+</svg>`;
+const emailIcon = `<path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/>`;
+const lockIcon = `<rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/>`;
+const userIcon = `<path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/>`;
 
-function buildSignIn(){return `
-<div class="auth-bg">
-  <div class="logo-wrap">${cpuSVG('#051929','#00D4FF')}</div>
+/* ─── SCREEN 1: SIGN IN ─── */
+function S_SignIn(){return `
+<div class="auth-shell">
+  <div class="logo-box">${cpu('#051929','#00D4FF')}</div>
   <p class="app-name">AURI'S JOURNEY</p>
-  <div class="auth-form">
-    <div class="auth-title">Sign In</div>
-    <div class="auth-sub">Welcome back, Commander</div>
-    <div class="input-wrap">
-      <svg class="input-icon" viewBox="0 0 24 24"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
-      <input class="field" type="email" placeholder="Email Address">
-    </div>
-    <div class="input-wrap">
-      <svg class="input-icon" viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg>
-      <input class="field" type="password" placeholder="Password">
-    </div>
+  <div class="af">
+    <div class="at">Sign In</div>
+    <div class="as">Welcome back, Commander</div>
+    <div class="iw"><svg class="ii" viewBox="0 0 24 24">${emailIcon}</svg><input class="ifield" type="email" placeholder="Email Address"></div>
+    <div class="iw"><svg class="ii" viewBox="0 0 24 24">${lockIcon}</svg><input class="ifield" type="password" placeholder="Password"></div>
     <div class="forgot"><a href="#">Forgot password?</a></div>
-    <button class="btn-primary">Sign In →</button>
-    <div class="signup-link">Don't have an account? <a href="#">Sign up</a></div>
+    <button class="btn-p">Sign In →</button>
+    <div class="auth-alt">Don't have an account? <a href="#">Sign up</a></div>
   </div>
 </div>`;}
 
-function buildSignUp(){return `
-<div class="auth-bg">
-  <div class="logo-wrap logo-wrap-purple">${cpuSVG('#0F0529','#7C5EFF')}</div>
-  <p class="app-name" style="color:#7C5EFF;opacity:.7">AURI'S JOURNEY</p>
-  <div class="auth-form">
-    <div style="font-size:10px;color:var(--txt3);letter-spacing:1.5px;margin-bottom:4px">CREATE ACCOUNT</div>
-    <div class="auth-title">Sign Up</div>
-    <div class="auth-sub" style="margin-bottom:20px">Join the mission, Commander</div>
-    <div class="input-wrap">
-      <svg class="input-icon" viewBox="0 0 24 24"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
-      <input class="field" type="email" placeholder="Email Address">
-    </div>
-    <div class="input-wrap">
-      <svg class="input-icon" viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg>
-      <input class="field" type="password" placeholder="Password">
-    </div>
-    <div class="input-wrap" style="margin-bottom:18px">
-      <svg class="input-icon" viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg>
-      <input class="field" type="password" placeholder="Confirm Password" style="border-color:#1A2A3A">
-    </div>
-    <button class="btn-primary btn-purple-solid">Start Adventure →</button>
-    <div class="signup-link">Already have an account? <a href="#" style="color:var(--purple)">Sign in</a></div>
+/* ─── SCREEN 2: SIGN UP ─── */
+function S_SignUp(){return `
+<div class="auth-shell" style="--cyan-g:rgba(124,94,255,.12);--cyan-b:rgba(124,94,255,.28)">
+  <div class="auth-shell::before" style="background:radial-gradient(circle,rgba(124,94,255,.05),transparent)"></div>
+  <div class="logo-box logo-box-p">${cpu('#0F0529','#7C5EFF')}</div>
+  <p class="app-name" style="color:var(--purple);opacity:.7">AURI'S JOURNEY</p>
+  <div class="af">
+    <div class="kicker">CREATE ACCOUNT</div>
+    <div class="at">Sign Up</div>
+    <div class="as">Join the mission, Commander</div>
+    <div class="iw"><svg class="ii" viewBox="0 0 24 24">${emailIcon}</svg><input class="ifield" type="email" placeholder="Email Address"></div>
+    <div class="iw"><svg class="ii" viewBox="0 0 24 24">${lockIcon}</svg><input class="ifield" type="password" placeholder="Password"></div>
+    <div class="iw" style="margin-bottom:16px"><svg class="ii" viewBox="0 0 24 24">${lockIcon}</svg><input class="ifield" type="password" placeholder="Confirm Password" style="border-color:#1C2D40"></div>
+    <button class="btn-p btn-pu">Start Adventure →</button>
+    <div class="auth-alt">Already have an account? <a href="#" class="pa">Sign in</a></div>
   </div>
 </div>`;}
 
-function buildMissions(){return `
+/* ─── SCREEN 3: MISSIONS ─── */
+function S_Missions(){return `
 <div style="flex:1;display:flex;flex-direction:column">
-  <div class="top-bar">
+  <div class="hdr">
     <div>
-      <div style="font-family:'Orbitron',monospace;font-size:11px;color:var(--cyan);letter-spacing:1px">CODEQUEST</div>
-      <div style="font-size:15px;font-weight:700;color:var(--txt1);margin-top:1px">Sector 2 — Active</div>
+      <div style="font-family:'Orbitron',monospace;font-size:10px;color:var(--cyan);letter-spacing:1px">CODEQUEST</div>
+      <div style="font-size:15px;font-weight:700;color:var(--t1);margin-top:1px">Sector 2 — Active</div>
     </div>
-    <div style="display:flex;flex-direction:column;align-items:center;gap:3px">
-      <div class="profile-btn"><svg viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></div>
-      <span style="font-size:9px;color:var(--txt3);letter-spacing:.5px">PROFILE</span>
+    <div style="display:flex;flex-direction:column;align-items:center;gap:2px">
+      <div style="width:34px;height:34px;border-radius:50%;background:var(--bg4);border:1px solid var(--bdr2);display:flex;align-items:center;justify-content:center">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--t2)" stroke-width="1.8">${userIcon}</svg>
+      </div>
     </div>
   </div>
-  <div style="padding:12px 14px 8px">
-    <div style="font-size:12px;color:var(--txt3)">Pick your next mission</div>
+  <div style="padding:8px 16px 6px;font-size:11px;color:var(--t3)">Pick your next mission</div>
+  <div class="mc done">
+    <div class="mbar d"></div>
+    <div style="flex:1"><div class="mt">Mission 1</div><div class="ms">Restore the power gate</div><div class="tag tc">Sequence</div></div>
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--green)" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
   </div>
-  <div class="mission-card done">
-    <div class="mission-dot c-done"></div>
-    <div style="flex:1">
-      <div class="mission-title">Mission 1</div>
-      <div class="mission-sub">Restore the power gate</div>
-      <div class="tag tag-cyan">Sequence</div>
-    </div>
-    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#10B981" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+  <div class="mc act">
+    <div class="mbar a"></div>
+    <div style="flex:1"><div class="mt">Mission 2</div><div class="ms">Debug the broken loop</div><div class="tag tp">Loop</div></div>
+    <span style="font-size:9px;font-weight:700;color:var(--purple)">● Active</span>
   </div>
-  <div class="mission-card active-mission">
-    <div class="mission-dot c-active"></div>
-    <div style="flex:1">
-      <div class="mission-title">Mission 2</div>
-      <div class="mission-sub">Debug the broken loop</div>
-      <div class="tag tag-purple">Loop</div>
-    </div>
-    <span style="font-size:10px;font-weight:700;color:var(--purple)">• Active</span>
+  <div class="mc locked">
+    <div class="mbar"></div>
+    <div style="flex:1"><div class="mt g">Mission 3</div><div class="ms g">Open the logic gates</div><div class="tag ts">Condition</div></div>
+    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="var(--t4)" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg>
   </div>
-  <div class="mission-card" style="opacity:.6">
-    <div class="mission-dot"></div>
-    <div style="flex:1">
-      <div class="mission-title muted">Mission 3</div>
-      <div class="mission-sub muted">Open the logic gates</div>
-      <div class="tag" style="background:rgba(75,85,99,.1);color:var(--txt3);border-color:var(--border)">Condition</div>
-    </div>
-    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--txt3)" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg>
+  <div class="mc locked" style="opacity:.13">
+    <div class="mbar"></div>
+    <div style="flex:1"><div class="mt g">Mission 4</div><div class="ms g">Sort the data stream</div><div class="tag ts">Sorting</div></div>
+    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="var(--t4)" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg>
   </div>
-  <div class="mission-card" style="opacity:.4">
-    <div class="mission-dot"></div>
-    <div style="flex:1">
-      <div class="mission-title muted">Mission 4</div>
-      <div class="mission-sub muted">Sort the data stream</div>
-      <div class="tag" style="background:rgba(75,85,99,.1);color:var(--txt3);border-color:var(--border)">Sorting</div>
-    </div>
-    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--txt3)" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg>
-  </div>
-  <div class="mission-card" style="opacity:.3">
-    <div class="mission-dot"></div>
-    <div style="flex:1">
-      <div class="mission-title muted">Mission 5</div>
-      <div class="mission-sub muted">Fix the recursive crash</div>
-      <div class="tag" style="background:rgba(75,85,99,.1);color:var(--txt3);border-color:var(--border)">Recursion</div>
-    </div>
-    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--txt3)" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg>
+  <div class="mc locked" style="opacity:.08">
+    <div class="mbar"></div>
+    <div style="flex:1"><div class="mt g">Mission 5</div><div class="ms g">Fix the recursive crash</div><div class="tag ts">Recursion</div></div>
+    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="var(--t4)" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg>
   </div>
   <div style="flex:1"></div>
-  <div class="xp-bar-wrap">
-    <div class="xp-label"><span>XP PROGRESS · LVL 12</span><span>70%</span></div>
-    <div class="xp-track"><div class="xp-fill" style="width:70%"></div></div>
-  </div>
-  <div style="padding:0 14px 14px">
-    <button class="btn-primary btn-purple-solid">Continue Mission 2 →</button>
+  <div style="padding:0 16px 6px">
+    <div style="font-size:8px;color:var(--t3);letter-spacing:1px;margin-bottom:5px;text-align:center">SECTOR PROGRESS</div>
+    <div class="xpbar-wrap" style="margin:0 0 12px">
+      <div class="xpbar-lbl"><span>LVL 12</span><span>70%</span></div>
+      <div class="xpbar-track"><div class="xpbar-fill" style="width:70%"></div></div>
+    </div>
+    <button class="btn-p btn-pu">Continue Mission 2 →</button>
   </div>
   ${navBar(1)}
 </div>`;}
 
-function buildGame(){return `
-<div style="flex:1;display:flex;flex-direction:column">
-  <div class="game-header">
-    <div class="game-header-row1">
-      <div class="back-btn"><svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg></div>
-      <div style="flex:1">
-        <div class="sector-title">SECTOR 1</div>
-        <div style="font-size:10px;color:var(--txt2)">Mission 1 · Restore the Power Gate</div>
-      </div>
-      <div class="xp-badge"><svg viewBox="0 0 24 24" fill="var(--amber)" stroke="none"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>2,289</div>
-    </div>
-  </div>
-  <div class="grid-wrap">
-    <div class="grid-label">EXECUTION GRID</div>
-    <div class="exec-grid">
-      ${[...Array(25)].map((_,i)=>{
-        if(i===12) return `<div class="cell robot">🤖</div>`;
-        if(i===18) return `<div class="cell target">⚡</div>`;
-        if(i===8) return `<div class="cell hazard" style="font-size:12px;color:var(--red);font-weight:700">✕</div>`;
-        return `<div class="cell"></div>`;
-      }).join('')}
-    </div>
-  </div>
-  <div class="cmd-section">
-    <div class="cmd-label">COMMAND BLOCKS</div>
-    <div class="cmd-row">
-      <div class="chip chip-cyan">↑ move</div>
-      <div class="chip chip-purple">↺ Turn</div>
-      <div class="chip chip-amber">· if</div>
-      <div class="chip chip-green">⟳ Loop</div>
-      <div class="chip chip-undo">↩ Undo</div>
-    </div>
-  </div>
-  <div class="queue-section">
-    <div class="queue-top">
-      <div class="queue-count">3 commands queued</div>
-      <button class="clear-btn">clear</button>
-    </div>
-    <div class="queue-items">
-      ${[['1','↑ move','chip-cyan'],['2','↺ Turn','chip-purple'],['3','· if','chip-amber']].map(([n,t,c])=>`<div class="q-item"><div class="q-num">${n}</div><div class="chip ${c}" style="font-size:10px;padding:4px 8px">${t}</div></div>`).join('')}
-      <div class="q-item" style="border-style:dashed;opacity:.4"><div class="q-num">4</div><div style="font-size:9px;color:var(--txt3)">—</div></div>
-    </div>
-  </div>
-  <div class="run-exit">
-    <button class="btn-run">▶ RUN</button>
-    <button class="btn-exit">✕ Exit</button>
-  </div>
-  <div class="echo-box">
-    <div class="echo-title">ECHO SAYS</div>
-    <div class="echo-text">Try a condition block — check the gate before moving forward.</div>
-  </div>
-</div>`;}
-
-function buildComplete(){return `
-<div style="flex:1;display:flex;flex-direction:column">
-  <div class="complete-header">
-    <div>
-      <div class="complete-sector">SECTOR 1 · MISSION 1</div>
-      <div class="complete-sub">Restore the power gate</div>
-    </div>
-    <div class="xp-badge"><svg viewBox="0 0 24 24" fill="var(--amber)" stroke="none"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>2,480 XP</div>
-  </div>
-  <div style="display:flex;flex-direction:column;align-items:center;padding:10px 0 14px">
-    <div class="success-ring">
-      <div class="success-check">
-        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--green)" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>
-      </div>
-    </div>
-    <div class="mission-complete-title">MISSION COMPLETE</div>
-    <div class="mission-complete-sub">Power Gate Restored!</div>
-    <div class="xp-reward"><svg width="14" height="14" viewBox="0 0 24 24" fill="var(--amber)" stroke="none"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>+ 120 XP</div>
-  </div>
-  <div class="metrics-card">
-    <div class="metric-block">
-      <div style="font-size:9px;color:var(--txt3);letter-spacing:1px;margin-bottom:4px">EFFICIENCY</div>
-      <div class="metric-num">4</div>
-      <div class="metric-label">Steps used</div>
-      <div class="metric-badge badge-green">Optimal</div>
-    </div>
-    <div class="metric-divider"></div>
-    <div class="metric-block">
-      <div style="font-size:9px;color:var(--txt3);letter-spacing:1px;margin-bottom:4px">SPEED</div>
-      <div class="metric-num" style="color:var(--cyan)">12s</div>
-      <div class="metric-label">Time taken</div>
-      <div class="metric-badge badge-cyan">Fast</div>
-    </div>
-  </div>
-  <div class="concept-card">
-    <div class="concept-label">✦ CONCEPT MASTERED</div>
-    <div class="concept-title">Sequential Reasoning</div>
-    <div class="concept-desc">You designed a perfect command sequence to reach the target efficiently.</div>
-  </div>
-  <div class="xp-progress-bar">
-    <div class="xp-prog-label"><span style="color:var(--txt3);font-size:10px">XP PROGRESS · LVL 12</span><span style="font-size:10px">+120 XP</span></div>
-    <div class="xp-track"><div class="xp-fill" style="width:75%"></div></div>
-    <div style="display:flex;justify-content:space-between;margin-top:4px;font-size:10px;color:var(--txt3)"><span>2,360 XP</span><span>→ 2,480 XP</span></div>
-  </div>
-  <div class="complete-btns">
-    <button class="btn-primary">Next Mission →</button>
-    <button class="btn-secondary btn-replay">↺ Replay Level</button>
-  </div>
-</div>`;}
-
-function buildWorldMap(){
+/* ─── SCREEN 4: GAME ─── */
+function S_Game(){
+  const cells = Array(25).fill('').map((_,i)=>{
+    if(i===12) return `<div class="cell rob">🤖</div>`;
+    if(i===18) return `<div class="cell tgt">⚡</div>`;
+    if(i===8) return `<div class="cell haz" style="font-size:11px;font-weight:800;color:var(--red)">✕</div>`;
+    return `<div class="cell"></div>`;
+  }).join('');
   return `
 <div style="flex:1;display:flex;flex-direction:column">
-  <div class="top-bar" style="margin-bottom:0">
-    <div>
-      <div style="font-family:'Orbitron',monospace;font-size:11px;color:var(--amber);letter-spacing:1px">WORLD MAP</div>
-      <div style="font-size:13px;color:var(--txt2);margin-top:2px">Choose your sector</div>
+  <div class="ghdr">
+    <div class="ghdr-r1">
+      <div class="back"><svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg></div>
+      <div class="stitle" style="flex:1">SECTOR 1</div>
+      ${xpBadge('2,289')}
     </div>
-    <div class="xp-badge"><svg viewBox="0 0 24 24" fill="var(--amber)" stroke="none" width="14" height="14"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>2,480 XP</div>
+    <div class="ghdr-r2"><span class="msub">Mission 1 · Restore the Power Gate</span></div>
   </div>
-  <div class="map-area">
-    <svg class="map-svg" viewBox="0 0 220 300">
-      <!-- Active path S1->S2 bright cyan -->
-      <line x1="110" y1="55" x2="70" y2="130" stroke="#00D4FF" stroke-width="2" stroke-dasharray="5,3" opacity=".9"/>
-      <!-- Path S1->S3 grey visible -->
-      <line x1="110" y1="55" x2="155" y2="130" stroke="#2D3F55" stroke-width="1.5"/>
-      <!-- Path S2->S4 grey -->
-      <line x1="70" y1="155" x2="50" y2="230" stroke="#1E293B" stroke-width="1.5"/>
-      <!-- Path S3->S5 grey -->
-      <line x1="155" y1="155" x2="170" y2="230" stroke="#1E293B" stroke-width="1.5"/>
+  <div class="grid-section">
+    <div class="grid-lbl">EXECUTION GRID</div>
+    <div class="egrid">${cells}</div>
+  </div>
+  <div class="cmds">
+    <div class="clbl">COMMAND BLOCKS</div>
+    <div class="crow">
+      <div class="chip ch-c">↑ move</div>
+      <div class="chip ch-p">↺ Turn</div>
+      <div class="chip ch-a">· if</div>
+      <div class="chip ch-g">⟳ Loop</div>
+      <div class="chip ch-u" style="margin-left:auto">↩ Undo</div>
+    </div>
+  </div>
+  <div class="qsec">
+    <div class="qtop">
+      <div class="qcount">3 commands queued</div>
+      <button class="qclear">✕ clear</button>
+    </div>
+    <div class="qrow">
+      ${[['1','↑ move','ch-c'],['2','↺ Turn','ch-p'],['3','· if','ch-a']].map(([n,t,c])=>`<div class="qi"><div class="qn">${n}</div><div class="chip ${c}" style="font-size:9px;padding:3px 6px">${t}</div></div>`).join('')}
+      <div class="qi" style="border-style:dashed;opacity:.3"><div class="qn">4</div><div style="font-size:8px;color:var(--t4)">—</div></div>
+    </div>
+  </div>
+  <div class="re">
+    <button class="run">▶ RUN</button>
+    <button class="exit">✕ EXIT</button>
+  </div>
+  <div class="echo">
+    <div class="echt">ECHO SAYS</div>
+    <div class="echb">Try a condition block — check the gate before moving forward.</div>
+  </div>
+</div>`;}
 
-      <!-- S1 Done -->
-      <circle cx="110" cy="40" r="28" fill="#0D2A1A" stroke="#10B981" stroke-width="2"/>
-      <text x="110" y="36" text-anchor="middle" fill="#10B981" font-family="Orbitron,monospace" font-size="13" font-weight="700">S1</text>
-      <text x="110" y="50" text-anchor="middle" fill="#34D399" font-size="9">✓ Done</text>
-      <text x="110" y="75" text-anchor="middle" fill="#6B7280" font-size="8">Sequence</text>
+/* ─── SCREEN 5: MISSION COMPLETE ─── */
+function S_Complete(){return `
+<div style="flex:1;display:flex;flex-direction:column">
+  <div class="comph">
+    <div>
+      <div style="font-size:10px;color:var(--t3);letter-spacing:.4px">SECTOR 1 · MISSION 1</div>
+      <div style="font-size:11px;color:var(--t3);margin-top:1px">Restore the power gate</div>
+    </div>
+    ${xpBadge('2,480 XP')}
+  </div>
+  <div style="display:flex;flex-direction:column;align-items:center;padding:10px 0 12px">
+    <div class="sring"><div class="scheck"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="var(--green)" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></div></div>
+    <div class="ctitle">MISSION COMPLETE</div>
+    <div class="csub">Power Gate Restored!</div>
+    <div class="xpr"><svg width="12" height="12" viewBox="0 0 24 24">${bol}</svg>+ 120 XP</div>
+  </div>
+  <div class="mcard">
+    <div class="mb">
+      <div style="font-size:8px;color:var(--t3);letter-spacing:1px;margin-bottom:3px">EFFICIENCY</div>
+      <div class="mn">4</div><div class="ml">Steps used</div>
+      <div class="mbadge bg">Optimal</div>
+    </div>
+    <div class="mdiv"></div>
+    <div class="mb">
+      <div style="font-size:8px;color:var(--t3);letter-spacing:1px;margin-bottom:3px">SPEED</div>
+      <div class="mn" style="color:var(--cyan)">12s</div><div class="ml">Time taken</div>
+      <div class="mbadge bc">Fast</div>
+    </div>
+  </div>
+  <div class="conccard">
+    <div class="conclbl">✦ CONCEPT MASTERED</div>
+    <div class="conct">Sequential Reasoning</div>
+    <div class="concd">You used ordered instructions to reach the target efficiently. Core skill unlocked.</div>
+  </div>
+  <div style="margin:0 14px 12px">
+    <div class="xpbar-lbl" style="margin-bottom:5px"><span style="font-size:9px;color:var(--t3)">XP PROGRESS · LVL 12</span><span style="font-size:9px;color:var(--green)">+120 XP</span></div>
+    <div class="xpbar-track"><div class="xpbar-fill" style="width:74%"></div></div>
+    <div style="display:flex;justify-content:space-between;margin-top:4px;font-size:9px;color:var(--t4)"><span>2,360 XP</span><span>→ 2,480 XP</span></div>
+  </div>
+  <div style="padding:0 14px 14px;display:flex;flex-direction:column;gap:7px">
+    <button class="btn-p">Next Mission →</button>
+    <button class="btn-p btn-s" style="font-size:13px;font-weight:600">↺ Replay Level</button>
+  </div>
+</div>`;}
 
-      <!-- S2 Active -->
-      <circle cx="70" cy="145" r="28" fill="#1A1040" stroke="#7C5EFF" stroke-width="2.5"/>
-      <text x="70" y="141" text-anchor="middle" fill="#7C5EFF" font-family="Orbitron,monospace" font-size="13" font-weight="700">S2</text>
-      <text x="70" y="155" text-anchor="middle" fill="#A78BFA" font-size="9">• Active</text>
-      <text x="70" y="180" text-anchor="middle" fill="#6B7280" font-size="8">Conditions</text>
-
-      <!-- S3 Locked -->
-      <circle cx="155" cy="145" r="22" fill="#0D1424" stroke="#1E293B" stroke-width="1.5" opacity=".7"/>
-      <text x="155" y="141" text-anchor="middle" fill="#374151" font-family="Orbitron,monospace" font-size="12" font-weight="700">S3</text>
-      <text x="155" y="153" text-anchor="middle" fill="#374151" font-size="10">🔒</text>
-      <text x="155" y="174" text-anchor="middle" fill="#374151" font-size="8">Loops</text>
-
-      <!-- S4 Locked far -->
-      <circle cx="50" cy="248" r="18" fill="#0A0E14" stroke="#151D2A" stroke-width="1" opacity=".5"/>
-      <text x="50" y="244" text-anchor="middle" fill="#1F2937" font-family="Orbitron,monospace" font-size="11" font-weight="700">S4</text>
-      <text x="50" y="255" text-anchor="middle" fill="#1F2937" font-size="9">🔒</text>
-      <text x="50" y="272" text-anchor="middle" fill="#1F2937" font-size="8">Functions</text>
-
-      <!-- S5 Locked far -->
-      <circle cx="170" cy="248" r="18" fill="#0A0E14" stroke="#151D2A" stroke-width="1" opacity=".5"/>
-      <text x="170" y="244" text-anchor="middle" fill="#1F2937" font-family="Orbitron,monospace" font-size="11" font-weight="700">S5</text>
-      <text x="170" y="255" text-anchor="middle" fill="#1F2937" font-size="9">🔒</text>
-      <text x="170" y="272" text-anchor="middle" fill="#1F2937" font-size="8">Debugging</text>
+/* ─── SCREEN 6: WORLD MAP ─── */
+function S_WorldMap(){return `
+<div style="flex:1;display:flex;flex-direction:column">
+  <div class="hdr">
+    <div>
+      <div style="font-family:'Orbitron',monospace;font-size:10px;color:var(--amber);letter-spacing:1px">WORLD MAP</div>
+      <div style="font-size:13px;color:var(--t2);margin-top:2px">Choose your sector</div>
+    </div>
+    ${xpBadge('2,480 XP')}
+  </div>
+  <div style="flex:1;display:flex;align-items:center;justify-content:center;padding:8px">
+    <svg class="mapsvg" width="230" height="295" viewBox="0 0 230 295">
+      <!-- active path bright -->
+      <line x1="115" y1="58" x2="72" y2="138" stroke="#00D4FF" stroke-width="2" stroke-dasharray="6,4" opacity=".85"/>
+      <!-- locked path S1->S3 visible grey -->
+      <line x1="115" y1="58" x2="160" y2="138" stroke="#2A3A50" stroke-width="1.5"/>
+      <!-- deep locked paths very dim -->
+      <line x1="72" y1="162" x2="52" y2="240" stroke="#161F2D" stroke-width="1.5"/>
+      <line x1="160" y1="162" x2="176" y2="240" stroke="#161F2D" stroke-width="1.5"/>
+      <!-- S1 done -->
+      <circle cx="115" cy="42" r="28" fill="#0B2419" stroke="#10B981" stroke-width="2"/>
+      <text x="115" y="38" text-anchor="middle" fill="#10B981" font-family="Orbitron,monospace" font-size="13" font-weight="700">S1</text>
+      <text x="115" y="51" text-anchor="middle" fill="#34D399" font-size="9">✓ Done</text>
+      <text x="115" y="78" text-anchor="middle" fill="#4B6070" font-size="8">Sequence</text>
+      <!-- S2 active -->
+      <circle cx="72" cy="150" r="27" fill="#170E3A" stroke="#7C5EFF" stroke-width="2.5"/>
+      <text x="72" y="146" text-anchor="middle" fill="#7C5EFF" font-family="Orbitron,monospace" font-size="12" font-weight="700">S2</text>
+      <text x="72" y="158" text-anchor="middle" fill="#A78BFA" font-size="8">● Active</text>
+      <text x="72" y="184" text-anchor="middle" fill="#4B6070" font-size="8">Conditions</text>
+      <!-- S3 locked -->
+      <circle cx="160" cy="150" r="22" fill="#0A1220" stroke="#1A2738" stroke-width="1.5" opacity=".7"/>
+      <text x="160" y="147" text-anchor="middle" fill="#2A3A50" font-family="Orbitron,monospace" font-size="11" font-weight="700">S3</text>
+      <text x="160" y="157" text-anchor="middle" fill="#2A3A50" font-size="10">🔒</text>
+      <text x="160" y="178" text-anchor="middle" fill="#2A3A50" font-size="8">Loops</text>
+      <!-- S4 very dim -->
+      <circle cx="52" cy="254" r="17" fill="#08101A" stroke="#111C28" stroke-width="1" opacity=".45"/>
+      <text x="52" y="251" text-anchor="middle" fill="#182030" font-family="Orbitron,monospace" font-size="10" font-weight="700">S4</text>
+      <text x="52" y="260" text-anchor="middle" fill="#182030" font-size="9">🔒</text>
+      <text x="52" y="277" text-anchor="middle" fill="#182030" font-size="8">Functions</text>
+      <!-- S5 very dim -->
+      <circle cx="176" cy="254" r="17" fill="#08101A" stroke="#111C28" stroke-width="1" opacity=".45"/>
+      <text x="176" y="251" text-anchor="middle" fill="#182030" font-family="Orbitron,monospace" font-size="10" font-weight="700">S5</text>
+      <text x="176" y="260" text-anchor="middle" fill="#182030" font-size="9">🔒</text>
+      <text x="176" y="277" text-anchor="middle" fill="#182030" font-size="8">Debugging</text>
     </svg>
   </div>
-  <div style="text-align:center;margin-bottom:12px">
-    <div class="map-location">• Now in: Conditional Forest</div>
+  <div style="padding:0 14px 6px;text-align:center">
+    <div style="display:inline-flex;align-items:center;gap:6px;padding:5px 14px;background:var(--purple-g);border:1px solid var(--purple-b);border-radius:20px;font-size:11px;color:var(--purple);font-weight:600;margin-bottom:10px">● Now in: Conditional Forest</div>
   </div>
   <div style="padding:0 14px 14px">
-    <button class="btn-primary btn-purple-solid">Enter Sector 2 →</button>
+    <button class="btn-p btn-pu">Enter Sector 2 →</button>
   </div>
   ${navBar(2)}
 </div>`;}
 
-function buildHub(){return `
+/* ─── SCREEN 7: HUB ─── */
+function S_Hub(){return `
 <div style="flex:1;display:flex;flex-direction:column">
-  <div class="hub-header">
-    <div>
-      <div class="hub-title">DAILY HUB</div>
-      <div class="hub-greet">Good morning, Commander</div>
-    </div>
-    <div class="xp-badge"><svg viewBox="0 0 24 24" fill="var(--amber)" stroke="none" width="14" height="14"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>2,480</div>
+  <div class="hbhdr">
+    <div><div class="hbtitle">DAILY HUB</div><div class="hbgreet">Good morning, Commander</div></div>
+    ${xpBadge('2,480')}
   </div>
-  <div class="challenge-card">
-    <div class="challenge-top">
-      <span class="challenge-label">DAILY CHALLENGE</span>
-      <span class="play-pill">Play</span>
-    </div>
-    <div class="challenge-title">Sort array in 3 moves</div>
-    <div class="challenge-reset">⟳ Resets in 6h 42m</div>
+  <div class="chall">
+    <div class="challt"><span class="challlbl">DAILY CHALLENGE</span><span class="challpill">Play</span></div>
+    <div class="challname">Sort array in 3 moves</div>
+    <div class="challreset">⟳ Resets in 6h 42m</div>
   </div>
-  <button class="go-play">Go Play →</button>
-  <div class="stats-row">
-    <div class="stat-card">
-      <div class="stat-num" style="color:var(--amber)">7</div>
-      <div class="stat-label">DAY STREAK</div>
-    </div>
-    <div class="stat-card">
-      <div class="stat-num" style="color:var(--cyan)">2,480</div>
-      <div class="stat-label">TOTAL XP</div>
-    </div>
+  <button class="goplay">Go Play →</button>
+  <div class="xpbar-wrap" style="margin:0 14px 10px">
+    <div class="xpbar-lbl"><span>XP PROGRESS · LVL 12</span><span>70%</span></div>
+    <div class="xpbar-track"><div class="xpbar-fill" style="width:70%"></div></div>
   </div>
-  <div class="xp-bar-wrap" style="margin:0 14px 12px;padding:8px 0">
-    <div class="xp-label"><span>XP PROGRESS · LVL 12</span><span>70%</span></div>
-    <div class="xp-track"><div class="xp-fill" style="width:70%"></div></div>
+  <div class="echohub">
+    <div class="echohublbl">ECHO SAYS</div>
+    <div class="echohubtext">You struggled with loops in Mission 3. Try Conditional Forest Mission 2 next.</div>
   </div>
-  <div class="echo-hub">
-    <div class="echo-hub-label">ECHO SAYS</div>
-    <div class="echo-hub-text">You struggled with loops in Mission 3. Try Conditional Forest Mission 2 next.</div>
+  <div class="stats2">
+    <div class="scard"><div class="snum" style="color:var(--amber)">7</div><div class="slbl">DAY STREAK</div></div>
+    <div class="scard"><div class="snum" style="color:var(--cyan)">2,480</div><div class="slbl">TOTAL XP</div></div>
   </div>
-  <div class="activity-section">
-    <div class="activity-label">RECENT ACTIVITY</div>
-    <div class="activity-row">
-      <span class="activity-text">Completed Mission 1</span>
-      <span class="activity-time">2h ago</span>
-    </div>
-    <div class="activity-row">
-      <span class="activity-text">Earned 120 XP</span>
-      <span class="activity-time">2h ago</span>
-    </div>
-    <div class="activity-row">
-      <span class="activity-text">Unlocked Sector 2</span>
-      <span class="activity-time">2h ago</span>
-    </div>
+  <div class="act-sec">
+    <div class="act-lbl">RECENT ACTIVITY</div>
+    <div class="act-row"><span class="act-t">Completed Mission 1</span><span class="act-time">2h ago</span></div>
+    <div class="act-row"><span class="act-t">Earned 120 XP</span><span class="act-time">2h ago</span></div>
+    <div class="act-row"><span class="act-t">Unlocked Sector 2</span><span class="act-time">2h ago</span></div>
   </div>
   ${navBar(3)}
 </div>`;}
 
-function buildProfile(){
-  const skills=[
-    {name:'Sequences',pct:90,color:'#00D4FF'},
-    {name:'Conditions',pct:65,color:'#7C5EFF'},
-    {name:'Loops',pct:40,color:'#F59E0B'},
-    {name:'Debugging',pct:55,color:'#EF4444'},
-    {name:'Functions',pct:20,color:'#10B981'},
-  ];
+/* ─── SCREEN 8: PROFILE ─── */
+function S_Profile(){
+  const skills=[['Sequences',90,'#00D4FF'],['Conditions',65,'#7C5EFF'],['Loops',40,'#F59E0B'],['Debugging',55,'#EF4444'],['Functions',20,'#10B981']];
   return `
 <div style="flex:1;display:flex;flex-direction:column">
-  <div class="profile-hero">
-    <div class="profile-hero-title">PROFILE</div>
-    <div style="font-size:11px;color:var(--txt3);margin-bottom:12px">Commander Auri</div>
-    <div class="avatar-ring">
-      <svg width="44" height="44" viewBox="0 0 44 44" fill="none">
-        <rect x="8" y="12" width="28" height="24" rx="8" fill="#1A1040" stroke="#7C5EFF" stroke-width="1.5"/>
-        <circle cx="16" cy="22" r="3" fill="#7C5EFF"/>
-        <circle cx="28" cy="22" r="3" fill="#7C5EFF"/>
-        <rect x="18" y="28" width="8" height="3" rx="1.5" fill="#7C5EFF" opacity=".5"/>
+  <div class="prohero">
+    <div style="font-family:'Orbitron',monospace;font-size:10px;color:var(--t3);letter-spacing:2px;margin-bottom:2px">PROFILE</div>
+    <div style="font-size:10px;color:var(--t4);margin-bottom:10px">Commander Auri</div>
+    <div class="avring">
+      <svg width="40" height="40" viewBox="0 0 44 44" fill="none">
+        <rect x="8" y="12" width="28" height="23" rx="8" fill="#1A1040" stroke="#7C5EFF" stroke-width="1.5"/>
+        <circle cx="16" cy="22" r="2.5" fill="#7C5EFF"/><circle cx="28" cy="22" r="2.5" fill="#7C5EFF"/>
+        <rect x="18" y="27" width="8" height="3" rx="1.5" fill="#7C5EFF" opacity=".5"/>
         <line x1="22" y1="12" x2="22" y2="7" stroke="#7C5EFF" stroke-width="1.5"/>
         <circle cx="22" cy="6" r="2" fill="#7C5EFF"/>
       </svg>
-      <div class="online-dot"></div>
+      <div class="odot"></div>
     </div>
-    <div class="username">@commander_auri</div>
-    <div class="user-rank">Commander</div>
-    <div class="lvl-pill"><svg width="12" height="12" viewBox="0 0 24 24" fill="var(--amber)" stroke="none"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>2,480 XP · Level 12</div>
+    <div class="uname">@commander_auri</div>
+    <div class="urank">Commander</div>
+    <div class="lvpill"><svg width="11" height="11" viewBox="0 0 24 24">${bol}</svg>2,480 XP · Level 12</div>
   </div>
-  <div class="profile-stats">
-    <div class="p-stat">
-      <div class="p-stat-num" style="color:var(--cyan)">12</div>
-      <div class="p-stat-label">LEVEL</div>
+  <div class="prostats">
+    <div class="psc"><div class="psn" style="color:var(--cyan)">12</div><div class="psl">LEVEL</div></div>
+    <div class="psc"><div class="psn" style="color:var(--amber)">7</div><div class="psl">DAY STREAK</div></div>
+    <div class="psc"><div class="psn" style="color:var(--purple)">34</div><div class="psl">MISSIONS<br>SOLVED</div></div>
+  </div>
+  <div class="procont">
+    <div style="margin-bottom:12px">
+      <div class="xpbar-lbl" style="margin-bottom:4px"><span style="font-size:9px;color:var(--cyan);font-weight:700;letter-spacing:1px">XP PROGRESS</span><span>Level 13</span></div>
+      <div class="xpbar-track"><div class="xpbar-fill" style="width:70%"></div></div>
+      <div style="display:flex;justify-content:space-between;margin-top:4px;font-size:9px;color:var(--t4)"><span>2,480 XP earned</span><span>520 to go</span></div>
     </div>
-    <div class="p-stat">
-      <div class="p-stat-num" style="color:var(--amber)">7</div>
-      <div class="p-stat-label">DAY STREAK</div>
-    </div>
-    <div class="p-stat">
-      <div class="p-stat-num" style="color:var(--purple)">34</div>
-      <div class="p-stat-label">MISSIONS<br>SOLVED</div>
+    <div class="sectitle">SKILL MAP</div>
+    ${skills.map(([n,p,c])=>`<div class="skillrow"><span class="sknm">${n}</span><div class="sktrack"><div class="skfill" style="width:${p}%;background:${c}"></div></div><span class="skpct">${p}%</span></div>`).join('')}
+    <div style="margin-top:14px"><button class="btn-p btn-s" style="font-size:12px;font-weight:600">← Back To Action</button></div>
+  </div>
+</div>`;}
+
+/* ─── SCREEN 9: LOADING STATES ─── */
+function S_Loading(){return `
+<div style="flex:1;display:flex;flex-direction:column;padding:14px;gap:0">
+  <div style="font-family:'Orbitron',monospace;font-size:9px;color:var(--cyan);letter-spacing:1.5px;margin-bottom:14px">LOADING STATES</div>
+
+  <!-- 1. Auth loading -->
+  <div style="margin-bottom:12px">
+    <div style="font-size:9px;color:var(--t3);letter-spacing:1px;margin-bottom:8px">AUTH · Signing in</div>
+    <div style="background:var(--bg3);border:1px solid var(--bdr);border-radius:var(--r12);padding:16px;display:flex;flex-direction:column;align-items:center;gap:10px">
+      <div class="pulse-ring">${cpu('#051929','#00D4FF')}</div>
+      <div style="font-size:12px;color:var(--t2);font-weight:600">Verifying Commander ID</div>
+      <div class="dots"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div>
     </div>
   </div>
-  <div class="profile-content">
-    <div class="xp-bar-wrap" style="margin:0 0 14px;padding:0">
-      <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:4px">
-        <div class="section-title" style="margin-bottom:0">XP PROGRESS</div>
-        <span style="font-size:10px;color:var(--txt3)">Level 13</span>
+
+  <!-- 2. Game execution running -->
+  <div style="margin-bottom:12px">
+    <div style="font-size:9px;color:var(--t3);letter-spacing:1px;margin-bottom:8px">GAME · Executing commands</div>
+    <div style="background:var(--bg3);border:1.5px solid rgba(0,212,255,.25);border-radius:var(--r12);padding:12px">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">
+        <div>
+          <div style="font-size:9px;color:var(--cyan);font-weight:700;letter-spacing:1px">RUNNING</div>
+          <div style="font-size:12px;color:var(--t1);margin-top:1px">Executing 3 commands…</div>
+        </div>
+        <div class="spinner"></div>
       </div>
-      <div class="xp-track"><div class="xp-fill" style="width:70%"></div></div>
-      <div style="display:flex;justify-content:space-between;margin-top:4px;font-size:10px;color:var(--txt3)">
-        <span>2,480 XP earned</span>
-        <span>520 to go</span>
+      <div class="run-anim"><div class="run-bar"></div></div>
+      <div style="display:flex;gap:6px;margin-top:8px">
+        ${[['↑ move','ch-c',true],['↺ Turn','ch-p',true],['· if','ch-a',false]].map(([t,c,done])=>`<div class="chip ${c}" style="flex:1;text-align:center;font-size:9px;opacity:${done?'1':'.4'};${done?'text-decoration:line-through':''}">${t}</div>`).join('')}
       </div>
     </div>
-    <div class="section-title">SKILL MAP</div>
-    ${skills.map(s=>`
-    <div class="skill-row">
-      <span class="skill-name">${s.name}</span>
-      <div class="skill-track"><div class="skill-fill" style="width:${s.pct}%;background:${s.color}"></div></div>
-      <span class="skill-pct">${s.pct}%</span>
-    </div>`).join('')}
-    <div style="margin-top:16px">
-      <button class="btn-secondary" style="font-size:13px">← Back To Action</button>
+  </div>
+
+  <!-- 3. Screen skeleton loading -->
+  <div>
+    <div style="font-size:9px;color:var(--t3);letter-spacing:1px;margin-bottom:8px">APP · Loading mission data</div>
+    <div style="background:var(--bg3);border:1px solid var(--bdr);border-radius:var(--r12);padding:12px;display:flex;flex-direction:column;gap:8px">
+      <div style="display:flex;align-items:center;gap:10px">
+        <div class="skel" style="width:36px;height:36px;border-radius:50%;flex-shrink:0"></div>
+        <div style="flex:1;display:flex;flex-direction:column;gap:5px">
+          <div class="skel" style="height:10px;width:70%"></div>
+          <div class="skel" style="height:8px;width:45%"></div>
+        </div>
+      </div>
+      ${[90,70,55].map(w=>`<div class="skel" style="height:34px;width:${w}%"></div>`).join('')}
+      <div style="display:flex;gap:6px">${[1,2,3].map(()=>`<div class="skel" style="height:20px;flex:1;border-radius:10px"></div>`).join('')}</div>
     </div>
   </div>
 </div>`;}
 
-function makePhone(label, html){
-  return `<div>
-    <div class="phone"><div class="phone-inner"><div class="screen">${html}</div></div></div>
-    <div class="screen-label">${label}</div>
+/* ─── SCREEN 10: ERROR STATES ─── */
+function S_Errors(){return `
+<div style="flex:1;display:flex;flex-direction:column;padding:14px;gap:0">
+  <div style="font-family:'Orbitron',monospace;font-size:9px;color:var(--red);letter-spacing:1.5px;margin-bottom:14px">ERROR STATES</div>
+
+  <!-- 1. Auth: wrong password -->
+  <div style="margin-bottom:12px">
+    <div style="font-size:9px;color:var(--t3);letter-spacing:1px;margin-bottom:8px">AUTH · Wrong password</div>
+    <div style="background:var(--bg3);border:1px solid var(--bdr);border-radius:var(--r12);padding:12px">
+      <div class="err-banner">
+        <div class="err-icon"><span>!</span></div>
+        <div class="err-text">Incorrect password. Check your credentials and try again.</div>
+      </div>
+      <div class="iw" style="margin-bottom:8px">
+        <svg class="ii" viewBox="0 0 24 24">${emailIcon}</svg>
+        <input class="ifield" type="email" value="commander@auri.io" readonly style="color:var(--t1)">
+      </div>
+      <div class="iw" style="margin-bottom:8px">
+        <svg class="ii" viewBox="0 0 24 24">${lockIcon}</svg>
+        <input class="ifield err" type="password" placeholder="Password" style="">
+      </div>
+      <div style="font-size:10px;color:var(--red);margin-bottom:10px;padding-left:2px">✕ Password is incorrect</div>
+      <button class="btn-p">Try Again →</button>
+    </div>
+  </div>
+
+  <!-- 2. Network error -->
+  <div style="margin-bottom:12px">
+    <div style="font-size:9px;color:var(--t3);letter-spacing:1px;margin-bottom:8px">APP · No connection</div>
+    <div style="background:var(--bg3);border:1px solid var(--bdr);border-radius:var(--r12);padding:12px">
+      <div class="warn-banner" style="margin-bottom:0">
+        <div style="width:16px;height:16px;border-radius:50%;background:var(--amber);display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px"><span style="font-size:9px;color:#04060D;font-weight:700">!</span></div>
+        <div>
+          <div style="font-size:11px;font-weight:700;color:var(--amber);margin-bottom:2px">Connection Lost</div>
+          <div style="font-size:10px;color:#FDE68A;line-height:1.4">You're offline. Progress is saved locally — reconnect to sync.</div>
+        </div>
+      </div>
+      <button class="btn-p" style="margin-top:10px;font-size:12px">↺ Retry Connection</button>
+    </div>
+  </div>
+
+  <!-- 3. Mission fail state -->
+  <div>
+    <div style="font-size:9px;color:var(--t3);letter-spacing:1px;margin-bottom:8px">GAME · Mission failed</div>
+    <div style="background:var(--bg3);border:1px solid var(--bdr);border-radius:var(--r12);padding:12px;display:flex;flex-direction:column;align-items:center">
+      <div class="fail-ring" style="margin-bottom:10px"><div class="fail-x"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--red)" stroke-width="3"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></div></div>
+      <div style="font-family:'Orbitron',monospace;font-size:14px;color:var(--red);margin-bottom:3px">MISSION FAILED</div>
+      <div style="font-size:11px;color:var(--t3);margin-bottom:10px;text-align:center">Robot hit a hazard! Review your sequence.</div>
+      <div style="background:rgba(239,68,68,.06);border:1px solid var(--red-b);border-radius:var(--r8);padding:9px;width:100%;margin-bottom:10px">
+        <div style="font-size:9px;color:var(--red);font-weight:700;letter-spacing:1px;margin-bottom:4px">ECHO SAYS</div>
+        <div style="font-size:11px;color:var(--t1);line-height:1.45">Check for hazards before moving. Use the <span style="color:var(--amber);font-weight:700">· if</span> block to test the path first.</div>
+      </div>
+      <div style="display:flex;gap:8px;width:100%">
+        <button class="btn-p" style="flex:2;font-size:12px">↺ Try Again</button>
+        <button class="btn-p btn-s" style="flex:1;font-size:11px">Exit</button>
+      </div>
+    </div>
+  </div>
+</div>`;}
+
+/* ─── SCREEN 11: ONBOARDING ─── */
+function S_Onboarding(){return `
+<div style="flex:1;display:flex;flex-direction:column">
+  <!-- Slide 1 shown with step indicators -->
+  <div style="flex:1;display:flex;flex-direction:column">
+    <div style="padding:14px 16px 0;display:flex;justify-content:flex-end">
+      <span style="font-size:11px;color:var(--t3);cursor:pointer">Skip</span>
+    </div>
+    <div class="ob-hero">
+      <div class="ob-icon" style="background:radial-gradient(circle at 35% 30%,#0A3D5C,#030C18);border-color:rgba(0,212,255,.25)">${cpu('#051929','#00D4FF')}</div>
+      <div class="ob-title">Welcome, Commander</div>
+      <div class="ob-desc">Auri's Journey turns programming concepts into missions. Code your way through alien sectors.</div>
+      <div class="ob-dots">
+        <div class="ob-dot on"></div>
+        <div class="ob-dot"></div>
+        <div class="ob-dot"></div>
+      </div>
+    </div>
+    <div style="padding:0 16px;margin-bottom:10px">
+      <div style="font-family:'Orbitron',monospace;font-size:9px;color:var(--t3);letter-spacing:1.5px;margin-bottom:10px">HOW IT WORKS</div>
+      <div class="feat-row">
+        <div class="feat-icon" style="background:var(--cyan-g);border:1px solid var(--cyan-b)">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--cyan)" stroke-width="2"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>
+        </div>
+        <div><div class="feat-t">Command Blocks</div><div class="feat-d">Drag logic blocks to build sequences. No typing required.</div></div>
+      </div>
+      <div class="feat-row">
+        <div class="feat-icon" style="background:var(--purple-g);border:1px solid var(--purple-b)">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--purple)" stroke-width="2"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+        </div>
+        <div><div class="feat-t">Earn XP & Level Up</div><div class="feat-d">Complete missions to unlock new sectors and skills.</div></div>
+      </div>
+      <div class="feat-row">
+        <div class="feat-icon" style="background:var(--green-g);border:1px solid rgba(16,185,129,.28)">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--green)" stroke-width="2"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+        </div>
+        <div><div class="feat-t">Master Concepts</div><div class="feat-d">Track Sequences, Loops, Conditions and more in your Skill Map.</div></div>
+      </div>
+    </div>
+    <div style="padding:0 16px 16px">
+      <button class="btn-p">Get Started →</button>
+      <div style="text-align:center;margin-top:8px;font-size:11px;color:var(--t3)">Already a Commander? <a href="#" style="color:var(--cyan);font-weight:600;text-decoration:none">Sign in</a></div>
+    </div>
+  </div>
+</div>`;}
+
+/* ─── RENDER ENGINE ─── */
+const screens = [
+  {id:'signin',  label:'01 · Sign In',      fn: S_SignIn},
+  {id:'signup',  label:'02 · Sign Up',      fn: S_SignUp},
+  {id:'missions',label:'03 · Missions',     fn: S_Missions},
+  {id:'game',    label:'04 · Game',         fn: S_Game},
+  {id:'complete',label:'05 · Complete',     fn: S_Complete},
+  {id:'worldmap',label:'06 · World Map',    fn: S_WorldMap},
+  {id:'hub',     label:'07 · Hub',          fn: S_Hub},
+  {id:'profile', label:'08 · Profile',      fn: S_Profile},
+  {id:'loading', label:'09 · Loading',      fn: S_Loading},
+  {id:'errors',  label:'10 · Errors',       fn: S_Errors},
+  {id:'onboard', label:'11 · Onboarding',   fn: S_Onboarding},
+];
+
+const tabsEl = document.getElementById('tabs');
+const gridEl = document.getElementById('grid');
+
+function makePhone(s){
+  return `<div class="phone-wrap">
+    <div class="phone"><div class="pinner"><div class="sc">${s.fn()}</div></div></div>
+    <div class="plabel">${s.label}</div>
   </div>`;
 }
 
-function showAll(){
-  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
-  document.querySelectorAll('.tab')[0].classList.add('active');
-  document.getElementById('grid').style.gridTemplateColumns='repeat(auto-fit,minmax(280px,1fr))';
-  document.getElementById('grid').innerHTML = screens.map(s=>makePhone(s.label,s.html)).join('');
+function renderAll(){
+  gridEl.style.gridTemplateColumns='repeat(auto-fill,minmax(278px,1fr))';
+  gridEl.innerHTML = screens.map(makePhone).join('');
+}
+function renderOne(idx){
+  gridEl.style.gridTemplateColumns='1fr';
+  gridEl.innerHTML = `<div style="display:flex;justify-content:center">${makePhone(screens[idx])}</div>`;
 }
 
-function showSingle(i){
-  document.querySelectorAll('.tab').forEach((t,j)=>t.classList.toggle('active',j===i+1));
-  document.getElementById('grid').style.gridTemplateColumns='1fr';
-  const s=screens[i];
-  document.getElementById('grid').innerHTML=`<div style="display:flex;flex-direction:column;align-items:center;gap:16px">
-    ${makePhone(s.label,s.html)}
-  </div>`;
-}
+// tabs
+const allTab = document.createElement('button');
+allTab.className='tab on'; allTab.textContent='All Screens';
+allTab.onclick=()=>{document.querySelectorAll('.tab').forEach(t=>t.classList.remove('on')); allTab.classList.add('on'); renderAll();};
+tabsEl.appendChild(allTab);
 
-showAll();
+screens.forEach((s,i)=>{
+  const t=document.createElement('button');
+  t.className='tab'; t.textContent=s.label;
+  t.onclick=()=>{document.querySelectorAll('.tab').forEach(b=>b.classList.remove('on')); t.classList.add('on'); renderOne(i);};
+  tabsEl.appendChild(t);
+});
+
+renderAll();
 </script>
 </body>
 </html>

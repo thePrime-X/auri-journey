@@ -49,9 +49,7 @@ Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
   // start Firebase
-  await Firebase.initializeApp(
-    options: DefaultFirebaseOptions.currentPlatform,
-  );
+  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
 
   // login user
   await AuthService().signInAnonymously();

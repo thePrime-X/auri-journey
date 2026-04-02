@@ -1,67 +1,53 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Auri's Journey — UI v3</title>
-<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;700;900&family=Exo+2:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Auri's Journey — First 8 Screens</title>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700;900&family=Exo+2:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
-*{margin:0;padding:0;box-sizing:border-box}
+/* AGGRESSIVELY HIDE SCROLLBARS GLOBALLY */
+::-webkit-scrollbar { width: 0px !important; height: 0px !important; display: none !important; background: transparent !important; }
+* { margin:0; padding:0; box-sizing:border-box; scrollbar-width: none !important; -ms-overflow-style: none !important; }
+
 :root{
-  --bg:#070B14;--bg2:#0D1424;--bg3:#111827;--bg4:#162032;--bg5:#1A2740;
+  --bg:#070B14;--bg2:#0D1424;--bg3:#111827;--bg4:#162032;
   --cyan:#00D4FF;--cyan2:#0891B2;--cyan-g:rgba(0,212,255,.12);--cyan-b:rgba(0,212,255,.25);
   --purple:#7C5EFF;--purple2:#5B3FCC;--purple-g:rgba(124,94,255,.12);--purple-b:rgba(124,94,255,.28);
-  --green:#10B981;--green2:#059669;--green-g:rgba(16,185,129,.12);
-  --amber:#F59E0B;--amber-g:rgba(245,158,11,.12);--amber-b:rgba(245,158,11,.28);
-  --red:#EF4444;--red2:#DC2626;--red-g:rgba(239,68,68,.12);--red-b:rgba(239,68,68,.28);
-  --t1:#E8EAE6;--t2:#94A3B8;--t3:#546070;--t4:#2D3A4A;
-  --bdr:#1A2535;--bdr2:#243044;
-  --r8:8px;--r12:12px;--r16:16px;--r24:24px
+  --green:#10B981;--green-g:rgba(16,185,129,.12);--amber:#F59E0B;--amber-g:rgba(245,158,11,.12);--amber-b:rgba(245,158,11,.28);
+  --red:#EF4444;--red-g:rgba(239,68,68,.12);--red-b:rgba(239,68,68,.28);
+  --t1:#E8EAE6;--t2:#94A3B8;--t3:#546070;--t4:#2D3A4A;--bdr:#1A2535;--bdr2:#243044;
+  --r8:8px;--r12:12px;--r16:16px;--r24:24px;
 }
 body{background:#04060D;font-family:'Exo 2',sans-serif;min-height:100vh;padding:28px 16px 48px;display:flex;flex-direction:column;align-items:center}
 #app-title{font-family:'Orbitron',monospace;color:var(--cyan);font-size:20px;letter-spacing:3px;margin-bottom:4px}
 #app-sub{font-size:11px;color:var(--t3);letter-spacing:1.5px;margin-bottom:24px}
 .nav-strip{display:flex;flex-wrap:wrap;gap:6px;justify-content:center;margin-bottom:28px;max-width:900px}
-.tab{padding:6px 13px;border-radius:6px;border:1px solid var(--bdr2);background:var(--bg2);color:var(--t3);font-family:'Exo 2',sans-serif;font-size:11px;font-weight:600;cursor:pointer;letter-spacing:.4px;transition:all .15s}
+.tab{padding:6px 13px;border-radius:6px;border:1px solid var(--bdr2);background:var(--bg2);color:var(--t3);font-size:11px;font-weight:600;cursor:pointer;letter-spacing:.4px;transition:all .15s}
 .tab:hover{border-color:var(--cyan);color:var(--cyan)}
 .tab.on{background:var(--cyan);color:#04060D;border-color:var(--cyan)}
 #grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(278px,1fr));gap:28px;width:100%;max-width:1360px}
 .phone-wrap{display:flex;flex-direction:column;align-items:center;gap:10px}
 .phone{width:278px;height:598px;background:var(--bg);border-radius:34px;border:1.5px solid var(--bdr2);overflow:hidden;position:relative;box-shadow:0 0 0 1px #090E18,0 28px 70px rgba(0,0,0,.7)}
 .pinner{height:100%;overflow:hidden;position:relative}
-.sc{position:absolute;inset:0;overflow-y:auto;overflow-x:hidden;display:flex;flex-direction:column;scrollbar-width:none}
-.sc::-webkit-scrollbar{display:none}
+.sc{position:absolute;inset:0;overflow-y:auto;overflow-x:hidden;display:flex;flex-direction:column;}
 .plabel{font-family:'Orbitron',monospace;font-size:10px;color:var(--t4);letter-spacing:1px;text-align:center}
 
-/* ── NAV BAR ── */
-.bnav{display:flex;border-top:1px solid var(--bdr);background:var(--bg2);padding:7px 0 5px;flex-shrink:0}
-.ni{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer}
-.ni svg{width:19px;height:19px;stroke:var(--t3);fill:none;stroke-width:1.8}
-.ni span{font-size:9px;color:var(--t3);letter-spacing:.4px;font-weight:600;text-transform:uppercase}
-.ni.on svg{stroke:var(--cyan)}
-.ni.on span{color:var(--cyan)}
-
-/* ── COMMON ── */
 .hdr{padding:14px 16px 0;display:flex;align-items:center;justify-content:space-between}
 .xpbadge{display:flex;align-items:center;gap:4px;font-family:'Orbitron',monospace;font-size:11px;color:var(--amber);font-weight:700}
-.card{background:var(--bg3);border:1px solid var(--bdr);border-radius:var(--r16)}
 .tag{display:inline-flex;align-items:center;padding:2px 7px;border-radius:4px;font-size:9px;font-weight:700;letter-spacing:.4px}
 .tc{background:var(--cyan-g);color:var(--cyan);border:1px solid var(--cyan-b)}
 .tp{background:var(--purple-g);color:var(--purple);border:1px solid var(--purple-b)}
-.ta{background:var(--amber-g);color:var(--amber);border:1px solid var(--amber-b)}
 .tg{background:var(--green-g);color:var(--green);border:1px solid rgba(16,185,129,.28)}
-.tr{background:var(--red-g);color:var(--red);border:1px solid var(--red-b)}
 .ts{background:rgba(84,96,112,.12);color:var(--t3);border:1px solid var(--bdr)}
 .xpbar-wrap{margin:0 16px}
 .xpbar-lbl{display:flex;justify-content:space-between;font-size:10px;color:var(--t3);margin-bottom:5px;letter-spacing:.4px}
 .xpbar-track{height:5px;background:var(--bg4);border-radius:3px;overflow:hidden}
 .xpbar-fill{height:100%;border-radius:3px;background:linear-gradient(90deg,var(--cyan),var(--purple))}
-.btn-p{width:100%;padding:13px;border-radius:var(--r12);background:linear-gradient(135deg,var(--cyan),var(--cyan2));color:#04060D;font-family:'Exo 2',sans-serif;font-size:14px;font-weight:800;border:none;cursor:pointer;letter-spacing:.4px}
+.btn-p{width:100%;padding:13px;border-radius:var(--r12);background:linear-gradient(135deg,var(--cyan),var(--cyan2));color:#04060D;font-size:14px;font-weight:800;border:none;cursor:pointer;letter-spacing:.4px}
 .btn-pu{background:linear-gradient(135deg,var(--purple),var(--purple2));color:#E8EAE6}
 .btn-s{background:transparent;color:var(--t2);border:1.5px solid var(--bdr2)}
-.btn-dead{background:transparent;color:var(--t4);border:1px solid var(--bdr);opacity:.55}
 
-/* ── AUTH ── */
 .auth-shell{flex:1;display:flex;flex-direction:column;align-items:center;padding:20px 20px 16px;position:relative;overflow:hidden}
 .auth-shell::before{content:'';position:absolute;top:-40px;left:50%;transform:translateX(-50%);width:220px;height:220px;background:radial-gradient(circle,rgba(0,212,255,.05) 0%,transparent 70%);pointer-events:none}
 .logo-box{width:80px;height:80px;background:radial-gradient(circle at 38% 32%,#0A3D5C,#030C18);border-radius:18px;border:1.5px solid rgba(0,212,255,.28);display:flex;align-items:center;justify-content:center;margin-bottom:8px;position:relative;flex-shrink:0}
@@ -75,212 +61,186 @@ body{background:#04060D;font-family:'Exo 2',sans-serif;min-height:100vh;padding:
 .kicker{font-size:9px;color:var(--t3);letter-spacing:1.5px;margin-bottom:3px}
 .iw{position:relative;margin-bottom:11px}
 .ii{position:absolute;left:13px;top:50%;transform:translateY(-50%);width:15px;height:15px;stroke:var(--t3);fill:none;stroke-width:1.8}
-.ifield{width:100%;padding:12px 13px 12px 40px;background:var(--bg3);border:1.5px solid var(--bdr2);border-radius:var(--r12);color:var(--t1);font-family:'Exo 2',sans-serif;font-size:13px;outline:none;transition:border-color .2s,box-shadow .2s}
+.ifield{width:100%;padding:12px 13px 12px 40px;background:var(--bg3);border:1.5px solid var(--bdr2);border-radius:var(--r12);color:var(--t1);font-size:13px;outline:none}
 .ifield::placeholder{color:#3A5068}
-.ifield:focus{border-color:var(--cyan);box-shadow:0 0 0 3px rgba(0,212,255,.1)}
-.ifield.err{border-color:var(--red);box-shadow:0 0 0 3px var(--red-g)}
 .forgot{text-align:right;margin:-4px 0 14px}
 .forgot a{font-size:12px;color:var(--cyan);text-decoration:none;font-weight:600;opacity:.8}
 .auth-alt{text-align:center;margin-top:12px;font-size:12px;color:var(--t3)}
 .auth-alt a{color:var(--cyan);font-weight:700;text-decoration:none}
 .auth-alt a.pa{color:var(--purple)}
 
-/* ── MISSION ── */
-.mc{display:flex;align-items:center;gap:10px;padding:11px 13px;margin:0 14px 7px;background:var(--bg3);border:1px solid var(--bdr);border-radius:var(--r12);cursor:pointer}
-.mc.act{border-color:var(--purple);background:linear-gradient(135deg,rgba(124,94,255,.1),rgba(92,63,204,.06));box-shadow:0 0 0 1px rgba(124,94,255,.15),0 4px 20px rgba(124,94,255,.12)}
-.mc.done{border-color:rgba(16,185,129,.22);background:rgba(16,185,129,.03)}
-.mc.locked{opacity:.22}
-.mbar{width:3px;height:38px;border-radius:2px;background:var(--bdr2);flex-shrink:0}
-.mbar.d{background:var(--green)}
-.mbar.a{background:var(--purple)}
-.mt{font-size:13px;font-weight:700;color:var(--t1);margin-bottom:1px}
-.ms{font-size:11px;color:var(--t2);margin-bottom:4px}
-.mt.g{color:var(--t3)}
-.ms.g{color:var(--t4)}
-
-/* ── GAME ── */
-.ghdr{padding:12px 16px 8px}
-.ghdr-r1{display:flex;align-items:center;gap:10px;margin-bottom:3px}
-.ghdr-r2{display:flex;align-items:center;gap:0;padding-left:40px}
-.back{width:30px;height:30px;border-radius:var(--r8);background:var(--bg3);border:1px solid var(--bdr);display:flex;align-items:center;justify-content:center;flex-shrink:0}
-.back svg{width:14px;height:14px;stroke:var(--t2);fill:none;stroke-width:2.2}
-.stitle{font-family:'Orbitron',monospace;font-size:13px;color:var(--t1);flex:1;letter-spacing:.5px}
-.msub{font-size:10px;color:var(--t3)}
-.grid-section{padding:0 14px;margin-bottom:9px}
-.grid-lbl{font-size:8px;color:var(--t3);letter-spacing:2px;text-align:center;margin-bottom:7px}
-.egrid{display:grid;grid-template-columns:repeat(5,1fr);gap:3px}
-.cell{aspect-ratio:1;background:var(--bg3);border:1px solid var(--bdr);border-radius:5px;display:flex;align-items:center;justify-content:center;font-size:13px}
-.cell.rob{background:rgba(0,212,255,.06);border-color:rgba(0,212,255,.22)}
-.cell.tgt{background:rgba(245,158,11,.06);border-color:rgba(245,158,11,.22)}
-.cell.haz{background:rgba(239,68,68,.06);border-color:rgba(239,68,68,.2)}
-.cmds{padding:0 14px;margin-bottom:9px}
-.clbl{font-size:9px;color:var(--cyan);font-weight:700;letter-spacing:1.2px;margin-bottom:7px}
-.crow{display:flex;gap:5px;flex-wrap:wrap}
-.chip{padding:6px 10px;border-radius:7px;font-size:10px;font-weight:700;cursor:pointer;border:1px solid transparent;white-space:nowrap;letter-spacing:.2px}
-.ch-c{background:var(--cyan-g);color:var(--cyan);border-color:var(--cyan-b)}
-.ch-p{background:var(--purple-g);color:var(--purple);border-color:var(--purple-b)}
-.ch-a{background:var(--amber-g);color:var(--amber);border-color:var(--amber-b)}
-.ch-g{background:var(--green-g);color:var(--green);border-color:rgba(16,185,129,.28)}
-.ch-u{background:transparent;color:var(--t4);border-color:var(--bdr);font-size:9px;opacity:.6;padding:6px 8px}
-.qsec{margin:0 14px 9px;background:var(--bg3);border:1px solid var(--bdr2);border-radius:var(--r12);padding:9px 12px}
-.qtop{display:flex;justify-content:space-between;align-items:center;margin-bottom:7px}
-.qcount{font-size:10px;color:var(--t2);font-weight:600}
-.qclear{font-size:9px;color:var(--t3);background:transparent;border:none;cursor:pointer;font-family:'Exo 2',sans-serif;font-weight:600;opacity:.7}
-.qrow{display:flex;gap:5px}
-.qi{flex:1;background:var(--bg4);border-radius:6px;border:1px solid var(--bdr);padding:5px;display:flex;flex-direction:column;align-items:center;gap:3px}
-.qn{font-size:8px;color:var(--t3);font-weight:700}
-.re{display:flex;gap:8px;padding:0 14px;margin-bottom:9px}
-.run{flex:2;padding:11px;border-radius:var(--r12);background:linear-gradient(135deg,var(--cyan),var(--cyan2));color:#04060D;font-weight:800;border:none;cursor:pointer;font-family:'Exo 2',sans-serif;font-size:12px;display:flex;align-items:center;justify-content:center;gap:5px}
-.exit{flex:1;padding:11px;border-radius:var(--r12);background:transparent;color:var(--t4);font-weight:600;border:1.5px solid var(--bdr);cursor:pointer;font-family:'Exo 2',sans-serif;font-size:11px}
-.echo{margin:0 14px 14px;background:var(--bg3);border-left:2.5px solid var(--cyan);border:1px solid var(--bdr2);border-left:2.5px solid var(--cyan);border-radius:var(--r8);padding:9px 12px}
-.echt{font-size:8px;color:var(--cyan);font-weight:700;letter-spacing:1.5px;margin-bottom:4px}
-.echb{font-size:11px;color:var(--t1);line-height:1.55}
-
-/* ── COMPLETE ── */
-.comph{padding:12px 16px;display:flex;justify-content:space-between;align-items:flex-start}
-.sring{width:88px;height:88px;border-radius:50%;background:radial-gradient(circle,rgba(16,185,129,.12),transparent 72%);border:1.5px solid rgba(16,185,129,.35);display:flex;align-items:center;justify-content:center;margin:0 auto 12px}
-.scheck{width:44px;height:44px;border-radius:50%;background:rgba(16,185,129,.15);border:1.5px solid var(--green);display:flex;align-items:center;justify-content:center}
-.ctitle{font-family:'Orbitron',monospace;font-size:16px;color:var(--t1);text-align:center;margin-bottom:3px;letter-spacing:.5px}
-.csub{font-size:12px;color:var(--t2);text-align:center;margin-bottom:10px}
-.xpr{display:inline-flex;align-items:center;gap:5px;background:var(--amber-g);border:1px solid var(--amber-b);padding:5px 14px;border-radius:20px;font-size:13px;font-weight:700;color:var(--amber)}
-.mcard{display:flex;background:var(--bg3);border:1px solid var(--bdr);border-radius:var(--r16);margin:0 14px 12px;overflow:hidden}
-.mb{flex:1;padding:12px;text-align:center}
-.mdiv{width:1px;background:var(--bdr)}
-.mn{font-family:'Orbitron',monospace;font-size:22px;font-weight:700;color:var(--t1);margin-bottom:2px}
-.ml{font-size:9px;color:var(--t3);letter-spacing:.5px;margin-bottom:3px}
-.mbadge{font-size:9px;font-weight:700;padding:2px 7px;border-radius:20px;display:inline-block}
-.bg{background:rgba(16,185,129,.14);color:#34D399}
-.bc{background:rgba(0,212,255,.14);color:var(--cyan)}
-.conccard{margin:0 14px 12px;background:rgba(0,212,255,.04);border:1px solid rgba(0,212,255,.18);border-radius:var(--r12);padding:11px 13px}
-.conclbl{font-size:8px;color:var(--cyan);font-weight:700;letter-spacing:1.5px;margin-bottom:5px}
-.conct{font-size:15px;font-weight:700;color:var(--t1);margin-bottom:2px}
-.concd{font-size:11px;color:var(--t2);line-height:1.4}
-
-/* ── WORLD MAP ── */
-.mapsvg{display:block;margin:0 auto}
-
-/* ── HUB ── */
+.menu-shell{flex:1;display:flex;flex-direction:column;padding-bottom:14px}
 .hbhdr{padding:12px 16px 10px;display:flex;justify-content:space-between;align-items:flex-start}
 .hbtitle{font-family:'Orbitron',monospace;font-size:10px;color:var(--cyan);letter-spacing:1.5px;margin-bottom:2px}
 .hbgreet{font-size:15px;font-weight:700;color:var(--t1)}
-.chall{margin:0 14px 10px;background:rgba(16,185,129,.05);border:1px solid rgba(16,185,129,.22);border-radius:var(--r16);padding:12px 14px}
+.menu-hero{margin:12px 14px 12px;background:linear-gradient(135deg,rgba(0,212,255,.08),rgba(124,94,255,.08));border:1px solid var(--bdr2);border-radius:20px;padding:14px}
+.menu-kicker{font-family:'Orbitron',monospace;font-size:9px;color:var(--cyan);letter-spacing:1.5px;margin-bottom:4px}
+.menu-title{font-size:18px;font-weight:700;color:var(--t1);margin-bottom:4px}
+.menu-sub{font-size:11px;color:var(--t2);line-height:1.45}
+.menu-grid{display:grid;grid-template-columns:1fr;gap:10px;padding:0 14px}
+.menu-card{background:var(--bg3);border:1px solid var(--bdr);border-radius:18px;padding:12px 12px 10px}
+.menu-card-top{display:flex;justify-content:space-between;align-items:flex-start;gap:10px;margin-bottom:8px}
+.menu-card-title{font-family:'Orbitron',monospace;font-size:11px;color:var(--t1);letter-spacing:.8px}
+.menu-card-sub{font-size:10px;color:var(--t3);margin-top:2px}
+.menu-map-wrap{display:flex;justify-content:center;padding:4px 0 0}
+.menu-action{margin-top:10px;padding:10px 12px;border-radius:12px;background:var(--bg4);border:1px solid var(--bdr2);display:flex;justify-content:space-between;align-items:center}
+.menu-action strong{font-size:11px;color:var(--t1)}
+.menu-action span{font-size:9px;color:var(--t3)}
+.menu-pills{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px}
+.menu-pill{padding:4px 8px;border-radius:999px;font-size:9px;font-weight:700;border:1px solid var(--bdr2);background:var(--bg4);color:var(--t2)}
+.chall{margin:0 0 10px;background:rgba(16,185,129,.05);border:1px solid rgba(16,185,129,.22);border-radius:var(--r16);padding:12px 14px}
 .challt{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px}
 .challlbl{font-size:8px;font-weight:700;color:var(--green);letter-spacing:1.5px}
 .challpill{padding:3px 10px;background:rgba(16,185,129,.12);border:1px solid rgba(16,185,129,.28);border-radius:10px;font-size:10px;color:var(--green);font-weight:700}
 .challname{font-size:15px;font-weight:700;color:var(--t1);margin-bottom:3px}
 .challreset{font-size:10px;color:var(--t3)}
-.goplay{margin:0 14px 12px;padding:13px;border-radius:var(--r12);background:linear-gradient(135deg,var(--cyan),var(--cyan2));color:#04060D;font-family:'Exo 2',sans-serif;font-size:14px;font-weight:800;border:none;cursor:pointer;width:calc(100% - 28px);letter-spacing:.4px}
-.echohub{margin:0 14px 10px;background:var(--bg3);border:1px solid var(--bdr2);border-left:2.5px solid var(--purple);border-radius:var(--r8);padding:9px 12px}
-.echohublbl{font-size:8px;color:var(--purple);font-weight:700;letter-spacing:1.5px;margin-bottom:4px}
-.echohubtext{font-size:11px;color:var(--t1);line-height:1.5}
-.stats2{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:0 14px 10px}
+.stats2{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:0}
 .scard{background:var(--bg3);border:1px solid var(--bdr);border-radius:var(--r8);padding:10px;text-align:center}
 .snum{font-family:'Orbitron',monospace;font-size:18px;font-weight:700;margin-bottom:2px}
 .slbl{font-size:9px;color:var(--t3);letter-spacing:.4px}
-.act-sec{margin:0 14px 10px}
-.act-lbl{font-size:9px;color:var(--t3);letter-spacing:1px;font-weight:700;margin-bottom:6px}
-.act-row{display:flex;justify-content:space-between;align-items:center;padding:5px 0;border-bottom:1px solid var(--bdr)}
-.act-row:last-child{border:none}
-.act-t{font-size:11px;color:var(--t3)}
-.act-time{font-size:10px;color:var(--t4)}
+.mc{display:flex;align-items:center;gap:10px;padding:11px 13px;background:var(--bg3);border:1px solid var(--bdr);border-radius:var(--r12)}
+.mc.act{border-color:var(--purple);background:linear-gradient(135deg,rgba(124,94,255,.1),rgba(92,63,204,.06));box-shadow:0 0 0 1px rgba(124,94,255,.15),0 4px 20px rgba(124,94,255,.12)}
+.mc.done{border-color:rgba(16,185,129,.22);background:rgba(16,185,129,.03)}
+.mc.locked{opacity:.22}
+.mbar{width:3px;height:38px;border-radius:2px;background:var(--bdr2);flex-shrink:0}.mbar.d{background:var(--green)}.mbar.a{background:var(--purple)}
+.mt{font-size:13px;font-weight:700;color:var(--t1);margin-bottom:1px}.ms{font-size:11px;color:var(--t2);margin-bottom:4px}.mt.g{color:var(--t3)}.ms.g{color:var(--t4)}
 
-/* ── PROFILE ── */
-.prohero{padding:16px 16px 10px;display:flex;flex-direction:column;align-items:center}
-.avring{width:72px;height:72px;border-radius:50%;background:var(--bg3);border:2px solid var(--purple);display:flex;align-items:center;justify-content:center;margin-bottom:8px;position:relative;flex-shrink:0}
-.odot{width:11px;height:11px;border-radius:50%;background:var(--green);border:2px solid var(--bg);position:absolute;bottom:2px;right:2px}
-.uname{font-size:13px;font-weight:700;color:var(--t1);margin-bottom:1px}
-.urank{font-size:10px;color:var(--purple);font-weight:600;letter-spacing:.5px;margin-bottom:7px}
-.lvpill{display:inline-flex;align-items:center;gap:5px;padding:4px 12px;background:var(--amber-g);border:1px solid var(--amber-b);border-radius:20px;font-size:10px;color:var(--amber);font-weight:700}
-.prostats{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin:0 14px 12px}
-.psc{background:var(--bg3);border:1px solid var(--bdr);border-radius:var(--r8);padding:9px;text-align:center}
-.psn{font-family:'Orbitron',monospace;font-size:16px;font-weight:700;color:var(--t1);margin-bottom:1px}
-.psl{font-size:8px;color:var(--t3);letter-spacing:.4px;line-height:1.3}
-.procont{padding:0 14px 14px}
-.sectitle{font-size:9px;font-weight:700;color:var(--cyan);letter-spacing:1.5px;margin-bottom:8px;display:flex;align-items:center;gap:6px}
-.sectitle::after{content:'';flex:1;height:1px;background:var(--bdr)}
-.skillrow{display:flex;align-items:center;gap:8px;margin-bottom:9px}
-.sknm{font-size:10px;color:var(--t2);width:64px;flex-shrink:0}
-.sktrack{flex:1;height:5px;background:var(--bg4);border-radius:3px;overflow:hidden}
-.skfill{height:100%;border-radius:3px}
-.skpct{font-size:9px;color:var(--t3);width:26px;text-align:right;flex-shrink:0;font-weight:600}
+/* --- GAME SCREEN UPDATES --- */
+.ghdr{padding:12px 16px 8px}.ghdr-r1{display:flex;align-items:center;gap:10px;margin-bottom:3px}.ghdr-r2{display:flex;align-items:center;padding-left:40px}
+.back{width:30px;height:30px;border-radius:var(--r8);background:var(--bg3);border:1px solid var(--bdr);display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all 0.15s;cursor:pointer;}
+.back:hover{background:var(--bdr2);color:var(--t1);}
+.back:active{transform:scale(0.9);}
+.back svg{width:14px;height:14px;stroke:currentColor;fill:none;stroke-width:2.2; color:var(--t2);}
+.stitle{font-family:'Orbitron',monospace;font-size:13px;color:var(--t1);flex:1;letter-spacing:.5px}.msub{font-size:10px;color:var(--t3)}
+.grid-section{padding:0 14px;margin-bottom:9px}.grid-lbl{font-size:8px;color:var(--t3);letter-spacing:2px;text-align:center;margin-bottom:7px}
+.egrid{display:grid;grid-template-columns:repeat(5,1fr);gap:3px}
+@keyframes pulseTgt { 0% { box-shadow: 0 0 4px rgba(245,158,11,0.2); } 50% { box-shadow: 0 0 14px rgba(245,158,11,0.5); } 100% { box-shadow: 0 0 4px rgba(245,158,11,0.2); } }
+.cell{aspect-ratio:1;background:var(--bg3);border:1px solid var(--bdr);border-radius:5px;display:flex;align-items:center;justify-content:center;font-size:13px; transition:all 0.2s;}
+.cell.training{background:rgba(124,94,255,.08);border-color:rgba(124,94,255,.28);box-shadow:inset 0 0 0 1px rgba(124,94,255,.12)}
+.cell.rob{background:rgba(0,212,255,.08);border-color:rgba(0,212,255,.3);box-shadow:0 0 12px rgba(0,212,255,.15);position:relative;z-index:1;}
+.cell.tgt{background:rgba(245,158,11,.08);border-color:rgba(245,158,11,.3);animation:pulseTgt 2s infinite;position:relative;z-index:1;}
+.cell.haz{background:rgba(239,68,68,.04);border-color:rgba(239,68,68,.15);box-shadow:inset 0 0 10px rgba(239,68,68,.1);}
 
-/* ── LOADING STATES ── */
-@keyframes spin{to{transform:rotate(360deg)}}
-@keyframes pulse{0%,100%{opacity:.4}50%{opacity:1}}
-@keyframes pulsescale{0%,100%{transform:scale(.96);opacity:.7}50%{transform:scale(1);opacity:1}}
-@keyframes shimmer{0%{background-position:-200% 0}100%{background-position:200% 0}}
-@keyframes blink{0%,100%{opacity:1}50%{opacity:.3}}
-.spinner{width:32px;height:32px;border:2.5px solid var(--bdr2);border-top-color:var(--cyan);border-radius:50%;animation:spin .8s linear infinite}
-.spinner-sm{width:18px;height:18px;border:2px solid var(--bdr2);border-top-color:var(--cyan);border-radius:50%;animation:spin .8s linear infinite}
-.pulse-ring{width:64px;height:64px;border-radius:50%;background:rgba(0,212,255,.06);border:2px solid rgba(0,212,255,.25);display:flex;align-items:center;justify-content:center;animation:pulsescale 1.5s ease-in-out infinite}
-.skel{background:linear-gradient(90deg,var(--bg3) 25%,var(--bg4) 50%,var(--bg3) 75%);background-size:200% 100%;animation:shimmer 1.4s infinite;border-radius:6px}
-.dots{display:flex;gap:5px;align-items:center}
-.dot{width:7px;height:7px;border-radius:50%;background:var(--cyan);animation:blink 1.2s ease-in-out infinite}
-.dot:nth-child(2){animation-delay:.2s}
-.dot:nth-child(3){animation-delay:.4s}
-.run-anim{width:100%;height:5px;background:var(--bg3);border-radius:3px;overflow:hidden;position:relative}
-.run-bar{height:100%;width:40%;background:linear-gradient(90deg,transparent,var(--cyan),transparent);animation:shimmer 1.2s linear infinite;background-size:200% 100%}
+.cmds{padding:0 14px;margin-bottom:18px}
+.clbl{font-size:11px;color:rgba(0,212,255,0.7);font-weight:800;letter-spacing:1px;margin-bottom:10px}
+.crow { display:flex; gap:14px; overflow-x:auto; padding-bottom:8px; scrollbar-width:none; -ms-overflow-style:none; }
+.cmd-btn { flex-shrink:0; width:54px; height:54px; border-radius:14px; display:flex; align-items:center; justify-content:center; cursor:pointer; transition:all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+.cmd-btn:hover { transform: translateY(-3px); box-shadow: 0 6px 12px rgba(0,0,0,0.4); border-color:currentColor; }
+.cmd-btn:active { transform:scale(0.94) translateY(0); box-shadow:none; }
+.cmd-btn svg { width:24px; height:24px; stroke-width:2.5; stroke-linecap:round; stroke-linejoin:round; fill:none; stroke:currentColor; }
+.cmd-fwd { background:rgba(0,212,255,.08); border:1.5px solid rgba(0,212,255,.25); color:var(--cyan); }
+.cmd-lft { background:rgba(124,94,255,.08); border:1.5px solid rgba(124,94,255,.25); color:var(--purple); }
+.cmd-rgt { background:rgba(245,158,11,.08); border:1.5px solid rgba(245,158,11,.25); color:var(--amber); }
+.cmd-if  { background:rgba(16,185,129,.08); border:1.5px solid rgba(16,185,129,.25); color:var(--green); }
+.cmd-loop{ background:rgba(239,68,68,.08); border:1.5px solid rgba(239,68,68,.25); color:var(--red); }
+.qsec-new { margin:0 14px 12px; background:rgba(17,24,39,0.4); border:1px solid rgba(36,48,68,0.5); border-radius:14px; padding:10px 14px; }
+.qsec-top { display:flex; justify-content:space-between; align-items:center; margin-bottom:8px; }
+.qsec-title { font-size:11px; color:var(--t3); font-weight:700; letter-spacing:0.5px; }
+.qclear { background:none; border:none; color:var(--t3); font-size:9px; font-weight:700; cursor:pointer; padding:2px; letter-spacing:0.5px; opacity:0.4; transition:opacity 0.2s, color 0.2s; }
+.qclear:hover { opacity:1; color:var(--red); }
+.q-scroll-wrap { position:relative; width:100%; overflow:hidden; border-radius:10px; }
+.q-scroll-wrap::after { content:''; position:absolute; right:0; top:0; bottom:0; width:36px; background:linear-gradient(to right, transparent, rgba(17,24,39,0.85) 90%); pointer-events:none; }
+.q-list { display:flex; gap:12px; overflow-x:auto; scrollbar-width:none; padding:2px 0 6px 0; }
+.cmd-btn.sm { width:40px; height:40px; border-radius:10px; border-width:1.5px; }
+.cmd-btn.sm svg { width:18px; height:18px; stroke-width:2.5; }
+.cmd-add { border: 1.5px dashed rgba(84,96,112,0.3); background: transparent; color: rgba(84,96,112,0.5); box-shadow: none !important; }
+.cmd-add:hover { border-color: rgba(84,96,112,0.6); color: rgba(84,96,112,0.8); transform: translateY(-1px); }
 
-/* ── ERROR STATES ── */
-.err-banner{background:var(--red-g);border:1px solid var(--red-b);border-radius:var(--r8);padding:9px 12px;display:flex;align-items:flex-start;gap:8px;margin:0 0 10px}
-.err-icon{width:16px;height:16px;border-radius:50%;background:var(--red);display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px}
-.err-icon span{font-size:9px;color:#fff;font-weight:700}
-.err-text{font-size:11px;color:#FCA5A5;line-height:1.45}
-.err-field{border-color:var(--red)!important;box-shadow:0 0 0 3px var(--red-g)!important}
-.warn-banner{background:var(--amber-g);border:1px solid var(--amber-b);border-radius:var(--r8);padding:9px 12px;display:flex;align-items:flex-start;gap:8px}
-.fail-ring{width:88px;height:88px;border-radius:50%;background:rgba(239,68,68,.1);border:1.5px solid rgba(239,68,68,.3);display:flex;align-items:center;justify-content:center}
-.fail-x{width:44px;height:44px;border-radius:50%;background:var(--red-g);border:1.5px solid var(--red);display:flex;align-items:center;justify-content:center}
+.re{display:flex;gap:10px;padding:0 14px;margin-bottom:12px}
+.run{flex:2;padding:10px 12px;border-radius:var(--r12);background:var(--cyan);color:#04060D;font-weight:800;border:none;cursor:pointer;font-size:13px; transition:transform 0.1s;}
+.run:active{transform:scale(0.98);}
+.exit{flex:1;padding:10px 12px;border-radius:var(--r12);background:rgba(255,255,255,0.03);color:var(--t2);font-weight:700;border:1.5px solid var(--bdr2);cursor:pointer;font-size:12px;transition:all 0.15s;}
+.exit:hover{background:rgba(255,255,255,0.06);color:var(--t1);}
+.exit:active{transform:scale(0.98);}
 
-/* ── ONBOARDING ── */
-.ob-hero{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:20px}
-.ob-icon{width:80px;height:80px;border-radius:20px;display:flex;align-items:center;justify-content:center;margin-bottom:16px;position:relative}
-.ob-icon::before{content:'';position:absolute;inset:-1px;border-radius:21px;border:1px solid rgba(0,212,255,.2)}
-.ob-title{font-family:'Orbitron',monospace;font-size:18px;color:var(--t1);text-align:center;margin-bottom:8px;letter-spacing:.5px}
-.ob-desc{font-size:13px;color:var(--t2);text-align:center;line-height:1.6;max-width:220px;margin:0 auto}
-.ob-dots{display:flex;gap:7px;justify-content:center;margin-top:20px}
-.ob-dot{width:7px;height:7px;border-radius:50%;background:var(--bdr2)}
-.ob-dot.on{background:var(--cyan);width:22px;border-radius:4px}
-.ob-dots2 .ob-dot.on{background:var(--purple);width:22px}
-.ob-dots3 .ob-dot.on{background:var(--green);width:22px}
-.ob-bot{padding:16px;flex-shrink:0}
-.ob-skip{display:block;text-align:center;font-size:11px;color:var(--t3);margin-top:8px;cursor:pointer}
-.feat-row{display:flex;align-items:flex-start;gap:12px;padding:12px;background:var(--bg3);border:1px solid var(--bdr);border-radius:var(--r12);margin-bottom:8px}
-.feat-icon{width:36px;height:36px;border-radius:10px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
-.feat-t{font-size:13px;font-weight:700;color:var(--t1);margin-bottom:2px}
-.feat-d{font-size:11px;color:var(--t2);line-height:1.4}
+.echo{margin:0 14px 14px;background:var(--bg3);border:1px solid var(--bdr2);border-left:2.5px solid var(--cyan);border-radius:var(--r8);padding:12px 14px;}
+.echt{font-size:8px;color:rgba(0,212,255,0.8);font-weight:700;letter-spacing:1.5px;margin-bottom:6px;}
+.echb{font-size:11px;color:var(--t2);line-height:1.75;}
+
+
+/* --- COMPLETE SCREEN ANIMATIONS & POLISH --- */
+@keyframes compPop { 0% { transform:scale(0.7); opacity:0; } 60% { transform:scale(1.05); opacity:1; } 100% { transform:scale(1); opacity:1; } }
+@keyframes compFadeUp { 0% { transform:translateY(10px); opacity:0; } 100% { transform:translateY(0); opacity:1; } }
+@keyframes compFillXp { 0% { width:30%; } 100% { width:74%; } }
+@keyframes pulseXpReward { 0% { box-shadow: 0 0 0px rgba(245,158,11,0); } 50% { box-shadow: 0 0 15px rgba(245,158,11,0.4); } 100% { box-shadow: 0 0 0px rgba(245,158,11,0); } }
+
+.comph{padding:12px 16px;display:flex;justify-content:space-between;align-items:flex-start}.sring{width:88px;height:88px;border-radius:50%;background:radial-gradient(circle,rgba(16,185,129,.12),transparent 72%);border:1.5px solid rgba(16,185,129,.35);display:flex;align-items:center;justify-content:center;margin:0 auto 20px; animation:compPop 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275) both;}.scheck{width:44px;height:44px;border-radius:50%;background:rgba(16,185,129,.15);border:1.5px solid var(--green);display:flex;align-items:center;justify-content:center}
+.ctitle{font-family:'Orbitron',monospace;font-size:17px;font-weight:600;color:var(--t1);text-align:center;margin-bottom:6px; animation:compFadeUp 0.5s ease-out 0.1s both;}.csub{font-size:12px;color:var(--t2);text-align:center;margin-bottom:18px; animation:compFadeUp 0.5s ease-out 0.2s both;}
+.xpr{display:inline-flex;align-items:center;gap:5px;background:var(--amber-g);border:1px solid var(--amber-b);padding:6px 16px;border-radius:20px;font-size:14px;font-weight:700;color:var(--amber); animation:compPop 0.5s ease-out 0.3s both, pulseXpReward 2s infinite 1s;}
+
+.mcard{display:flex;background:var(--bg3);border:1px solid var(--bdr);border-radius:var(--r16);margin:0 14px 14px;overflow:hidden; animation:compFadeUp 0.5s ease-out 0.4s both;}.mb{flex:1;padding:14px;text-align:center}.mdiv{width:1px;background:var(--bdr)}
+.mpl{font-size:9px;color:var(--t2);font-weight:700;letter-spacing:1px;margin-bottom:6px;}
+.mn{font-family:'Orbitron',monospace;font-size:24px;font-weight:700;color:var(--t1);margin-bottom:2px}.ml{font-size:9px;color:var(--t3);letter-spacing:.5px;margin-bottom:6px;}
+.mbadge{font-size:10px;font-weight:700;padding:3px 10px;border-radius:20px;display:inline-block; letter-spacing:0.5px;}
+.bg{background:rgba(16,185,129,.14);color:#34D399; box-shadow:0 0 10px rgba(16,185,129,0.1);}.bc{background:rgba(0,212,255,.14);color:var(--cyan); box-shadow:0 0 10px rgba(0,212,255,0.1);}
+
+.conccard{margin:0 14px 14px;background:rgba(0,212,255,.04);border:1px solid rgba(0,212,255,.18);border-radius:var(--r16);padding:14px 16px; animation:compFadeUp 0.5s ease-out 0.5s both;}.conclbl{font-size:8px;color:var(--cyan);font-weight:700;letter-spacing:1.5px;margin-bottom:6px}.conct{font-size:15px;font-weight:700;color:var(--t1);margin-bottom:4px}.concd{font-size:11px;color:var(--t2);line-height:1.65;}
+
+.comp-xp-wrap { margin:0 14px 18px; animation:compFadeUp 0.5s ease-out 0.6s both; }
+.xpbar-fill.anim { animation:compFillXp 1s ease-out forwards 0.8s; }
+
+.comp-actions { padding:0 14px 14px; display:flex; flex-direction:column; gap:10px; animation:compFadeUp 0.5s ease-out 0.7s both; }
+.btn-replay { background:rgba(255,255,255,0.03); color:var(--t1); border:1.5px solid var(--bdr2); transition:all 0.15s; }
+.btn-replay:hover { background:rgba(255,255,255,0.06); }
+.btn-replay:active { transform:scale(0.98); }
+
+
+/* --- PROFILE SCREEN 10/10 UPGRADES --- */
+@keyframes pulseAvatar { 
+  0% { box-shadow: 0 0 0 0 rgba(124,94,255,0.4); } 
+  70% { box-shadow: 0 0 0 15px rgba(124,94,255,0); } 
+  100% { box-shadow: 0 0 0 0 rgba(124,94,255,0); } 
+}
+
+.prohero { padding: 16px 16px 12px; display: flex; flex-direction: column; align-items: center; position:relative; }
+.avring { border-radius: 50%; background: var(--bg3); border: 2.5px solid var(--purple); display: flex; align-items: center; justify-content: center; position: relative; flex-shrink: 0; transition: transform 0.3s; }
+.avring:hover { transform: scale(1.05); }
+.odot { border-radius: 50%; background: var(--green); position: absolute; }
+
+/* 2x2 Detailed Stats Grid - Premium Polish */
+.prostats { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; margin: 0 14px 20px; }
+.psc { background: linear-gradient(145deg, rgba(45,58,80,0.4), rgba(17,24,39,0.5)); border: 1px solid rgba(84,96,112,0.4); border-radius: var(--r12); padding: 14px 12px; text-align: center; box-shadow: inset 0 2px 10px rgba(255,255,255,0.04), 0 4px 12px rgba(0,0,0,0.2); }
+.psn { font-family: 'Orbitron', monospace; font-size: 25px; font-weight: 700; margin-bottom: 2px; }
+.psl { font-size: 9px; color: var(--t2); letter-spacing: 0.5px; font-weight: 600; }
+
+/* Thicker, Glowing Skill Bars */
+.procont { padding: 0 14px 20px; }
+.sectitle { font-size: 9px; font-weight: 700; color: var(--cyan); letter-spacing: 1.5px; margin-bottom: 12px; display: flex; align-items: center; gap: 8px; }
+.sectitle::after { content: ''; flex: 1; height: 1px; background: rgba(84,96,112,0.3); }
+.skillrow { display: flex; align-items: center; gap: 10px; margin-bottom: 12px; }
+.sknm { font-size: 10px; color: var(--t1); font-weight: 600; width: 68px; flex-shrink: 0; }
+.sktrack { flex: 1; height: 10px; background: rgba(255,255,255,0.04); border-radius: 5px; box-shadow: inset 0 1px 3px rgba(0,0,0,0.5); overflow: hidden; }
+.skfill { height: 100%; border-radius: 5px; }
+.skpct { font-size: 10px; color: var(--t2); width: 28px; text-align: right; flex-shrink: 0; font-weight: 700; }
+
+/* Achievements Row */
+.ach-wrap { position: relative; margin: 0 14px 18px; }
+.ach-wrap::after { content: ''; position: absolute; right: 0; top: 0; bottom: 0; width: 30px; background: linear-gradient(to right, transparent, var(--bg) 90%); pointer-events: none; }
+.ach-scroll { display: flex; gap: 12px; overflow-x: auto; padding-bottom: 8px; scrollbar-width: none; }
+.ach-item { flex-shrink: 0; width: 56px; text-align: center; }
+.ach-box { width: 56px; height: 56px; border-radius: 14px; margin-bottom: 8px; display: flex; align-items: center; justify-content: center; font-size: 22px; transition: transform 0.2s; cursor: pointer; }
+.ach-box:hover { transform: translateY(-3px); }
+.ach-title { font-size: 8.5px; color: var(--t2); font-weight: 600; line-height: 1.3; }
+
+/* Premium CTA Button */
+.pro-btn { font-size:13px; font-weight:700; letter-spacing:0.5px; transition:all 0.15s; background:rgba(255,255,255,0.06); border:1.5px solid rgba(255,255,255,0.22); color:var(--t1); box-shadow:0 4px 12px rgba(0,0,0,0.25); border-radius: var(--r12); width: 100%; padding: 13px; cursor: pointer;}
+.pro-btn:hover { background:rgba(255,255,255,0.1); border-color:rgba(255,255,255,0.35); box-shadow:0 6px 16px rgba(0,0,0,0.3), 0 0 12px rgba(255,255,255,0.05); transform:translateY(-1px); }
+.pro-btn:active { transform:scale(0.98) translateY(0); }
+
 </style>
 </head>
 <body>
 <div id="app-title">AURI'S JOURNEY</div>
 <p id="app-sub">UI MOCKUP DESIGN</p>
-
 <div class="nav-strip" id="tabs"></div>
 <div id="grid"></div>
-
 <script>
-/* ─── HELPERS ─── */
 const bol = `<polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2" fill="var(--amber)" stroke="none"/>`;
 const xpBadge = (n) => `<div class="xpbadge"><svg width="13" height="13" viewBox="0 0 24 24">${bol}</svg>${n}</div>`;
-const navBar = (a) => {
-  const items=[
-    [`<path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/>`,'Game'],
-    [`<rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/>`,'Mission'],
-    [`<circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 010 20M12 2a15.3 15.3 0 000 20"/>`,'World'],
-    [`<path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5M2 12l10 5 10-5"/>`,'Hub'],
-  ];
-  return `<div class="bnav">${items.map((it,i)=>`<div class="ni${i===a?' on':''}"><svg viewBox="0 0 24 24">${it[0]}</svg><span>${it[1]}</span></div>`).join('')}</div>`;
-};
-const cpu = (c1,c2) => `<svg width="44" height="44" viewBox="0 0 52 52" fill="none">
-  <rect x="14" y="14" width="24" height="24" rx="4" fill="${c1}" stroke="${c2}" stroke-width="1.5"/>
-  <rect x="18" y="18" width="16" height="16" rx="2" fill="${c2}" opacity=".35"/>
-  ${[8,15,22,29].map(y=>`<line x1="8" y1="${y}" x2="14" y2="${y}" stroke="${c2}" stroke-width="1.5"/><line x1="38" y1="${y}" x2="44" y2="${y}" stroke="${c2}" stroke-width="1.5"/>`).join('')}
-  ${[8,15,22,29].map(x=>`<line x1="${x}" y1="8" x2="${x}" y2="14" stroke="${c2}" stroke-width="1.5"/><line x1="${x}" y1="38" x2="${x}" y2="44" stroke="${c2}" stroke-width="1.5"/>`).join('')}
-</svg>`;
+const cpu = (c1,c2) => `<svg width="44" height="44" viewBox="0 0 52 52" fill="none"><rect x="14" y="14" width="24" height="24" rx="4" fill="${c1}" stroke="${c2}" stroke-width="1.5"/><rect x="18" y="18" width="16" height="16" rx="2" fill="${c2}" opacity=".35"/></svg>`;
 const emailIcon = `<path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/>`;
 const lockIcon = `<rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/>`;
-const userIcon = `<path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/>`;
 
-/* ─── SCREEN 1: SIGN IN ─── */
 function S_SignIn(){return `
 <div class="auth-shell">
   <div class="logo-box">${cpu('#051929','#00D4FF')}</div>
@@ -296,10 +256,8 @@ function S_SignIn(){return `
   </div>
 </div>`;}
 
-/* ─── SCREEN 2: SIGN UP ─── */
 function S_SignUp(){return `
-<div class="auth-shell" style="--cyan-g:rgba(124,94,255,.12);--cyan-b:rgba(124,94,255,.28)">
-  <div class="auth-shell::before" style="background:radial-gradient(circle,rgba(124,94,255,.05),transparent)"></div>
+<div class="auth-shell">
   <div class="logo-box logo-box-p">${cpu('#0F0529','#7C5EFF')}</div>
   <p class="app-name" style="color:var(--purple);opacity:.7">AURI'S JOURNEY</p>
   <div class="af">
@@ -308,492 +266,290 @@ function S_SignUp(){return `
     <div class="as">Join the mission, Commander</div>
     <div class="iw"><svg class="ii" viewBox="0 0 24 24">${emailIcon}</svg><input class="ifield" type="email" placeholder="Email Address"></div>
     <div class="iw"><svg class="ii" viewBox="0 0 24 24">${lockIcon}</svg><input class="ifield" type="password" placeholder="Password"></div>
-    <div class="iw" style="margin-bottom:16px"><svg class="ii" viewBox="0 0 24 24">${lockIcon}</svg><input class="ifield" type="password" placeholder="Confirm Password" style="border-color:#1C2D40"></div>
+    <div class="iw" style="margin-bottom:16px"><svg class="ii" viewBox="0 0 24 24">${lockIcon}</svg><input class="ifield" type="password" placeholder="Confirm Password"></div>
     <button class="btn-p btn-pu">Start Adventure →</button>
     <div class="auth-alt">Already have an account? <a href="#" class="pa">Sign in</a></div>
   </div>
 </div>`;}
 
-/* ─── SCREEN 3: MISSIONS ─── */
-function S_Missions(){return `
-<div style="flex:1;display:flex;flex-direction:column">
-  <div class="hdr">
-    <div>
-      <div style="font-family:'Orbitron',monospace;font-size:10px;color:var(--cyan);letter-spacing:1px">CODEQUEST</div>
-      <div style="font-size:15px;font-weight:700;color:var(--t1);margin-top:1px">Sector 2 — Active</div>
+function S_Menu(){return `
+<div class="menu-shell">
+  <div class="hbhdr">
+    <div><div class="hbtitle">MAIN MENU</div><div class="hbgreet">Choose your next path</div></div>
+    ${xpBadge('2,480')}
+  </div>
+  <div class="menu-hero">
+    <div class="menu-kicker">UNIFIED SCREEN</div>
+    <div class="menu-title">Hub · World · Mission</div>
+    <div class="menu-sub">Combined into one screen called Menu, with the bottom clickable buttons removed.</div>
+  </div>
+  <div class="menu-grid">
+    <div class="menu-card">
+      <div class="menu-card-top"><div><div class="menu-card-title">HUB OVERVIEW</div><div class="menu-card-sub">Daily status</div></div><div class="tag tg">Live</div></div>
+      <div class="chall">
+        <div class="challt"><span class="challlbl">DAILY CHALLENGE</span><span class="challpill">Ready</span></div>
+        <div class="challname" style="font-size:14px">Sort array in 3 moves</div>
+        <div class="challreset">⟳ Resets in 6h 42m</div>
+      </div>
+      <div class="xpbar-wrap" style="margin:0">
+        <div class="xpbar-lbl"><span>XP PROGRESS · LVL 12</span><span>70%</span></div>
+        <div class="xpbar-track"><div class="xpbar-fill" style="width:70%"></div></div>
+      </div>
+      <div class="stats2" style="margin-top:10px">
+        <div class="scard"><div class="snum" style="color:var(--amber)">7</div><div class="slbl">DAY STREAK</div></div>
+        <div class="scard"><div class="snum" style="color:var(--cyan)">2,480</div><div class="slbl">TOTAL XP</div></div>
+      </div>
     </div>
-    <div style="display:flex;flex-direction:column;align-items:center;gap:2px">
-      <div style="width:34px;height:34px;border-radius:50%;background:var(--bg4);border:1px solid var(--bdr2);display:flex;align-items:center;justify-content:center">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--t2)" stroke-width="1.8">${userIcon}</svg>
+    
+    <div class="menu-card" style="padding-bottom: 16px;">
+      <div class="menu-card-top" style="margin-bottom:0"><div><div class="menu-card-title">WORLD MAP</div><div class="menu-card-sub">Current route</div></div><div class="tag tp">Sector 2</div></div>
+      <div class="menu-map-wrap" style="padding: 0; margin-top: -10px;">
+        <svg width="100%" height="320" viewBox="0 0 200 350" style="overflow: visible; margin: 10px 0;">
+          <path d="M 100 81 L 100 65 Q 100 55 110 55 L 150 55 Q 160 55 160 45 L 160 30 Q 160 20 150 20 L 109 20" fill="none" stroke="#2D3A4A" stroke-width="2"/>
+          <path d="M 100 151 L 100 135 Q 100 125 90 125 L 50 125 Q 40 125 40 115 L 40 100 Q 40 90 50 90 L 91 90" fill="none" stroke="#4C3A7A" stroke-width="2" stroke-dasharray="4,4"/>
+          <path d="M 100 212 L 100 205 Q 100 195 110 195 L 150 195 Q 160 195 160 185 L 160 170 Q 160 160 150 160 L 109 160" fill="none" stroke="#9F7AEA" stroke-width="2" stroke-dasharray="4,4"/>
+          <path d="M 100 285 L 100 275 Q 100 265 90 265 L 50 265 Q 40 265 40 255 L 40 240 Q 40 230 50 230 L 82 230" fill="none" stroke="#00D4FF" stroke-width="2.5" style="filter: drop-shadow(0 0 4px #00D4FF)"/>
+          <rect x="91" y="11" width="18" height="18" rx="3" fill="#0D1424" stroke="#546070" stroke-width="1.5"/>
+          <g transform="translate(100, 20) scale(0.55) translate(-12, -11)"><rect x="5" y="11" width="14" height="10" rx="2" fill="#546070"/><path d="M7 11V7a5 5 0 0110 0v4" fill="none" stroke="#546070" stroke-width="2"/></g>
+          <text x="100" y="42" font-family="Orbitron, monospace" font-size="7.5" font-weight="700" fill="#546070" letter-spacing="0.5" text-anchor="middle">S5: ALGORITHMS</text>
+          <rect x="91" y="81" width="18" height="18" rx="3" fill="#0D1424" stroke="#546070" stroke-width="1.5"/>
+          <g transform="translate(100, 90) scale(0.55) translate(-12, -11)"><rect x="5" y="11" width="14" height="10" rx="2" fill="#546070"/><path d="M7 11V7a5 5 0 0110 0v4" fill="none" stroke="#546070" stroke-width="2"/></g>
+          <text x="100" y="112" font-family="Orbitron, monospace" font-size="7.5" font-weight="700" fill="#546070" letter-spacing="0.5" text-anchor="middle">S4: FUNCTIONS</text>
+          <rect x="91" y="151" width="18" height="18" rx="3" fill="#0D1424" stroke="#546070" stroke-width="1.5"/>
+          <g transform="translate(100, 160) scale(0.55) translate(-12, -11)"><rect x="5" y="11" width="14" height="10" rx="2" fill="#546070"/><path d="M7 11V7a5 5 0 0110 0v4" fill="none" stroke="#546070" stroke-width="2"/></g>
+          <text x="100" y="182" font-family="Orbitron, monospace" font-size="7.5" font-weight="700" fill="#546070" letter-spacing="0.5" text-anchor="middle">S3: LOOPS</text>
+          <polygon points="100,212 118,230 100,248 82,230" fill="#1D0A40" stroke="#B794F4" stroke-width="2" style="filter: drop-shadow(0 0 8px #9F7AEA)"/>
+          <g transform="translate(100, 230) scale(0.6) translate(-12, -12)"><path d="M17.5 4.5c-2.4-2.4-7.5-1.7-10.6 1.4l-1.5 1.5 2.5 2.5-3.6 3.6-2.8-1-1.4 1.4 4.5 4.5 1.4-1.4-1-2.8 3.6-3.6 2.5 2.5 1.5-1.5c3.1-3.1 3.8-8.2 1.4-10.6zm-4 5.5c-.8.8-2.2.8-3 0s-.8-2.2 0-3 2.2-.8 3 0 .8 2.2 0 3z" fill="white"/></g>
+          <text x="100" y="263" font-family="Orbitron, monospace" font-size="8.5" font-weight="700" fill="#E8EAE6" letter-spacing="0.5" text-anchor="middle">S2: CONDITIONAL FOREST</text>
+          <polygon points="100,285 113,292 113,308 100,315 87,308 87,292" fill="#0D1424" stroke="#00D4FF" stroke-width="2" style="filter: drop-shadow(0 0 4px #00D4FF)"/>
+          <polyline points="95,300 99,304 105,296" fill="none" stroke="#00D4FF" stroke-width="2"/>
+          <text x="100" y="328" font-family="Orbitron, monospace" font-size="8.5" font-weight="700" fill="#E8EAE6" letter-spacing="0.5" text-anchor="middle">S1: SEQUENCE</text>
+        </svg>
+      </div>
+      <div style="text-align:center; padding: 4px 0 0;">
+        <div style="font-size:10px; color:var(--t3); margin-bottom:12px;">Current Location: Conditional Forest</div>
+        <button class="btn-p btn-pu" style="border-radius: 20px; font-size: 12px; padding: 12px; width: 100%; box-shadow: 0 4px 20px rgba(124,94,255,0.25); display: flex; justify-content: center; align-items: center; gap: 6px;">ENTER SECTOR 2 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg></button>
+      </div>
+    </div>
+    
+    <div class="menu-card">
+      <div class="menu-card-top"><div><div class="menu-card-title">MISSION LIST</div><div class="menu-card-sub">Current sector tasks</div></div><div class="tag tc">Sector 2</div></div>
+      <div class="mc done" style="margin-bottom:7px"><div class="mbar d"></div><div style="flex:1"><div class="mt">Mission 1</div><div class="ms">Restore the power gate</div><div class="tag tc">Sequence</div></div></div>
+      <div class="mc act" style="margin-bottom:7px"><div class="mbar a"></div><div style="flex:1"><div class="mt">Mission 2</div><div class="ms">Debug the broken loop</div><div class="tag tp">Loop</div></div><span style="font-size:9px;font-weight:700;color:var(--purple)">● Active</span></div>
+      <div class="mc locked"><div class="mbar"></div><div style="flex:1"><div class="mt g">Mission 3</div><div class="ms g">Open the logic gates</div><div class="tag ts">Condition</div></div></div>
+      <div class="menu-pills"><div class="menu-pill">Single screen</div><div class="menu-pill">No bottom nav</div><div class="menu-pill">Cleaner flow</div></div>
+    </div>
+  </div>
+</div>`;}
+
+function S_Game(){
+  const cells = Array(25).fill('').map((_,i)=>{
+    const row = Math.floor(i/5);
+    const col = i%5;
+    const inTrainingZone = row>=1 && row<=3 && col>=1 && col<=3;
+    const zoneClass = inTrainingZone ? ' training' : '';
+    if(i===12) return `<div class="cell rob${zoneClass}">🤖</div>`;
+    if(i===18) return `<div class="cell tgt${zoneClass}">⚡</div>`;
+    if(i===8) return `<div class="cell haz${zoneClass}" style="font-size:11px;font-weight:800;color:var(--red)">✕</div>`;
+    return `<div class="cell${zoneClass}"></div>`;
+  }).join('');
+
+  const arrUp = `<svg viewBox="0 0 24 24"><path d="M12 18V6M6 12l6-6 6 6"/></svg>`;
+  const arrLeft = `<svg viewBox="0 0 24 24"><path d="M16 18v-5a4 4 0 0 0-4-4H6m4-4L6 9l4 4"/></svg>`;
+  const arrRight = `<svg viewBox="0 0 24 24"><path d="M8 18v-5a4 4 0 0 1 4-4h6m-4-4l4 4-4 4"/></svg>`;
+  const iconIf = `<svg viewBox="0 0 24 24"><polygon points="12 4 4 12 12 20 20 12"/></svg>`;
+  const iconLoop = `<svg viewBox="0 0 24 24"><path d="M21 12a9 9 0 1 1-9-9c2.5 0 4.8 1 6.5 2.5L21 8M21 3v5h-5"/></svg>`;
+
+  return `
+<div style="flex:1;display:flex;flex-direction:column">
+  <div class="ghdr"><div class="ghdr-r1"><div class="back"><svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg></div><div class="stitle">SECTOR 1</div>${xpBadge('2,289')}</div><div class="ghdr-r2"><span class="msub">Mission 1 · Restore the Power Gate</span></div></div>
+  <div class="grid-section"><div class="grid-lbl">EXECUTION GRID · 3×3 TRAINING ZONE</div><div class="egrid">${cells}</div></div>
+  
+  <div class="cmds">
+    <div class="clbl">COMMANDS</div>
+    <div class="crow">
+      <div class="cmd-btn cmd-fwd">${arrUp}</div>
+      <div class="cmd-btn cmd-lft">${arrLeft}</div>
+      <div class="cmd-btn cmd-rgt">${arrRight}</div>
+      <div class="cmd-btn cmd-if">${iconIf}</div>
+      <div class="cmd-btn cmd-loop">${iconLoop}</div>
+    </div>
+  </div>
+  
+  <div class="qsec-new">
+    <div class="qsec-top">
+      <div class="qsec-title">Sequence</div>
+      <button class="qclear">✕ CLEAR</button>
+    </div>
+    
+    <div class="q-scroll-wrap">
+      <div class="q-list">
+        <div class="cmd-btn cmd-fwd sm">${arrUp}</div>
+        <div class="cmd-btn cmd-lft sm">${arrLeft}</div>
+        <div class="cmd-btn cmd-rgt sm">${arrRight}</div>
+        <div class="cmd-btn cmd-if sm">${iconIf}</div>
+        
+        <!-- RESTORED: [ + ] Add Command Button in Queue -->
+        <div class="cmd-btn cmd-add sm" title="Add Command"><svg viewBox="0 0 24 24"><path d="M12 5v14m-7-7h14"/></svg></div>
       </div>
     </div>
   </div>
-  <div style="padding:8px 16px 6px;font-size:11px;color:var(--t3)">Pick your next mission</div>
-  <div class="mc done">
-    <div class="mbar d"></div>
-    <div style="flex:1"><div class="mt">Mission 1</div><div class="ms">Restore the power gate</div><div class="tag tc">Sequence</div></div>
-    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--green)" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
-  </div>
-  <div class="mc act">
-    <div class="mbar a"></div>
-    <div style="flex:1"><div class="mt">Mission 2</div><div class="ms">Debug the broken loop</div><div class="tag tp">Loop</div></div>
-    <span style="font-size:9px;font-weight:700;color:var(--purple)">● Active</span>
-  </div>
-  <div class="mc locked">
-    <div class="mbar"></div>
-    <div style="flex:1"><div class="mt g">Mission 3</div><div class="ms g">Open the logic gates</div><div class="tag ts">Condition</div></div>
-    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="var(--t4)" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg>
-  </div>
-  <div class="mc locked" style="opacity:.13">
-    <div class="mbar"></div>
-    <div style="flex:1"><div class="mt g">Mission 4</div><div class="ms g">Sort the data stream</div><div class="tag ts">Sorting</div></div>
-    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="var(--t4)" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg>
-  </div>
-  <div class="mc locked" style="opacity:.08">
-    <div class="mbar"></div>
-    <div style="flex:1"><div class="mt g">Mission 5</div><div class="ms g">Fix the recursive crash</div><div class="tag ts">Recursion</div></div>
-    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="var(--t4)" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg>
-  </div>
-  <div style="flex:1"></div>
-  <div style="padding:0 16px 6px">
-    <div style="font-size:8px;color:var(--t3);letter-spacing:1px;margin-bottom:5px;text-align:center">SECTOR PROGRESS</div>
-    <div class="xpbar-wrap" style="margin:0 0 12px">
-      <div class="xpbar-lbl"><span>LVL 12</span><span>70%</span></div>
-      <div class="xpbar-track"><div class="xpbar-fill" style="width:70%"></div></div>
-    </div>
-    <button class="btn-p btn-pu">Continue Mission 2 →</button>
-  </div>
-  ${navBar(1)}
-</div>`;}
 
-/* ─── SCREEN 4: GAME ─── */
-function S_Game(){
-  const cells = Array(25).fill('').map((_,i)=>{
-    if(i===12) return `<div class="cell rob">🤖</div>`;
-    if(i===18) return `<div class="cell tgt">⚡</div>`;
-    if(i===8) return `<div class="cell haz" style="font-size:11px;font-weight:800;color:var(--red)">✕</div>`;
-    return `<div class="cell"></div>`;
-  }).join('');
-  return `
-<div style="flex:1;display:flex;flex-direction:column">
-  <div class="ghdr">
-    <div class="ghdr-r1">
-      <div class="back"><svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg></div>
-      <div class="stitle" style="flex:1">SECTOR 1</div>
-      ${xpBadge('2,289')}
-    </div>
-    <div class="ghdr-r2"><span class="msub">Mission 1 · Restore the Power Gate</span></div>
-  </div>
-  <div class="grid-section">
-    <div class="grid-lbl">EXECUTION GRID</div>
-    <div class="egrid">${cells}</div>
-  </div>
-  <div class="cmds">
-    <div class="clbl">COMMAND BLOCKS</div>
-    <div class="crow">
-      <div class="chip ch-c">↑ move</div>
-      <div class="chip ch-p">↺ Turn</div>
-      <div class="chip ch-a">· if</div>
-      <div class="chip ch-g">⟳ Loop</div>
-      <div class="chip ch-u" style="margin-left:auto">↩ Undo</div>
-    </div>
-  </div>
-  <div class="qsec">
-    <div class="qtop">
-      <div class="qcount">3 commands queued</div>
-      <button class="qclear">✕ clear</button>
-    </div>
-    <div class="qrow">
-      ${[['1','↑ move','ch-c'],['2','↺ Turn','ch-p'],['3','· if','ch-a']].map(([n,t,c])=>`<div class="qi"><div class="qn">${n}</div><div class="chip ${c}" style="font-size:9px;padding:3px 6px">${t}</div></div>`).join('')}
-      <div class="qi" style="border-style:dashed;opacity:.3"><div class="qn">4</div><div style="font-size:8px;color:var(--t4)">—</div></div>
-    </div>
-  </div>
   <div class="re">
     <button class="run">▶ RUN</button>
     <button class="exit">✕ EXIT</button>
   </div>
-  <div class="echo">
-    <div class="echt">ECHO SAYS</div>
-    <div class="echb">Try a condition block — check the gate before moving forward.</div>
-  </div>
+  <div class="echo"><div class="echt">ECHO SAYS</div><div class="echb">Start small: use the highlighted 3×3 zone to learn forward, left, and right before the full grid opens up.</div></div>
 </div>`;}
 
-/* ─── SCREEN 5: MISSION COMPLETE ─── */
 function S_Complete(){return `
 <div style="flex:1;display:flex;flex-direction:column">
   <div class="comph">
-    <div>
-      <div style="font-size:10px;color:var(--t3);letter-spacing:.4px">SECTOR 1 · MISSION 1</div>
-      <div style="font-size:11px;color:var(--t3);margin-top:1px">Restore the power gate</div>
-    </div>
+    <div><div style="font-size:10px;color:var(--t3);letter-spacing:.4px;font-weight:700;">SECTOR 1 · MISSION 1</div><div style="font-size:11px;color:var(--t2);margin-top:2px">Restore the power gate</div></div>
     ${xpBadge('2,480 XP')}
   </div>
-  <div style="display:flex;flex-direction:column;align-items:center;padding:10px 0 12px">
+  
+  <div style="display:flex;flex-direction:column;align-items:center;padding:12px 0 16px">
     <div class="sring"><div class="scheck"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="var(--green)" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></div></div>
     <div class="ctitle">MISSION COMPLETE</div>
     <div class="csub">Power Gate Restored!</div>
     <div class="xpr"><svg width="12" height="12" viewBox="0 0 24 24">${bol}</svg>+ 120 XP</div>
   </div>
+  
   <div class="mcard">
     <div class="mb">
-      <div style="font-size:8px;color:var(--t3);letter-spacing:1px;margin-bottom:3px">EFFICIENCY</div>
+      <div class="mpl">EFFICIENCY</div>
       <div class="mn">4</div><div class="ml">Steps used</div>
       <div class="mbadge bg">Optimal</div>
     </div>
     <div class="mdiv"></div>
     <div class="mb">
-      <div style="font-size:8px;color:var(--t3);letter-spacing:1px;margin-bottom:3px">SPEED</div>
+      <div class="mpl">SPEED</div>
       <div class="mn" style="color:var(--cyan)">12s</div><div class="ml">Time taken</div>
       <div class="mbadge bc">Fast</div>
     </div>
   </div>
+  
   <div class="conccard">
     <div class="conclbl">✦ CONCEPT MASTERED</div>
     <div class="conct">Sequential Reasoning</div>
     <div class="concd">You used ordered instructions to reach the target efficiently. Core skill unlocked.</div>
   </div>
-  <div style="margin:0 14px 12px">
-    <div class="xpbar-lbl" style="margin-bottom:5px"><span style="font-size:9px;color:var(--t3)">XP PROGRESS · LVL 12</span><span style="font-size:9px;color:var(--green)">+120 XP</span></div>
-    <div class="xpbar-track"><div class="xpbar-fill" style="width:74%"></div></div>
-    <div style="display:flex;justify-content:space-between;margin-top:4px;font-size:9px;color:var(--t4)"><span>2,360 XP</span><span>→ 2,480 XP</span></div>
+  
+  <div class="comp-xp-wrap">
+    <div class="xpbar-lbl">
+      <span style="font-size:10px;color:var(--t2);font-weight:600;">Level 12 <span style="color:var(--t4);margin:0 4px;">→</span> Level 13</span>
+      <span style="font-size:10px;color:var(--green);font-weight:700;">+120 XP</span>
+    </div>
+    <div class="xpbar-track"><div class="xpbar-fill anim" style="width:74%"></div></div>
   </div>
-  <div style="padding:0 14px 14px;display:flex;flex-direction:column;gap:7px">
+  
+  <div class="comp-actions">
     <button class="btn-p">Next Mission →</button>
-    <button class="btn-p btn-s" style="font-size:13px;font-weight:600">↺ Replay Level</button>
+    <button class="btn-p btn-replay" style="font-size:13px;font-weight:600">↺ Replay Level</button>
   </div>
 </div>`;}
 
-/* ─── SCREEN 6: WORLD MAP ─── */
-function S_WorldMap(){return `
-<div style="flex:1;display:flex;flex-direction:column">
-  <div class="hdr">
-    <div>
-      <div style="font-family:'Orbitron',monospace;font-size:10px;color:var(--amber);letter-spacing:1px">WORLD MAP</div>
-      <div style="font-size:13px;color:var(--t2);margin-top:2px">Choose your sector</div>
-    </div>
-    ${xpBadge('2,480 XP')}
-  </div>
-  <div style="flex:1;display:flex;align-items:center;justify-content:center;padding:8px">
-    <svg class="mapsvg" width="230" height="295" viewBox="0 0 230 295">
-      <!-- active path bright -->
-      <line x1="115" y1="58" x2="72" y2="138" stroke="#00D4FF" stroke-width="2" stroke-dasharray="6,4" opacity=".85"/>
-      <!-- locked path S1->S3 visible grey -->
-      <line x1="115" y1="58" x2="160" y2="138" stroke="#2A3A50" stroke-width="1.5"/>
-      <!-- deep locked paths very dim -->
-      <line x1="72" y1="162" x2="52" y2="240" stroke="#161F2D" stroke-width="1.5"/>
-      <line x1="160" y1="162" x2="176" y2="240" stroke="#161F2D" stroke-width="1.5"/>
-      <!-- S1 done -->
-      <circle cx="115" cy="42" r="28" fill="#0B2419" stroke="#10B981" stroke-width="2"/>
-      <text x="115" y="38" text-anchor="middle" fill="#10B981" font-family="Orbitron,monospace" font-size="13" font-weight="700">S1</text>
-      <text x="115" y="51" text-anchor="middle" fill="#34D399" font-size="9">✓ Done</text>
-      <text x="115" y="78" text-anchor="middle" fill="#4B6070" font-size="8">Sequence</text>
-      <!-- S2 active -->
-      <circle cx="72" cy="150" r="27" fill="#170E3A" stroke="#7C5EFF" stroke-width="2.5"/>
-      <text x="72" y="146" text-anchor="middle" fill="#7C5EFF" font-family="Orbitron,monospace" font-size="12" font-weight="700">S2</text>
-      <text x="72" y="158" text-anchor="middle" fill="#A78BFA" font-size="8">● Active</text>
-      <text x="72" y="184" text-anchor="middle" fill="#4B6070" font-size="8">Conditions</text>
-      <!-- S3 locked -->
-      <circle cx="160" cy="150" r="22" fill="#0A1220" stroke="#1A2738" stroke-width="1.5" opacity=".7"/>
-      <text x="160" y="147" text-anchor="middle" fill="#2A3A50" font-family="Orbitron,monospace" font-size="11" font-weight="700">S3</text>
-      <text x="160" y="157" text-anchor="middle" fill="#2A3A50" font-size="10">🔒</text>
-      <text x="160" y="178" text-anchor="middle" fill="#2A3A50" font-size="8">Loops</text>
-      <!-- S4 very dim -->
-      <circle cx="52" cy="254" r="17" fill="#08101A" stroke="#111C28" stroke-width="1" opacity=".45"/>
-      <text x="52" y="251" text-anchor="middle" fill="#182030" font-family="Orbitron,monospace" font-size="10" font-weight="700">S4</text>
-      <text x="52" y="260" text-anchor="middle" fill="#182030" font-size="9">🔒</text>
-      <text x="52" y="277" text-anchor="middle" fill="#182030" font-size="8">Functions</text>
-      <!-- S5 very dim -->
-      <circle cx="176" cy="254" r="17" fill="#08101A" stroke="#111C28" stroke-width="1" opacity=".45"/>
-      <text x="176" y="251" text-anchor="middle" fill="#182030" font-family="Orbitron,monospace" font-size="10" font-weight="700">S5</text>
-      <text x="176" y="260" text-anchor="middle" fill="#182030" font-size="9">🔒</text>
-      <text x="176" y="277" text-anchor="middle" fill="#182030" font-size="8">Debugging</text>
-    </svg>
-  </div>
-  <div style="padding:0 14px 6px;text-align:center">
-    <div style="display:inline-flex;align-items:center;gap:6px;padding:5px 14px;background:var(--purple-g);border:1px solid var(--purple-b);border-radius:20px;font-size:11px;color:var(--purple);font-weight:600;margin-bottom:10px">● Now in: Conditional Forest</div>
-  </div>
-  <div style="padding:0 14px 14px">
-    <button class="btn-p btn-pu">Enter Sector 2 →</button>
-  </div>
-  ${navBar(2)}
-</div>`;}
-
-/* ─── SCREEN 7: HUB ─── */
-function S_Hub(){return `
-<div style="flex:1;display:flex;flex-direction:column">
-  <div class="hbhdr">
-    <div><div class="hbtitle">DAILY HUB</div><div class="hbgreet">Good morning, Commander</div></div>
-    ${xpBadge('2,480')}
-  </div>
-  <div class="chall">
-    <div class="challt"><span class="challlbl">DAILY CHALLENGE</span><span class="challpill">Play</span></div>
-    <div class="challname">Sort array in 3 moves</div>
-    <div class="challreset">⟳ Resets in 6h 42m</div>
-  </div>
-  <button class="goplay">Go Play →</button>
-  <div class="xpbar-wrap" style="margin:0 14px 10px">
-    <div class="xpbar-lbl"><span>XP PROGRESS · LVL 12</span><span>70%</span></div>
-    <div class="xpbar-track"><div class="xpbar-fill" style="width:70%"></div></div>
-  </div>
-  <div class="echohub">
-    <div class="echohublbl">ECHO SAYS</div>
-    <div class="echohubtext">You struggled with loops in Mission 3. Try Conditional Forest Mission 2 next.</div>
-  </div>
-  <div class="stats2">
-    <div class="scard"><div class="snum" style="color:var(--amber)">7</div><div class="slbl">DAY STREAK</div></div>
-    <div class="scard"><div class="snum" style="color:var(--cyan)">2,480</div><div class="slbl">TOTAL XP</div></div>
-  </div>
-  <div class="act-sec">
-    <div class="act-lbl">RECENT ACTIVITY</div>
-    <div class="act-row"><span class="act-t">Completed Mission 1</span><span class="act-time">2h ago</span></div>
-    <div class="act-row"><span class="act-t">Earned 120 XP</span><span class="act-time">2h ago</span></div>
-    <div class="act-row"><span class="act-t">Unlocked Sector 2</span><span class="act-time">2h ago</span></div>
-  </div>
-  ${navBar(3)}
-</div>`;}
-
-/* ─── SCREEN 8: PROFILE ─── */
 function S_Profile(){
-  const skills=[['Sequences',90,'#00D4FF'],['Conditions',65,'#7C5EFF'],['Loops',40,'#F59E0B'],['Debugging',55,'#EF4444'],['Functions',20,'#10B981']];
+  const skills=[
+    ['Sequences', 90, '#00D4FF', '#0891B2'],
+    ['Conditions', 65, '#7C5EFF', '#5B3FCC'],
+    ['Loops', 40, '#F59E0B', '#B45309'],
+    ['Debugging', 55, '#EF4444', '#B91C1C']
+  ];
   return `
-<div style="flex:1;display:flex;flex-direction:column">
-  <div class="prohero">
-    <div style="font-family:'Orbitron',monospace;font-size:10px;color:var(--t3);letter-spacing:2px;margin-bottom:2px">PROFILE</div>
-    <div style="font-size:10px;color:var(--t4);margin-bottom:10px">Commander Auri</div>
-    <div class="avring">
-      <svg width="40" height="40" viewBox="0 0 44 44" fill="none">
-        <rect x="8" y="12" width="28" height="23" rx="8" fill="#1A1040" stroke="#7C5EFF" stroke-width="1.5"/>
-        <circle cx="16" cy="22" r="2.5" fill="#7C5EFF"/><circle cx="28" cy="22" r="2.5" fill="#7C5EFF"/>
-        <rect x="18" y="27" width="8" height="3" rx="1.5" fill="#7C5EFF" opacity=".5"/>
-        <line x1="22" y1="12" x2="22" y2="7" stroke="#7C5EFF" stroke-width="1.5"/>
-        <circle cx="22" cy="6" r="2" fill="#7C5EFF"/>
-      </svg>
-      <div class="odot"></div>
-    </div>
-    <div class="uname">@commander_auri</div>
-    <div class="urank">Commander</div>
-    <div class="lvpill"><svg width="11" height="11" viewBox="0 0 24 24">${bol}</svg>2,480 XP · Level 12</div>
+<div style="flex:1;display:flex;flex-direction:column;padding-bottom:14px;overflow-x:hidden;">
+  
+  <div style="padding:16px 16px 0; display:flex; justify-content:space-between; align-items:center;">
+    <div class="back" style="margin:0;"><svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg></div>
+    <div style="font-family:'Orbitron',monospace;font-size:11px;color:var(--t3);letter-spacing:2px;font-weight:700;">PROFILE</div>
+    <div style="width:30px;"></div> <!-- visual spacer for centering -->
   </div>
+
+  <div class="prohero" style="padding-top:8px;">
+    <div class="avring" style="width:90px;height:90px;margin-bottom:18px;box-shadow:0 0 25px rgba(124,94,255,0.4);animation:pulseAvatar 2.5s infinite;">
+      <svg width="48" height="48" viewBox="0 0 44 44" fill="none"><rect x="8" y="12" width="28" height="23" rx="8" fill="#1A1040" stroke="#7C5EFF" stroke-width="1.5"/><circle cx="16" cy="22" r="2.5" fill="#7C5EFF"/><circle cx="28" cy="22" r="2.5" fill="#7C5EFF"/><rect x="18" y="27" width="8" height="3" rx="1.5" fill="#7C5EFF" opacity=".5"/></svg>
+      <div class="odot" style="width:16px;height:16px;border-width:3px;bottom:0px;right:0px;"></div>
+    </div>
+    
+    <div class="uname" style="font-family:'Orbitron',monospace;font-size:18px;color:#FFFFFF;text-shadow:0 0 12px rgba(255,255,255,0.3);letter-spacing:0.5px;">@commander_auri</div>
+    <div class="urank" style="font-size:11px;color:var(--t3);text-transform:uppercase;letter-spacing:1.5px;margin-bottom:20px;">Commander</div>
+    
+    <div class="lvpill" style="font-size:12px;padding:8px 18px;background:linear-gradient(135deg, rgba(245,158,11,0.15), rgba(245,158,11,0.05));border:1.5px solid rgba(245,158,11,0.4);box-shadow:0 4px 15px rgba(245,158,11,0.15);border-radius:24px;margin-bottom:24px;">
+      <svg width="14" height="14" viewBox="0 0 24 24">${bol}</svg>2,480 XP <span style="color:rgba(245,158,11,0.4);margin:0 6px;">|</span> Level 12
+    </div>
+  </div>
+  
+  <div style="width:65%;height:1px;background:linear-gradient(90deg,transparent,rgba(84,96,112,0.3),transparent);margin:0 auto 24px;"></div>
+  
   <div class="prostats">
-    <div class="psc"><div class="psn" style="color:var(--cyan)">12</div><div class="psl">LEVEL</div></div>
-    <div class="psc"><div class="psn" style="color:var(--amber)">7</div><div class="psl">DAY STREAK</div></div>
-    <div class="psc"><div class="psn" style="color:var(--purple)">34</div><div class="psl">MISSIONS<br>SOLVED</div></div>
+    <div class="psc"><div class="psn" style="color:var(--cyan);text-shadow:0 0 10px rgba(0,212,255,0.3);">12</div><div class="psl">LEVEL</div></div>
+    <div class="psc"><div class="psn" style="color:var(--amber);text-shadow:0 0 10px rgba(245,158,11,0.3);">7</div><div class="psl">DAY STREAK</div></div>
+    <div class="psc"><div class="psn" style="color:var(--purple);text-shadow:0 0 10px rgba(124,94,255,0.3);">34</div><div class="psl">MISSIONS</div></div>
+    <div class="psc"><div class="psn" style="color:var(--green);text-shadow:0 0 10px rgba(16,185,129,0.3);">4<span style="font-size:14px;opacity:0.7">h</span> 12<span style="font-size:14px;opacity:0.7">m</span></div><div class="psl">PLAY TIME</div></div>
   </div>
+  
+  <div class="conccard" style="margin:0 14px 20px; padding:12px 14px; background:rgba(16,185,129,0.04); border-color:rgba(16,185,129,0.2);">
+    <div class="conclbl" style="color:var(--green);">✦ LEARNING INSIGHTS</div>
+    <div style="font-size:11px; color:var(--t1); margin-bottom:8px; display:flex; gap:8px; align-items:center;">
+      <span style="color:var(--cyan);font-weight:900;">↑</span> <div>Strongest concept: <strong>Sequences</strong></div>
+    </div>
+    <div style="font-size:11px; color:var(--t2); display:flex; gap:8px; align-items:center;">
+      <span style="color:var(--amber);font-weight:900;">★</span> <div>Recommended next: <strong style="color:var(--t1)">Conditional Forest</strong></div>
+    </div>
+  </div>
+  
   <div class="procont">
-    <div style="margin-bottom:12px">
-      <div class="xpbar-lbl" style="margin-bottom:4px"><span style="font-size:9px;color:var(--cyan);font-weight:700;letter-spacing:1px">XP PROGRESS</span><span>Level 13</span></div>
-      <div class="xpbar-track"><div class="xpbar-fill" style="width:70%"></div></div>
-      <div style="display:flex;justify-content:space-between;margin-top:4px;font-size:9px;color:var(--t4)"><span>2,480 XP earned</span><span>520 to go</span></div>
-    </div>
     <div class="sectitle">SKILL MAP</div>
-    ${skills.map(([n,p,c])=>`<div class="skillrow"><span class="sknm">${n}</span><div class="sktrack"><div class="skfill" style="width:${p}%;background:${c}"></div></div><span class="skpct">${p}%</span></div>`).join('')}
-    <div style="margin-top:14px"><button class="btn-p btn-s" style="font-size:12px;font-weight:600">← Back To Action</button></div>
+    ${skills.map(([n,p,c1,c2])=>`<div class="skillrow"><span class="sknm">${n}</span><div class="sktrack"><div class="skfill" style="width:${p}%;background:linear-gradient(90deg, ${c2}, ${c1});box-shadow:0 0 8px ${c1}40;"></div></div><span class="skpct">${p}%</span></div>`).join('')}
   </div>
+
+  <div class="ach-wrap">
+    <div class="sectitle">ACHIEVEMENTS</div>
+    <div class="ach-scroll">
+       <div class="ach-item">
+         <div class="ach-box" style="background:rgba(0,212,255,0.1); border:1.5px solid rgba(0,212,255,0.3); box-shadow:0 0 12px rgba(0,212,255,0.15);">🏆</div>
+         <div class="ach-title">First<br>Mission</div>
+       </div>
+       <div class="ach-item">
+         <div class="ach-box" style="background:rgba(124,94,255,0.1); border:1.5px solid rgba(124,94,255,0.3); box-shadow:0 0 12px rgba(124,94,255,0.15);">♾️</div>
+         <div class="ach-title">Loop<br>Master</div>
+       </div>
+       <div class="ach-item">
+         <div class="ach-box" style="background:rgba(245,158,11,0.1); border:1.5px solid rgba(245,158,11,0.3); box-shadow:0 0 12px rgba(245,158,11,0.15);">⚡</div>
+         <div class="ach-title">Speed<br>Runner</div>
+       </div>
+       <div class="ach-item" style="opacity:0.25; filter:grayscale(1);">
+         <div class="ach-box" style="background:var(--bg4); border:1.5px dashed var(--bdr2);">🔒</div>
+         <div class="ach-title" style="color:var(--t3);">Level<br>10</div>
+       </div>
+    </div>
+  </div>
+  
+  <div style="padding:0 14px;">
+    <button class="pro-btn">Continue Playing →</button>
+  </div>
+
 </div>`;}
 
-/* ─── SCREEN 9: LOADING STATES ─── */
-function S_Loading(){return `
-<div style="flex:1;display:flex;flex-direction:column;padding:14px;gap:0">
-  <div style="font-family:'Orbitron',monospace;font-size:9px;color:var(--cyan);letter-spacing:1.5px;margin-bottom:14px">LOADING STATES</div>
+function S_Placeholder(label,desc){return `<div style="flex:1;display:flex;flex-direction:column;justify-content:center;align-items:center;padding:24px;text-align:center"><div style="font-family:'Orbitron',monospace;font-size:14px;color:var(--cyan);margin-bottom:8px">${label}</div><div style="font-size:12px;color:var(--t2);line-height:1.6">${desc}</div></div>`;}
 
-  <!-- 1. Auth loading -->
-  <div style="margin-bottom:12px">
-    <div style="font-size:9px;color:var(--t3);letter-spacing:1px;margin-bottom:8px">AUTH · Signing in</div>
-    <div style="background:var(--bg3);border:1px solid var(--bdr);border-radius:var(--r12);padding:16px;display:flex;flex-direction:column;align-items:center;gap:10px">
-      <div class="pulse-ring">${cpu('#051929','#00D4FF')}</div>
-      <div style="font-size:12px;color:var(--t2);font-weight:600">Verifying Commander ID</div>
-      <div class="dots"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div>
-    </div>
-  </div>
-
-  <!-- 2. Game execution running -->
-  <div style="margin-bottom:12px">
-    <div style="font-size:9px;color:var(--t3);letter-spacing:1px;margin-bottom:8px">GAME · Executing commands</div>
-    <div style="background:var(--bg3);border:1.5px solid rgba(0,212,255,.25);border-radius:var(--r12);padding:12px">
-      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">
-        <div>
-          <div style="font-size:9px;color:var(--cyan);font-weight:700;letter-spacing:1px">RUNNING</div>
-          <div style="font-size:12px;color:var(--t1);margin-top:1px">Executing 3 commands…</div>
-        </div>
-        <div class="spinner"></div>
-      </div>
-      <div class="run-anim"><div class="run-bar"></div></div>
-      <div style="display:flex;gap:6px;margin-top:8px">
-        ${[['↑ move','ch-c',true],['↺ Turn','ch-p',true],['· if','ch-a',false]].map(([t,c,done])=>`<div class="chip ${c}" style="flex:1;text-align:center;font-size:9px;opacity:${done?'1':'.4'};${done?'text-decoration:line-through':''}">${t}</div>`).join('')}
-      </div>
-    </div>
-  </div>
-
-  <!-- 3. Screen skeleton loading -->
-  <div>
-    <div style="font-size:9px;color:var(--t3);letter-spacing:1px;margin-bottom:8px">APP · Loading mission data</div>
-    <div style="background:var(--bg3);border:1px solid var(--bdr);border-radius:var(--r12);padding:12px;display:flex;flex-direction:column;gap:8px">
-      <div style="display:flex;align-items:center;gap:10px">
-        <div class="skel" style="width:36px;height:36px;border-radius:50%;flex-shrink:0"></div>
-        <div style="flex:1;display:flex;flex-direction:column;gap:5px">
-          <div class="skel" style="height:10px;width:70%"></div>
-          <div class="skel" style="height:8px;width:45%"></div>
-        </div>
-      </div>
-      ${[90,70,55].map(w=>`<div class="skel" style="height:34px;width:${w}%"></div>`).join('')}
-      <div style="display:flex;gap:6px">${[1,2,3].map(()=>`<div class="skel" style="height:20px;flex:1;border-radius:10px"></div>`).join('')}</div>
-    </div>
-  </div>
-</div>`;}
-
-/* ─── SCREEN 10: ERROR STATES ─── */
-function S_Errors(){return `
-<div style="flex:1;display:flex;flex-direction:column;padding:14px;gap:0">
-  <div style="font-family:'Orbitron',monospace;font-size:9px;color:var(--red);letter-spacing:1.5px;margin-bottom:14px">ERROR STATES</div>
-
-  <!-- 1. Auth: wrong password -->
-  <div style="margin-bottom:12px">
-    <div style="font-size:9px;color:var(--t3);letter-spacing:1px;margin-bottom:8px">AUTH · Wrong password</div>
-    <div style="background:var(--bg3);border:1px solid var(--bdr);border-radius:var(--r12);padding:12px">
-      <div class="err-banner">
-        <div class="err-icon"><span>!</span></div>
-        <div class="err-text">Incorrect password. Check your credentials and try again.</div>
-      </div>
-      <div class="iw" style="margin-bottom:8px">
-        <svg class="ii" viewBox="0 0 24 24">${emailIcon}</svg>
-        <input class="ifield" type="email" value="commander@auri.io" readonly style="color:var(--t1)">
-      </div>
-      <div class="iw" style="margin-bottom:8px">
-        <svg class="ii" viewBox="0 0 24 24">${lockIcon}</svg>
-        <input class="ifield err" type="password" placeholder="Password" style="">
-      </div>
-      <div style="font-size:10px;color:var(--red);margin-bottom:10px;padding-left:2px">✕ Password is incorrect</div>
-      <button class="btn-p">Try Again →</button>
-    </div>
-  </div>
-
-  <!-- 2. Network error -->
-  <div style="margin-bottom:12px">
-    <div style="font-size:9px;color:var(--t3);letter-spacing:1px;margin-bottom:8px">APP · No connection</div>
-    <div style="background:var(--bg3);border:1px solid var(--bdr);border-radius:var(--r12);padding:12px">
-      <div class="warn-banner" style="margin-bottom:0">
-        <div style="width:16px;height:16px;border-radius:50%;background:var(--amber);display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px"><span style="font-size:9px;color:#04060D;font-weight:700">!</span></div>
-        <div>
-          <div style="font-size:11px;font-weight:700;color:var(--amber);margin-bottom:2px">Connection Lost</div>
-          <div style="font-size:10px;color:#FDE68A;line-height:1.4">You're offline. Progress is saved locally — reconnect to sync.</div>
-        </div>
-      </div>
-      <button class="btn-p" style="margin-top:10px;font-size:12px">↺ Retry Connection</button>
-    </div>
-  </div>
-
-  <!-- 3. Mission fail state -->
-  <div>
-    <div style="font-size:9px;color:var(--t3);letter-spacing:1px;margin-bottom:8px">GAME · Mission failed</div>
-    <div style="background:var(--bg3);border:1px solid var(--bdr);border-radius:var(--r12);padding:12px;display:flex;flex-direction:column;align-items:center">
-      <div class="fail-ring" style="margin-bottom:10px"><div class="fail-x"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--red)" stroke-width="3"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></div></div>
-      <div style="font-family:'Orbitron',monospace;font-size:14px;color:var(--red);margin-bottom:3px">MISSION FAILED</div>
-      <div style="font-size:11px;color:var(--t3);margin-bottom:10px;text-align:center">Robot hit a hazard! Review your sequence.</div>
-      <div style="background:rgba(239,68,68,.06);border:1px solid var(--red-b);border-radius:var(--r8);padding:9px;width:100%;margin-bottom:10px">
-        <div style="font-size:9px;color:var(--red);font-weight:700;letter-spacing:1px;margin-bottom:4px">ECHO SAYS</div>
-        <div style="font-size:11px;color:var(--t1);line-height:1.45">Check for hazards before moving. Use the <span style="color:var(--amber);font-weight:700">· if</span> block to test the path first.</div>
-      </div>
-      <div style="display:flex;gap:8px;width:100%">
-        <button class="btn-p" style="flex:2;font-size:12px">↺ Try Again</button>
-        <button class="btn-p btn-s" style="flex:1;font-size:11px">Exit</button>
-      </div>
-    </div>
-  </div>
-</div>`;}
-
-/* ─── SCREEN 11: ONBOARDING ─── */
-function S_Onboarding(){return `
-<div style="flex:1;display:flex;flex-direction:column">
-  <!-- Slide 1 shown with step indicators -->
-  <div style="flex:1;display:flex;flex-direction:column">
-    <div style="padding:14px 16px 0;display:flex;justify-content:flex-end">
-      <span style="font-size:11px;color:var(--t3);cursor:pointer">Skip</span>
-    </div>
-    <div class="ob-hero">
-      <div class="ob-icon" style="background:radial-gradient(circle at 35% 30%,#0A3D5C,#030C18);border-color:rgba(0,212,255,.25)">${cpu('#051929','#00D4FF')}</div>
-      <div class="ob-title">Welcome, Commander</div>
-      <div class="ob-desc">Auri's Journey turns programming concepts into missions. Code your way through alien sectors.</div>
-      <div class="ob-dots">
-        <div class="ob-dot on"></div>
-        <div class="ob-dot"></div>
-        <div class="ob-dot"></div>
-      </div>
-    </div>
-    <div style="padding:0 16px;margin-bottom:10px">
-      <div style="font-family:'Orbitron',monospace;font-size:9px;color:var(--t3);letter-spacing:1.5px;margin-bottom:10px">HOW IT WORKS</div>
-      <div class="feat-row">
-        <div class="feat-icon" style="background:var(--cyan-g);border:1px solid var(--cyan-b)">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--cyan)" stroke-width="2"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>
-        </div>
-        <div><div class="feat-t">Command Blocks</div><div class="feat-d">Drag logic blocks to build sequences. No typing required.</div></div>
-      </div>
-      <div class="feat-row">
-        <div class="feat-icon" style="background:var(--purple-g);border:1px solid var(--purple-b)">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--purple)" stroke-width="2"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
-        </div>
-        <div><div class="feat-t">Earn XP & Level Up</div><div class="feat-d">Complete missions to unlock new sectors and skills.</div></div>
-      </div>
-      <div class="feat-row">
-        <div class="feat-icon" style="background:var(--green-g);border:1px solid rgba(16,185,129,.28)">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--green)" stroke-width="2"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
-        </div>
-        <div><div class="feat-t">Master Concepts</div><div class="feat-d">Track Sequences, Loops, Conditions and more in your Skill Map.</div></div>
-      </div>
-    </div>
-    <div style="padding:0 16px 16px">
-      <button class="btn-p">Get Started →</button>
-      <div style="text-align:center;margin-top:8px;font-size:11px;color:var(--t3)">Already a Commander? <a href="#" style="color:var(--cyan);font-weight:600;text-decoration:none">Sign in</a></div>
-    </div>
-  </div>
-</div>`;}
-
-/* ─── RENDER ENGINE ─── */
 const screens = [
-  {id:'signin',  label:'01 · Sign In',      fn: S_SignIn},
-  {id:'signup',  label:'02 · Sign Up',      fn: S_SignUp},
-  {id:'missions',label:'03 · Missions',     fn: S_Missions},
-  {id:'game',    label:'04 · Game',         fn: S_Game},
-  {id:'complete',label:'05 · Complete',     fn: S_Complete},
-  {id:'worldmap',label:'06 · World Map',    fn: S_WorldMap},
-  {id:'hub',     label:'07 · Hub',          fn: S_Hub},
-  {id:'profile', label:'08 · Profile',      fn: S_Profile},
-  {id:'loading', label:'09 · Loading',      fn: S_Loading},
-  {id:'errors',  label:'10 · Errors',       fn: S_Errors},
-  {id:'onboard', label:'11 · Onboarding',   fn: S_Onboarding},
+  {id:'signin',label:'01 · Sign In',fn:S_SignIn},
+  {id:'signup',label:'02 · Sign Up',fn:S_SignUp},
+  {id:'menu',label:'03 · Menu',fn:S_Menu},
+  {id:'game',label:'04 · Game',fn:S_Game},
+  {id:'complete',label:'05 · Complete',fn:S_Complete},
+  {id:'profile',label:'06 · Profile',fn:S_Profile},
 ];
 
-const tabsEl = document.getElementById('tabs');
-const gridEl = document.getElementById('grid');
-
-function makePhone(s){
-  return `<div class="phone-wrap">
-    <div class="phone"><div class="pinner"><div class="sc">${s.fn()}</div></div></div>
-    <div class="plabel">${s.label}</div>
-  </div>`;
-}
-
-function renderAll(){
-  gridEl.style.gridTemplateColumns='repeat(auto-fill,minmax(278px,1fr))';
-  gridEl.innerHTML = screens.map(makePhone).join('');
-}
-function renderOne(idx){
-  gridEl.style.gridTemplateColumns='1fr';
-  gridEl.innerHTML = `<div style="display:flex;justify-content:center">${makePhone(screens[idx])}</div>`;
-}
-
-// tabs
-const allTab = document.createElement('button');
-allTab.className='tab on'; allTab.textContent='All Screens';
-allTab.onclick=()=>{document.querySelectorAll('.tab').forEach(t=>t.classList.remove('on')); allTab.classList.add('on'); renderAll();};
-tabsEl.appendChild(allTab);
-
-screens.forEach((s,i)=>{
-  const t=document.createElement('button');
-  t.className='tab'; t.textContent=s.label;
-  t.onclick=()=>{document.querySelectorAll('.tab').forEach(b=>b.classList.remove('on')); t.classList.add('on'); renderOne(i);};
-  tabsEl.appendChild(t);
-});
-
+const tabsEl=document.getElementById('tabs');
+const gridEl=document.getElementById('grid');
+function makePhone(s){return `<div class="phone-wrap"><div class="phone"><div class="pinner"><div class="sc">${s.fn()}</div></div></div><div class="plabel">${s.label}</div></div>`;}
+function renderAll(){gridEl.style.gridTemplateColumns='repeat(auto-fill,minmax(278px,1fr))';gridEl.innerHTML=screens.map(makePhone).join('');}
+function renderOne(idx){gridEl.style.gridTemplateColumns='1fr';gridEl.innerHTML=`<div style="display:flex;justify-content:center">${makePhone(screens[idx])}</div>`;}
+const allTab=document.createElement('button');allTab.className='tab on';allTab.textContent='All Screens';allTab.onclick=()=>{document.querySelectorAll('.tab').forEach(t=>t.classList.remove('on'));allTab.classList.add('on');renderAll();};tabsEl.appendChild(allTab);
+screens.forEach((s,i)=>{const t=document.createElement('button');t.className='tab';t.textContent=s.label;t.onclick=()=>{document.querySelectorAll('.tab').forEach(b=>b.classList.remove('on'));t.classList.add('on');renderOne(i);};tabsEl.appendChild(t);});
 renderAll();
 </script>
 </body>

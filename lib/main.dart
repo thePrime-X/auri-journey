@@ -5,22 +5,26 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'firebase_options.dart';
 
-// This is a simple Flutter app to verify Firebase integration
+// Service for Firestore
 class FirestoreService {
   final FirebaseFirestore _db = FirebaseFirestore.instance;
   final FirebaseAuth _auth = FirebaseAuth.instance;
 
   Future<void> testWrite() async {
     final user = _auth.currentUser;
+
+    // check if user exists
     if (user == null) {
       throw Exception('No authenticated user found');
     }
 
+    // print user info
     debugPrint('Current UID: ${user.uid}');
     debugPrint('Is anonymous: ${user.isAnonymous}');
 
+    // write data to Firestore
     await _db.collection('users').doc(user.uid).set({
-      'displayName': 'Anonymous Tester',
+      'displayName': 'Anonymous Tester1',
       'createdAt': FieldValue.serverTimestamp(),
       'lastLoginAt': FieldValue.serverTimestamp(),
       'currentLevel': 'S1_L1',
@@ -30,11 +34,12 @@ class FirestoreService {
   }
 }
 
-// Simple authentication service to sign in anonymously
+// Auth service
 class AuthService {
   final FirebaseAuth _auth = FirebaseAuth.instance;
 
   Future<User?> signInAnonymously() async {
+    // login without email
     final result = await _auth.signInAnonymously();
     return result.user;
   }
@@ -43,13 +48,16 @@ class AuthService {
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
+  // start Firebase
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
 
+  // login user
   await AuthService().signInAnonymously();
 
   runApp(const MyApp());
 }
 
+// main app
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
@@ -80,7 +88,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
   void _incrementCounter() {
     setState(() {
-      _counter++;
+      _counter++; // increase number
     });
   }
 
@@ -97,6 +105,8 @@ class _MyHomePageState extends State<MyHomePage> {
       setState(() {
         _firestoreStatus = 'Firestore test failed ❌';
       });
+
+      // print error
       debugPrint('Firestore error: $e');
     }
   }
@@ -116,13 +126,19 @@ class _MyHomePageState extends State<MyHomePage> {
             const SizedBox(height: 8),
             const Text('Anonymous auth is working 👤'),
             const SizedBox(height: 8),
+
+            // show counter
             Text(
               '$_counter',
               style: Theme.of(context).textTheme.headlineMedium,
             ),
+
             const SizedBox(height: 16),
             Text(_firestoreStatus),
+
             const SizedBox(height: 16),
+
+            // test button (debug only)
             if (kDebugMode)
               ElevatedButton(
                 onPressed: _runDebugFirestoreTest,

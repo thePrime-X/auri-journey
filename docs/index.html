@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Auri's Journey — First 6 Screens</title>
+<title>Auri's Journey — Full Architecture</title>
 <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700;900&family=Exo+2:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
 /* AGGRESSIVELY HIDE SCROLLBARS GLOBALLY */
@@ -20,9 +20,9 @@
   --r8:8px;--r12:12px;--r16:16px;--r24:24px;
 }
 body{background:#04060D;font-family:'Exo 2',sans-serif;min-height:100vh;padding:28px 16px 48px;display:flex;flex-direction:column;align-items:center}
-#app-title{font-family:'Orbitron',monospace;color:var(--cyan);font-size:20px;letter-spacing:3px;margin-bottom:4px}
-#app-sub{font-size:11px;color:var(--t3);letter-spacing:1.5px;margin-bottom:24px}
-.nav-strip{display:flex;flex-wrap:wrap;gap:6px;justify-content:center;margin-bottom:28px;max-width:900px}
+#app-title{font-family:'Orbitron',monospace;color:var(--cyan);font-size:20px;letter-spacing:3px;margin-bottom:4px;text-align:center;}
+#app-sub{font-size:11px;color:var(--t3);letter-spacing:1.5px;margin-bottom:24px;text-align:center;}
+.nav-strip{display:flex;gap:6px;justify-content:center;margin-bottom:28px;max-width:900px;flex-wrap:wrap;padding:0 16px;}
 .tab{padding:6px 13px;border-radius:6px;border:1px solid var(--bdr2);background:var(--bg2);color:var(--t3);font-size:11px;font-weight:600;cursor:pointer;letter-spacing:.4px;transition:all .15s}
 .tab:hover{border-color:var(--cyan);color:var(--cyan)}
 .tab.on{background:var(--cyan);color:#04060D;border-color:var(--cyan)}
@@ -49,6 +49,22 @@ body{background:#04060D;font-family:'Exo 2',sans-serif;min-height:100vh;padding:
 .btn-pu{background:linear-gradient(135deg,var(--purple),var(--purple2));color:#E8EAE6}
 .btn-s{background:transparent;color:var(--t2);border:1.5px solid var(--bdr2)}
 
+/* Modals & Overlays */
+.modal-overlay { position:absolute; inset:0; background:rgba(7,11,20,0.7); backdrop-filter:blur(6px); z-index:100; display:flex; flex-direction:column; align-items:center; justify-content:center; padding:20px; }
+.modal-box { background:var(--bg2); border:1px solid var(--bdr2); border-radius:var(--r16); width:100%; padding:20px; box-shadow:0 20px 40px rgba(0,0,0,0.5); }
+.spinner { width:44px; height:44px; border:3px solid rgba(0,212,255,0.1); border-top-color:var(--cyan); border-radius:50%; animation:spin 1s linear infinite; margin-bottom:20px; }
+@keyframes spin { 100% { transform:rotate(360deg); } }
+
+/* Toggles */
+.toggle { width:42px; height:24px; background:var(--bg4); border-radius:12px; position:relative; cursor:pointer; border:1px solid var(--bdr); transition:0.3s; }
+.toggle.on { background:var(--green); border-color:var(--green); }
+.toggle .knob { width:18px; height:18px; background:var(--t2); border-radius:50%; position:absolute; top:2px; left:2px; transition:0.3s; }
+.toggle.on .knob { transform:translateX(18px); background:#04060D; }
+
+/* Bottom Sheet (Echo Expansion) */
+.echo-sheet { position:absolute; bottom:0; left:0; right:0; background:linear-gradient(180deg, var(--bg4), var(--bg2)); border-top:1.5px solid var(--cyan); border-radius:24px 24px 0 0; padding:20px 16px 30px; z-index:100; box-shadow:0 -10px 40px rgba(0,212,255,0.15); animation:slideUp 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+@keyframes slideUp { 0% { transform:translateY(100%); } 100% { transform:translateY(0); } }
+
 .auth-shell{flex:1;display:flex;flex-direction:column;align-items:center;padding:20px 20px 16px;position:relative;overflow:hidden}
 .auth-shell::before{content:'';position:absolute;top:-40px;left:50%;transform:translateX(-50%);width:220px;height:220px;background:radial-gradient(circle,rgba(0,212,255,.05) 0%,transparent 70%);pointer-events:none}
 .logo-box{width:80px;height:80px;background:radial-gradient(circle at 38% 32%,#0A3D5C,#030C18);border-radius:18px;border:1.5px solid rgba(0,212,255,.28);display:flex;align-items:center;justify-content:center;margin-bottom:8px;position:relative;flex-shrink:0}
@@ -70,7 +86,7 @@ body{background:#04060D;font-family:'Exo 2',sans-serif;min-height:100vh;padding:
 .auth-alt a{color:var(--cyan);font-weight:700;text-decoration:none}
 .auth-alt a.pa{color:var(--purple)}
 
-/* --- MENU SCREEN REVISED --- */
+/* --- MENU SCREEN --- */
 .menu-shell{flex:1;display:flex;flex-direction:column;padding-bottom:20px}
 .hbhdr{padding:16px 16px 14px;display:flex;justify-content:space-between;align-items:flex-start}
 .hbtitle{font-family:'Orbitron',monospace;font-size:10px;color:var(--cyan);letter-spacing:1.5px;margin-bottom:2px}
@@ -91,19 +107,10 @@ body{background:#04060D;font-family:'Exo 2',sans-serif;min-height:100vh;padding:
 .snum{font-family:'Orbitron',monospace;font-size:18px;font-weight:700;margin-bottom:2px}
 .slbl{font-size:9px;color:var(--t3);letter-spacing:.4px}
 .mt{font-size:14px;font-weight:700;color:var(--t1);margin-bottom:3px}.ms{font-size:11px;color:var(--t2);margin-bottom:4px;line-height:1.4}.mt.g{color:var(--t3)}.ms.g{color:var(--t4)}
+.hmap-scroll { width: 100%; overflow-x: auto; scroll-behavior: smooth; padding: 8px 0; -webkit-mask-image: linear-gradient(90deg, transparent 0%, #000 5%, #000 95%, transparent 100%); mask-image: linear-gradient(90deg, transparent 0%, #000 5%, #000 95%, transparent 100%); }
 
-/* HORIZONTAL SCROLL MAP CLASSES */
-.hmap-scroll {
-  width: 100%;
-  overflow-x: auto;
-  scroll-behavior: smooth;
-  padding: 8px 0;
-  -webkit-mask-image: linear-gradient(90deg, transparent 0%, #000 5%, #000 95%, transparent 100%);
-  mask-image: linear-gradient(90deg, transparent 0%, #000 5%, #000 95%, transparent 100%);
-}
-
-/* --- GAME SCREEN UPDATES --- */
-.ghdr{padding:12px 16px 8px}.ghdr-r1{display:flex;align-items:center;gap:10px;margin-bottom:3px}.ghdr-r2{display:flex;align-items:center;padding-left:40px}
+/* --- GAME SCREEN --- */
+.ghdr{padding:12px 16px 8px}.ghdr-r1{display:flex;align-items:center;gap:10px;margin-bottom:3px}.ghdr-r2{display:flex;align-items:center;justify-content:space-between;padding-left:40px}
 .back{width:30px;height:30px;border-radius:var(--r8);background:var(--bg3);border:1px solid var(--bdr);display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all 0.15s;cursor:pointer;}
 .back:hover{background:var(--bdr2);color:var(--t1);}
 .back:active{transform:scale(0.9);}
@@ -121,6 +128,7 @@ body{background:#04060D;font-family:'Exo 2',sans-serif;min-height:100vh;padding:
 .cmds{padding:0 14px;margin-bottom:18px}
 .clbl{font-size:11px;color:rgba(0,212,255,0.7);font-weight:800;letter-spacing:1px;margin-bottom:10px}
 .crow { display:flex; gap:14px; overflow-x:auto; padding-bottom:8px; scrollbar-width:none; -ms-overflow-style:none; }
+.crow::-webkit-scrollbar { display:none; }
 .cmd-btn { flex-shrink:0; width:54px; height:54px; border-radius:14px; display:flex; align-items:center; justify-content:center; cursor:pointer; transition:all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
 .cmd-btn:hover { transform: translateY(-3px); box-shadow: 0 6px 12px rgba(0,0,0,0.4); border-color:currentColor; }
 .cmd-btn:active { transform:scale(0.94) translateY(0); box-shadow:none; }
@@ -138,6 +146,7 @@ body{background:#04060D;font-family:'Exo 2',sans-serif;min-height:100vh;padding:
 .q-scroll-wrap { position:relative; width:100%; overflow:hidden; border-radius:10px; }
 .q-scroll-wrap::after { content:''; position:absolute; right:0; top:0; bottom:0; width:36px; background:linear-gradient(to right, transparent, rgba(17,24,39,0.85) 90%); pointer-events:none; }
 .q-list { display:flex; gap:12px; overflow-x:auto; scrollbar-width:none; padding:2px 0 6px 0; }
+.q-list::-webkit-scrollbar { display:none; }
 .cmd-btn.sm { width:40px; height:40px; border-radius:10px; border-width:1.5px; }
 .cmd-btn.sm svg { width:18px; height:18px; stroke-width:2.5; }
 .cmd-add { border: 1.5px dashed rgba(84,96,112,0.3); background: transparent; color: rgba(84,96,112,0.5); box-shadow: none !important; }
@@ -151,56 +160,39 @@ body{background:#04060D;font-family:'Exo 2',sans-serif;min-height:100vh;padding:
 .exit:active{transform:scale(0.98);}
 
 .echo{margin:0 14px 14px;background:var(--bg3);border:1px solid var(--bdr2);border-left:2.5px solid var(--cyan);border-radius:var(--r8);padding:12px 14px;}
-.echt{font-size:8px;color:rgba(0,212,255,0.8);font-weight:700;letter-spacing:1.5px;margin-bottom:6px;}
+.echt{font-size:8px;color:rgba(0,212,255,0.8);font-weight:700;letter-spacing:1.5px;}
 .echb{font-size:11px;color:var(--t2);line-height:1.75;}
 
-
-/* --- COMPLETE SCREEN ANIMATIONS & POLISH --- */
+/* --- COMPLETE & PROFILE --- */
 @keyframes compPop { 0% { transform:scale(0.7); opacity:0; } 60% { transform:scale(1.05); opacity:1; } 100% { transform:scale(1); opacity:1; } }
 @keyframes compFadeUp { 0% { transform:translateY(10px); opacity:0; } 100% { transform:translateY(0); opacity:1; } }
 @keyframes compFillXp { 0% { width:30%; } 100% { width:74%; } }
 @keyframes pulseXpReward { 0% { box-shadow: 0 0 0px rgba(245,158,11,0); } 50% { box-shadow: 0 0 15px rgba(245,158,11,0.4); } 100% { box-shadow: 0 0 0px rgba(245,158,11,0); } }
-
 .comph{padding:12px 16px;display:flex;justify-content:space-between;align-items:flex-start}.sring{width:88px;height:88px;border-radius:50%;background:radial-gradient(circle,rgba(16,185,129,.12),transparent 72%);border:1.5px solid rgba(16,185,129,.35);display:flex;align-items:center;justify-content:center;margin:0 auto 20px; animation:compPop 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275) both;}.scheck{width:44px;height:44px;border-radius:50%;background:rgba(16,185,129,.15);border:1.5px solid var(--green);display:flex;align-items:center;justify-content:center}
 .ctitle{font-family:'Orbitron',monospace;font-size:17px;font-weight:600;color:var(--t1);text-align:center;margin-bottom:6px; animation:compFadeUp 0.5s ease-out 0.1s both;}.csub{font-size:12px;color:var(--t2);text-align:center;margin-bottom:18px; animation:compFadeUp 0.5s ease-out 0.2s both;}
 .xpr{display:inline-flex;align-items:center;gap:5px;background:var(--amber-g);border:1px solid var(--amber-b);padding:6px 16px;border-radius:20px;font-size:14px;font-weight:700;color:var(--amber); animation:compPop 0.5s ease-out 0.3s both, pulseXpReward 2s infinite 1s;}
-
 .mcard{display:flex;background:var(--bg3);border:1px solid var(--bdr);border-radius:var(--r16);margin:0 14px 14px;overflow:hidden; animation:compFadeUp 0.5s ease-out 0.4s both;}.mb{flex:1;padding:14px;text-align:center}.mdiv{width:1px;background:var(--bdr)}
 .mpl{font-size:9px;color:var(--t2);font-weight:700;letter-spacing:1px;margin-bottom:6px;}
 .mn{font-family:'Orbitron',monospace;font-size:24px;font-weight:700;color:var(--t1);margin-bottom:2px}.ml{font-size:9px;color:var(--t3);letter-spacing:.5px;margin-bottom:6px;}
 .mbadge{font-size:10px;font-weight:700;padding:3px 10px;border-radius:20px;display:inline-block; letter-spacing:0.5px;}
 .bg{background:rgba(16,185,129,.14);color:#34D399; box-shadow:0 0 10px rgba(16,185,129,0.1);}.bc{background:rgba(0,212,255,.14);color:var(--cyan); box-shadow:0 0 10px rgba(0,212,255,0.1);}
-
 .conccard{margin:0 14px 14px;background:rgba(0,212,255,.04);border:1px solid rgba(0,212,255,.18);border-radius:var(--r16);padding:14px 16px; animation:compFadeUp 0.5s ease-out 0.5s both;}.conclbl{font-size:8px;color:var(--cyan);font-weight:700;letter-spacing:1.5px;margin-bottom:6px}.conct{font-size:15px;font-weight:700;color:var(--t1);margin-bottom:4px}.concd{font-size:11px;color:var(--t2);line-height:1.65;}
-
 .comp-xp-wrap { margin:0 14px 18px; animation:compFadeUp 0.5s ease-out 0.6s both; }
 .xpbar-fill.anim { animation:compFillXp 1s ease-out forwards 0.8s; }
-
 .comp-actions { padding:0 14px 14px; display:flex; flex-direction:column; gap:10px; animation:compFadeUp 0.5s ease-out 0.7s both; }
 .btn-replay { background:rgba(255,255,255,0.03); color:var(--t1); border:1.5px solid var(--bdr2); transition:all 0.15s; }
 .btn-replay:hover { background:rgba(255,255,255,0.06); }
 .btn-replay:active { transform:scale(0.98); }
 
-
-/* --- PROFILE SCREEN 10/10 UPGRADES --- */
-@keyframes pulseAvatar { 
-  0% { box-shadow: 0 0 0 0 rgba(124,94,255,0.4); } 
-  70% { box-shadow: 0 0 0 15px rgba(124,94,255,0); } 
-  100% { box-shadow: 0 0 0 0 rgba(124,94,255,0); } 
-}
-
+@keyframes pulseAvatar { 0% { box-shadow: 0 0 0 0 rgba(124,94,255,0.4); } 70% { box-shadow: 0 0 0 15px rgba(124,94,255,0); } 100% { box-shadow: 0 0 0 0 rgba(124,94,255,0); } }
 .prohero { padding: 16px 16px 12px; display: flex; flex-direction: column; align-items: center; position:relative; }
 .avring { border-radius: 50%; background: var(--bg3); border: 2.5px solid var(--purple); display: flex; align-items: center; justify-content: center; position: relative; flex-shrink: 0; transition: transform 0.3s; }
 .avring:hover { transform: scale(1.05); }
 .odot { border-radius: 50%; background: var(--green); position: absolute; }
-
-/* 2x2 Detailed Stats Grid - Premium Polish */
 .prostats { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; margin: 0 14px 20px; }
 .psc { background: linear-gradient(145deg, rgba(45,58,80,0.4), rgba(17,24,39,0.5)); border: 1px solid rgba(84,96,112,0.4); border-radius: var(--r12); padding: 14px 12px; text-align: center; box-shadow: inset 0 2px 10px rgba(255,255,255,0.04), 0 4px 12px rgba(0,0,0,0.2); }
 .psn { font-family: 'Orbitron', monospace; font-size: 25px; font-weight: 700; margin-bottom: 2px; }
 .psl { font-size: 9px; color: var(--t2); letter-spacing: 0.5px; font-weight: 600; }
-
-/* Thicker, Glowing Skill Bars */
 .procont { padding: 0 14px 20px; }
 .sectitle { font-size: 9px; font-weight: 700; color: var(--cyan); letter-spacing: 1.5px; margin-bottom: 12px; display: flex; align-items: center; gap: 8px; }
 .sectitle::after { content: ''; flex: 1; height: 1px; background: rgba(84,96,112,0.3); }
@@ -209,8 +201,6 @@ body{background:#04060D;font-family:'Exo 2',sans-serif;min-height:100vh;padding:
 .sktrack { flex: 1; height: 10px; background: rgba(255,255,255,0.04); border-radius: 5px; box-shadow: inset 0 1px 3px rgba(0,0,0,0.5); overflow: hidden; }
 .skfill { height: 100%; border-radius: 5px; }
 .skpct { font-size: 10px; color: var(--t2); width: 28px; text-align: right; flex-shrink: 0; font-weight: 700; }
-
-/* Achievements Row */
 .ach-wrap { position: relative; margin: 0 14px 18px; }
 .ach-wrap::after { content: ''; position: absolute; right: 0; top: 0; bottom: 0; width: 30px; background: linear-gradient(to right, transparent, var(--bg) 90%); pointer-events: none; }
 .ach-scroll { display: flex; gap: 12px; overflow-x: auto; padding-bottom: 8px; scrollbar-width: none; }
@@ -218,17 +208,14 @@ body{background:#04060D;font-family:'Exo 2',sans-serif;min-height:100vh;padding:
 .ach-box { width: 56px; height: 56px; border-radius: 14px; margin-bottom: 8px; display: flex; align-items: center; justify-content: center; font-size: 22px; transition: transform 0.2s; cursor: pointer; }
 .ach-box:hover { transform: translateY(-3px); }
 .ach-title { font-size: 8.5px; color: var(--t2); font-weight: 600; line-height: 1.3; }
-
-/* Premium CTA Button */
 .pro-btn { font-size:13px; font-weight:700; letter-spacing:0.5px; transition:all 0.15s; background:rgba(255,255,255,0.06); border:1.5px solid rgba(255,255,255,0.22); color:var(--t1); box-shadow:0 4px 12px rgba(0,0,0,0.25); border-radius: var(--r12); width: 100%; padding: 13px; cursor: pointer;}
 .pro-btn:hover { background:rgba(255,255,255,0.1); border-color:rgba(255,255,255,0.35); box-shadow:0 6px 16px rgba(0,0,0,0.3), 0 0 12px rgba(255,255,255,0.05); transform:translateY(-1px); }
 .pro-btn:active { transform:scale(0.98) translateY(0); }
-
 </style>
 </head>
 <body>
 <div id="app-title">AURI'S JOURNEY</div>
-<p id="app-sub">UI MOCKUP DESIGN</p>
+<p id="app-sub">FULL APP ARCHITECTURE (15 SCREENS)</p>
 <div class="nav-strip" id="tabs"></div>
 <div id="grid"></div>
 <script>
@@ -238,161 +225,102 @@ const cpu = (c1,c2) => `<svg width="44" height="44" viewBox="0 0 52 52" fill="no
 const emailIcon = `<path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/>`;
 const lockIcon = `<rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/>`;
 
-function S_SignIn(){return `
-<div class="auth-shell">
-  <div class="logo-box">${cpu('#051929','#00D4FF')}</div>
-  <p class="app-name">AURI'S JOURNEY</p>
-  <div class="af">
-    <div class="at">Sign In</div>
-    <div class="as">Welcome back, Commander</div>
-    <div class="iw"><svg class="ii" viewBox="0 0 24 24">${emailIcon}</svg><input class="ifield" type="email" placeholder="Email Address"></div>
-    <div class="iw"><svg class="ii" viewBox="0 0 24 24">${lockIcon}</svg><input class="ifield" type="password" placeholder="Password"></div>
-    <div class="forgot"><a href="#">Forgot password?</a></div>
-    <button class="btn-p">Sign In →</button>
-    <div class="auth-alt">Don't have an account? <a href="#">Sign up</a></div>
+function S_Onboarding(){return `
+<div style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:24px;text-align:center;position:relative;">
+  <div style="flex:1;display:flex;flex-direction:column;justify-content:center;align-items:center;width:100%;">
+    <div style="width:120px;height:120px;background:radial-gradient(circle, rgba(0,212,255,0.15), transparent 70%);border-radius:50%;display:flex;align-items:center;justify-content:center;margin-bottom:30px;position:relative;">
+      <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="var(--cyan)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="filter:drop-shadow(0 0 8px var(--cyan));"><polygon points="12 2 22 8.5 22 15.5 12 22 2 15.5 2 8.5 12 2"></polygon><line x1="12" y1="22" x2="12" y2="12"></line><line x1="22" y1="8.5" x2="12" y2="12"></line><line x1="2" y1="8.5" x2="12" y2="12"></line></svg>
+      <div style="position:absolute;inset:0;border:1px dashed var(--cyan);border-radius:50%;animation:spin 10s linear infinite;opacity:0.3;"></div>
+    </div>
+    <h1 style="font-family:'Orbitron',monospace;color:var(--t1);font-size:22px;margin-bottom:12px;letter-spacing:1px;">AURI'S JOURNEY</h1>
+    <h2 style="font-size:14px;color:var(--cyan);font-weight:700;margin-bottom:16px;">Master Logic. Save the Grid.</h2>
+    <p style="font-size:12px;color:var(--t2);line-height:1.6;max-width:220px;margin-bottom:40px;">Learn coding concepts like loops and sequences through interactive puzzles. Echo will guide you when you're stuck.</p>
+  </div>
+  <div style="width:100%;">
+    <div style="display:flex;justify-content:center;gap:6px;margin-bottom:24px;">
+      <div style="width:16px;height:4px;background:var(--cyan);border-radius:2px;box-shadow:0 0 8px rgba(0,212,255,0.5);"></div>
+      <div style="width:4px;height:4px;background:var(--t4);border-radius:2px;"></div>
+      <div style="width:4px;height:4px;background:var(--t4);border-radius:2px;"></div>
+    </div>
+    <button class="btn-p">Next →</button>
   </div>
 </div>`;}
 
-function S_SignUp(){return `
-<div class="auth-shell">
-  <div class="logo-box logo-box-p">${cpu('#0F0529','#7C5EFF')}</div>
-  <p class="app-name" style="color:var(--purple);opacity:.7">AURI'S JOURNEY</p>
-  <div class="af">
-    <div class="kicker">CREATE ACCOUNT</div>
-    <div class="at">Sign Up</div>
-    <div class="as">Join the mission, Commander</div>
-    <div class="iw"><svg class="ii" viewBox="0 0 24 24">${emailIcon}</svg><input class="ifield" type="email" placeholder="Email Address"></div>
-    <div class="iw"><svg class="ii" viewBox="0 0 24 24">${lockIcon}</svg><input class="ifield" type="password" placeholder="Password"></div>
-    <div class="iw" style="margin-bottom:16px"><svg class="ii" viewBox="0 0 24 24">${lockIcon}</svg><input class="ifield" type="password" placeholder="Confirm Password"></div>
-    <button class="btn-p btn-pu">Start Adventure →</button>
-    <div class="auth-alt">Already have an account? <a href="#" class="pa">Sign in</a></div>
+function S_Onboarding2(){return `
+<div style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:24px;text-align:center;position:relative;">
+  <div style="flex:1;display:flex;flex-direction:column;justify-content:center;align-items:center;width:100%;">
+    <div style="width:120px;height:120px;background:radial-gradient(circle, rgba(124,94,255,0.15), transparent 70%);border-radius:50%;display:flex;align-items:center;justify-content:center;margin-bottom:30px;position:relative;">
+      <svg width="60" height="60" viewBox="0 0 24 24" fill="none" stroke="var(--purple)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="filter:drop-shadow(0 0 8px var(--purple));"><rect x="4" y="4" width="16" height="5" rx="1"/><rect x="4" y="14" width="12" height="5" rx="1"/><path d="M8 9v5"/></svg>
+      <div style="position:absolute;inset:0;border:1px dashed var(--purple);border-radius:50%;animation:spin 10s linear infinite reverse;opacity:0.3;"></div>
+    </div>
+    <h1 style="font-family:'Orbitron',monospace;color:var(--t1);font-size:20px;margin-bottom:12px;letter-spacing:1px;text-transform:uppercase;">Build Logic</h1>
+    <h2 style="font-size:14px;color:var(--purple);font-weight:700;margin-bottom:16px;">Queue your commands.</h2>
+    <p style="font-size:12px;color:var(--t2);line-height:1.6;max-width:220px;margin-bottom:40px;">Select directional blocks, loops, and conditions to navigate the execution grid safely to the target.</p>
   </div>
+  <div style="width:100%;">
+    <div style="display:flex;justify-content:center;gap:6px;margin-bottom:24px;">
+      <div style="width:4px;height:4px;background:var(--t4);border-radius:2px;"></div>
+      <div style="width:16px;height:4px;background:var(--purple);border-radius:2px;box-shadow:0 0 8px rgba(124,94,255,0.5);"></div>
+      <div style="width:4px;height:4px;background:var(--t4);border-radius:2px;"></div>
+    </div>
+    <button class="btn-p btn-pu">Next →</button>
+  </div>
+</div>`;}
+
+function S_Onboarding3(){return `
+<div style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:24px;text-align:center;position:relative;">
+  <div style="flex:1;display:flex;flex-direction:column;justify-content:center;align-items:center;width:100%;">
+    <div style="width:120px;height:120px;background:radial-gradient(circle, rgba(245,158,11,0.15), transparent 70%);border-radius:50%;display:flex;align-items:center;justify-content:center;margin-bottom:30px;position:relative;">
+      <svg width="60" height="60" viewBox="0 0 24 24" fill="none" stroke="var(--amber)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="filter:drop-shadow(0 0 8px var(--amber));"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon></svg>
+      <div style="position:absolute;inset:0;border:1px dashed var(--amber);border-radius:50%;animation:spin 10s linear infinite;opacity:0.3;"></div>
+    </div>
+    <h1 style="font-family:'Orbitron',monospace;color:var(--t1);font-size:20px;margin-bottom:12px;letter-spacing:1px;text-transform:uppercase;">Level Up</h1>
+    <h2 style="font-size:14px;color:var(--amber);font-weight:700;margin-bottom:16px;">Track your progression.</h2>
+    <p style="font-size:12px;color:var(--t2);line-height:1.6;max-width:220px;margin-bottom:40px;">Earn XP for efficiency, master new programming concepts, and unlock new sectors on the World Map.</p>
+  </div>
+  <div style="width:100%;">
+    <div style="display:flex;justify-content:center;gap:6px;margin-bottom:24px;">
+      <div style="width:4px;height:4px;background:var(--t4);border-radius:2px;"></div>
+      <div style="width:4px;height:4px;background:var(--t4);border-radius:2px;"></div>
+      <div style="width:16px;height:4px;background:var(--amber);border-radius:2px;box-shadow:0 0 8px rgba(245,158,11,0.5);"></div>
+    </div>
+    <button class="btn-p" style="background:linear-gradient(135deg, var(--amber), #D97706);color:#04060D;">Start Mission →</button>
+  </div>
+</div>`;}
+
+function S_SignIn(){return `
+<div class="auth-shell"><div class="logo-box">${cpu('#051929','#00D4FF')}</div><p class="app-name">AURI'S JOURNEY</p><div class="af"><div class="at">Sign In</div><div class="as">Welcome back, Commander</div><div class="iw"><svg class="ii" viewBox="0 0 24 24">${emailIcon}</svg><input class="ifield" type="email" placeholder="Email Address"></div><div class="iw"><svg class="ii" viewBox="0 0 24 24">${lockIcon}</svg><input class="ifield" type="password" placeholder="Password"></div><div class="forgot"><a href="#">Forgot password?</a></div><button class="btn-p">Sign In →</button><div class="auth-alt">Don't have an account? <a href="#">Sign up</a></div></div></div>`;}
+
+function S_SignUp(){return `
+<div class="auth-shell"><div class="logo-box logo-box-p">${cpu('#0F0529','#7C5EFF')}</div><p class="app-name" style="color:var(--purple);opacity:.7">AURI'S JOURNEY</p><div class="af"><div class="kicker">CREATE ACCOUNT</div><div class="at">Sign Up</div><div class="as">Join the mission, Commander</div><div class="iw"><svg class="ii" viewBox="0 0 24 24">${emailIcon}</svg><input class="ifield" type="email" placeholder="Email Address"></div><div class="iw"><svg class="ii" viewBox="0 0 24 24">${lockIcon}</svg><input class="ifield" type="password" placeholder="Password"></div><div class="iw" style="margin-bottom:16px"><svg class="ii" viewBox="0 0 24 24">${lockIcon}</svg><input class="ifield" type="password" placeholder="Confirm Password"></div><button class="btn-p btn-pu">Start Adventure →</button><div class="auth-alt">Already have an account? <a href="#" class="pa">Sign in</a></div></div></div>`;}
+
+function S_Loading(){return `
+<div style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:24px;">
+  <div class="spinner"></div>
+  <div style="font-family:'Orbitron',monospace;font-size:12px;color:var(--cyan);letter-spacing:2px;margin-bottom:8px;">CONNECTING TO ECHO</div>
+  <div style="font-size:11px;color:var(--t3);">Syncing progress data...</div>
 </div>`;}
 
 function S_Menu(){return `
 <div class="menu-shell">
   <div class="hbhdr">
     <div><div class="hbtitle">MAIN MENU</div><div class="hbgreet">Ready to continue, Commander?</div></div>
-    ${xpBadge('2,480')}
+    <div style="display:flex;align-items:center;gap:12px;">
+      ${xpBadge('2,480')}
+      <div style="width:28px;height:28px;border-radius:8px;background:var(--bg3);border:1px solid var(--bdr);display:flex;align-items:center;justify-content:center;color:var(--t2);cursor:pointer;"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg></div>
+    </div>
   </div>
-  
-  <div class="chall">
-    <div class="challt"><span class="challlbl">DAILY CHALLENGE</span><span class="challpill">Ready</span></div>
-    <div class="challname">Sort array in 3 moves</div>
-    <div class="challreset">⟳ Resets in 6h 42m</div>
-  </div>
-
+  <div class="chall"><div class="challt"><span class="challlbl">DAILY CHALLENGE</span><span class="challpill">Ready</span></div><div class="challname">Sort array in 3 moves</div><div class="challreset">⟳ Resets in 6h 42m</div></div>
   <div class="menu-grid">
-    <!-- PRIMARY: MISSION -->
-    <div class="menu-card" style="border:1.5px solid rgba(0,212,255,0.4); box-shadow:0 0 20px rgba(0,212,255,0.1); background:linear-gradient(180deg, rgba(0,212,255,0.05), var(--bg3)); padding-bottom:16px;">
-      <div class="menu-card-top">
-        <div><div class="menu-card-title" style="color:var(--cyan); font-size:12px;">CURRENT MISSION</div><div class="menu-card-sub">Sector 2 · Task 2</div></div>
-        <div class="tag tp" style="font-size:10px;">Loop</div>
-      </div>
-      <div style="margin-bottom:16px;">
-        <div class="mt" style="font-size:16px;">Debug the broken loop</div>
-        <div class="ms" style="font-size:12px;">Fix the logic gate sequence to restore power to the main array.</div>
-      </div>
-      <button class="btn-p" style="padding:12px; font-size:13px; display:flex; justify-content:center; align-items:center; gap:6px;">▶ CONTINUE MISSION</button>
-    </div>
-    
-    <!-- SECONDARY: WORLD MAP (HORIZONTAL SCROLL) -->
-    <div class="menu-card" style="padding:0; overflow:hidden; background:radial-gradient(circle at 50% 50%, var(--bg4), var(--bg3)); border:1px solid rgba(84,96,112,0.3);">
-      <div style="padding:14px 14px 0;">
-        <div style="display:flex; justify-content:space-between; align-items:flex-start;">
-          <div><div class="menu-card-title">CIRCUIT JOURNEY</div><div class="menu-card-sub" style="color:var(--t2);">Explore sectors</div></div>
-          <div class="tag tp" style="background:rgba(124,94,255,0.1);border-color:rgba(124,94,255,0.3);color:var(--purple);">Sector 2</div>
-        </div>
-      </div>
-
-      <div class="hmap-scroll">
-        <svg width="480" height="130" viewBox="0 0 480 130" style="display:block; margin-top:5px;">
-           <defs>
-            <filter id="glow-cyan" x="-50%" y="-50%" width="200%" height="200%">
-              <feGaussianBlur stdDeviation="4" result="blur" />
-              <feComposite in="SourceGraphic" in2="blur" operator="over"/>
-            </filter>
-            <filter id="glow-purple" x="-50%" y="-50%" width="200%" height="200%">
-              <feGaussianBlur stdDeviation="5" result="blur" />
-              <feComposite in="SourceGraphic" in2="blur" operator="over"/>
-            </filter>
-          </defs>
-
-          <!-- Background Circuit Lines -->
-          <path d="M 0 30 L 480 30 M 0 100 L 480 100" stroke="rgba(255,255,255,0.03)" stroke-width="1"/>
-
-          <!-- Paths -->
-          <path d="M 40 65 Q 90 25 140 65" fill="none" stroke="#00D4FF" stroke-width="3" filter="url(#glow-cyan)"/>
-          <path d="M 140 65 Q 190 105 240 65" fill="none" stroke="#B794F4" stroke-width="2" stroke-dasharray="6,4"/>
-          <path d="M 240 65 Q 290 25 340 65" fill="none" stroke="#546070" stroke-width="1.5" stroke-dasharray="4,4" opacity="0.5"/>
-          <path d="M 340 65 Q 390 105 440 65" fill="none" stroke="#546070" stroke-width="1.5" stroke-dasharray="4,4" opacity="0.3"/>
-
-          <!-- S1: Completed -->
-          <circle cx="40" cy="65" r="10" fill="#0D1424" stroke="#00D4FF" stroke-width="2" filter="url(#glow-cyan)"/>
-          <polyline points="36,65 39,68 45,61" fill="none" stroke="#00D4FF" stroke-width="2"/>
-          <text x="40" y="93" font-family="Exo 2, sans-serif" font-size="9" fill="#00D4FF" font-weight="600" text-anchor="middle" opacity="0.8">Sequence</text>
-
-          <!-- S2: Active -->
-          <circle cx="140" cy="65" r="20" fill="#1D0A40" stroke="#B794F4" stroke-width="2" filter="url(#glow-purple)"/>
-          <circle cx="140" cy="65" r="12" fill="none" stroke="#B794F4" stroke-width="1" stroke-dasharray="2,2"/>
-          <circle cx="140" cy="65" r="4" fill="#FFFFFF" filter="url(#glow-purple)"/>
-          <text x="140" y="33" font-family="Orbitron, monospace" font-size="11" font-weight="700" fill="#FFFFFF" text-anchor="middle" filter="url(#glow-purple)">CONDITIONAL FOREST</text>
-
-          <!-- S3: Locked -->
-          <circle cx="240" cy="65" r="8" fill="#0D1424" stroke="#546070" stroke-width="1.5" opacity="0.6"/>
-          <rect x="237" y="62" width="6" height="5" rx="1" fill="#546070" opacity="0.6"/>
-          <path d="M 238 62 V 60 A 2 2 0 0 1 242 60 V 62" fill="none" stroke="#546070" stroke-width="1" opacity="0.6"/>
-          <text x="240" y="89" font-family="Exo 2, sans-serif" font-size="9" fill="#546070" font-weight="500" text-anchor="middle">Loops</text>
-
-          <!-- S4: Locked -->
-          <circle cx="340" cy="65" r="8" fill="#0D1424" stroke="#546070" stroke-width="1.5" opacity="0.4"/>
-          <rect x="337" y="62" width="6" height="5" rx="1" fill="#546070" opacity="0.4"/>
-          <path d="M 338 62 V 60 A 2 2 0 0 1 342 60 V 62" fill="none" stroke="#546070" stroke-width="1" opacity="0.4"/>
-          <text x="340" y="89" font-family="Exo 2, sans-serif" font-size="9" fill="#546070" font-weight="500" text-anchor="middle" opacity="0.6">Functions</text>
-
-          <!-- S5: Locked -->
-          <circle cx="440" cy="65" r="8" fill="#0D1424" stroke="#546070" stroke-width="1.5" opacity="0.2"/>
-          <rect x="437" y="62" width="6" height="5" rx="1" fill="#546070" opacity="0.2"/>
-          <path d="M 438 62 V 60 A 2 2 0 0 1 442 60 V 62" fill="none" stroke="#546070" stroke-width="1" opacity="0.2"/>
-          <text x="440" y="89" font-family="Exo 2, sans-serif" font-size="9" fill="#546070" font-weight="500" text-anchor="middle" opacity="0.4">Algorithms</text>
-        </svg>
-      </div>
-
-      <div style="padding:12px 14px; background:rgba(7,11,20,0.8); border-top:1px solid rgba(84,96,112,0.2); display:flex; align-items:center; justify-content:space-between; backdrop-filter:blur(4px);">
-        <div>
-          <div style="font-size:8px; color:var(--cyan); letter-spacing:1px; font-weight:700; margin-bottom:2px;">CURRENT LOCATION</div>
-          <div style="font-size:12px; font-weight:700; color:var(--t1);">Conditional Forest</div>
-        </div>
-        <button class="btn-p" style="width:auto; padding:8px 14px; border-radius:20px; font-size:11px; background:linear-gradient(135deg, rgba(124,94,255,0.8), rgba(8,145,178,0.8)); box-shadow:none;">Continue →</button>
-      </div>
-    </div>
-
-    <!-- TERTIARY: PROGRESS -->
-    <div class="menu-card" style="border-color:transparent; background:rgba(17,24,39,0.5);">
-      <div class="menu-card-top" style="margin-bottom:12px;">
-        <div><div class="menu-card-title">PROGRESS</div></div>
-      </div>
-      <div class="xpbar-wrap" style="margin:0 0 12px 0;">
-        <div class="xpbar-lbl"><span>Level 12</span><span>70%</span></div>
-        <div class="xpbar-track" style="background:rgba(255,255,255,0.05);"><div class="xpbar-fill" style="width:70%"></div></div>
-      </div>
-      <div class="stats2">
-        <div class="scard" style="background:transparent; border-color:rgba(84,96,112,0.3); padding:10px 8px;">
-          <div class="snum" style="font-size:15px; color:var(--amber)">7</div><div class="slbl">DAY STREAK</div>
-        </div>
-        <div class="scard" style="background:transparent; border-color:rgba(84,96,112,0.3); padding:10px 8px;">
-          <div class="snum" style="font-size:15px; color:var(--cyan)">2,480</div><div class="slbl">TOTAL XP</div>
-        </div>
-      </div>
-    </div>
-    
+    <div class="menu-card" style="border:1.5px solid rgba(0,212,255,0.4); box-shadow:0 0 20px rgba(0,212,255,0.1); background:linear-gradient(180deg, rgba(0,212,255,0.05), var(--bg3)); padding-bottom:16px;"><div class="menu-card-top"><div><div class="menu-card-title" style="color:var(--cyan); font-size:12px;">CURRENT MISSION</div><div class="menu-card-sub">Sector 2 · Task 2</div></div><div class="tag tp" style="font-size:10px;">Loop</div></div><div style="margin-bottom:16px;"><div class="mt" style="font-size:16px;">Debug the broken loop</div><div class="ms" style="font-size:12px;">Fix the logic gate sequence to restore power to the main array.</div></div><button class="btn-p" style="padding:12px; font-size:13px; display:flex; justify-content:center; align-items:center; gap:6px;">▶ CONTINUE MISSION</button></div>
+    <div class="menu-card" style="padding:0; overflow:hidden; background:radial-gradient(circle at 50% 50%, var(--bg4), var(--bg3)); border:1px solid rgba(84,96,112,0.3);"><div style="padding:14px 14px 0;"><div style="display:flex; justify-content:space-between; align-items:flex-start;"><div><div class="menu-card-title">CIRCUIT JOURNEY</div><div class="menu-card-sub" style="color:var(--t2);">Explore sectors</div></div><div class="tag tp" style="background:rgba(124,94,255,0.1);border-color:rgba(124,94,255,0.3);color:var(--purple);">Sector 2</div></div></div><div class="hmap-scroll"><svg width="480" height="130" viewBox="0 0 480 130" style="display:block; margin-top:5px;"><defs><filter id="glow-cyan" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="4" result="blur" /><feComposite in="SourceGraphic" in2="blur" operator="over"/></filter><filter id="glow-purple" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="5" result="blur" /><feComposite in="SourceGraphic" in2="blur" operator="over"/></filter></defs><path d="M 0 30 L 480 30 M 0 100 L 480 100" stroke="rgba(255,255,255,0.03)" stroke-width="1"/><path d="M 40 65 Q 90 25 140 65" fill="none" stroke="#00D4FF" stroke-width="3" filter="url(#glow-cyan)"/><path d="M 140 65 Q 190 105 240 65" fill="none" stroke="#B794F4" stroke-width="2" stroke-dasharray="6,4"/><path d="M 240 65 Q 290 25 340 65" fill="none" stroke="#546070" stroke-width="1.5" stroke-dasharray="4,4" opacity="0.5"/><path d="M 340 65 Q 390 105 440 65" fill="none" stroke="#546070" stroke-width="1.5" stroke-dasharray="4,4" opacity="0.3"/><circle cx="40" cy="65" r="10" fill="#0D1424" stroke="#00D4FF" stroke-width="2" filter="url(#glow-cyan)"/><polyline points="36,65 39,68 45,61" fill="none" stroke="#00D4FF" stroke-width="2"/><text x="40" y="93" font-family="Exo 2, sans-serif" font-size="9" fill="#00D4FF" font-weight="600" text-anchor="middle" opacity="0.8">Sequence</text><circle cx="140" cy="65" r="20" fill="#1D0A40" stroke="#B794F4" stroke-width="2" filter="url(#glow-purple)"/><circle cx="140" cy="65" r="12" fill="none" stroke="#B794F4" stroke-width="1" stroke-dasharray="2,2"/><circle cx="140" cy="65" r="4" fill="#FFFFFF" filter="url(#glow-purple)"/><text x="140" y="33" font-family="Orbitron, monospace" font-size="11" font-weight="700" fill="#FFFFFF" text-anchor="middle" filter="url(#glow-purple)">CONDITIONAL FOREST</text><circle cx="240" cy="65" r="8" fill="#0D1424" stroke="#546070" stroke-width="1.5" opacity="0.6"/><rect x="237" y="62" width="6" height="5" rx="1" fill="#546070" opacity="0.6"/><path d="M 238 62 V 60 A 2 2 0 0 1 242 60 V 62" fill="none" stroke="#546070" stroke-width="1" opacity="0.6"/><text x="240" y="89" font-family="Exo 2, sans-serif" font-size="9" fill="#546070" font-weight="500" text-anchor="middle">Loops</text><circle cx="340" cy="65" r="8" fill="#0D1424" stroke="#546070" stroke-width="1.5" opacity="0.4"/><rect x="337" y="62" width="6" height="5" rx="1" fill="#546070" opacity="0.4"/><path d="M 338 62 V 60 A 2 2 0 0 1 342 60 V 62" fill="none" stroke="#546070" stroke-width="1" opacity="0.4"/><text x="340" y="89" font-family="Exo 2, sans-serif" font-size="9" fill="#546070" font-weight="500" text-anchor="middle" opacity="0.6">Functions</text><circle cx="440" cy="65" r="8" fill="#0D1424" stroke="#546070" stroke-width="1.5" opacity="0.2"/><rect x="437" y="62" width="6" height="5" rx="1" fill="#546070" opacity="0.2"/><path d="M 438 62 V 60 A 2 2 0 0 1 442 60 V 62" fill="none" stroke="#546070" stroke-width="1" opacity="0.2"/><text x="440" y="89" font-family="Exo 2, sans-serif" font-size="9" fill="#546070" font-weight="500" text-anchor="middle" opacity="0.4">Algorithms</text></svg></div><div style="padding:12px 14px; background:rgba(7,11,20,0.8); border-top:1px solid rgba(84,96,112,0.2); display:flex; align-items:center; justify-content:space-between; backdrop-filter:blur(4px);"><div><div style="font-size:8px; color:var(--cyan); letter-spacing:1px; font-weight:700; margin-bottom:2px;">CURRENT LOCATION</div><div style="font-size:12px; font-weight:700; color:var(--t1);">Conditional Forest</div></div><button class="btn-p" style="width:auto; padding:8px 14px; border-radius:20px; font-size:11px; background:linear-gradient(135deg, rgba(124,94,255,0.8), rgba(8,145,178,0.8)); box-shadow:none;">Continue →</button></div></div>
+    <div class="menu-card" style="border-color:transparent; background:rgba(17,24,39,0.5);"><div class="menu-card-top" style="margin-bottom:12px;"><div><div class="menu-card-title">PROGRESS</div></div></div><div class="xpbar-wrap" style="margin:0 0 12px 0;"><div class="xpbar-lbl"><span>Level 12</span><span>70%</span></div><div class="xpbar-track" style="background:rgba(255,255,255,0.05);"><div class="xpbar-fill" style="width:70%"></div></div></div><div class="stats2"><div class="scard" style="background:transparent; border-color:rgba(84,96,112,0.3); padding:10px 8px;"><div class="snum" style="font-size:15px; color:var(--amber)">7</div><div class="slbl">DAY STREAK</div></div><div class="scard" style="background:transparent; border-color:rgba(84,96,112,0.3); padding:10px 8px;"><div class="snum" style="font-size:15px; color:var(--cyan)">2,480</div><div class="slbl">TOTAL XP</div></div></div></div>
   </div>
 </div>`;}
 
-function S_Game(){
+const coreGameMarkup = (isTutorial = false) => {
   const cells = Array(25).fill('').map((_,i)=>{
-    const row = Math.floor(i/5);
-    const col = i%5;
+    const row = Math.floor(i/5); const col = i%5;
     const inTrainingZone = row>=1 && row<=3 && col>=1 && col<=3;
     const zoneClass = inTrainingZone ? ' training' : '';
     if(i===12) return `<div class="cell rob${zoneClass}">🤖</div>`;
@@ -400,7 +328,6 @@ function S_Game(){
     if(i===8) return `<div class="cell haz${zoneClass}" style="font-size:11px;font-weight:800;color:var(--red)">✕</div>`;
     return `<div class="cell${zoneClass}"></div>`;
   }).join('');
-
   const arrUp = `<svg viewBox="0 0 24 24"><path d="M12 18V6M6 12l6-6 6 6"/></svg>`;
   const arrLeft = `<svg viewBox="0 0 24 24"><path d="M16 18v-5a4 4 0 0 0-4-4H6m4-4L6 9l4 4"/></svg>`;
   const arrRight = `<svg viewBox="0 0 24 24"><path d="M8 18v-5a4 4 0 0 1 4-4h6m-4-4l4 4-4 4"/></svg>`;
@@ -408,46 +335,125 @@ function S_Game(){
   const iconLoop = `<svg viewBox="0 0 24 24"><path d="M21 12a9 9 0 1 1-9-9c2.5 0 4.8 1 6.5 2.5L21 8M21 3v5h-5"/></svg>`;
 
   return `
-<div style="flex:1;display:flex;flex-direction:column">
-  <div class="ghdr"><div class="ghdr-r1"><div class="back"><svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg></div><div class="stitle">SECTOR 1</div>${xpBadge('2,289')}</div><div class="ghdr-r2"><span class="msub">Mission 1 · Restore the Power Gate</span></div></div>
+  <div class="ghdr"><div class="ghdr-r1"><div class="back"><svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg></div><div class="stitle">SECTOR 1</div>${xpBadge('2,289')}</div><div class="ghdr-r2"><span class="msub">Mission 1 · Restore</span> <div style="width:24px;height:24px;border:1px solid var(--bdr2);border-radius:6px;display:flex;align-items:center;justify-content:center;color:var(--t2);cursor:pointer;margin-left:8px;"><svg width="10" height="10" viewBox="0 0 24 24" fill="currentColor"><rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/></svg></div></div></div>
   <div class="grid-section"><div class="grid-lbl">EXECUTION GRID · 3×3 TRAINING ZONE</div><div class="egrid">${cells}</div></div>
-  
-  <div class="cmds">
-    <div class="clbl">COMMANDS</div>
-    <div class="crow">
-      <div class="cmd-btn cmd-fwd">${arrUp}</div>
-      <div class="cmd-btn cmd-lft">${arrLeft}</div>
-      <div class="cmd-btn cmd-rgt">${arrRight}</div>
-      <div class="cmd-btn cmd-if">${iconIf}</div>
-      <div class="cmd-btn cmd-loop">${iconLoop}</div>
+  <div class="cmds"><div class="clbl">COMMANDS</div><div class="crow"><div class="cmd-btn cmd-fwd" ${isTutorial ? 'id="tut-fwd"' : ''}>${arrUp}</div><div class="cmd-btn cmd-lft">${arrLeft}</div><div class="cmd-btn cmd-rgt">${arrRight}</div><div class="cmd-btn cmd-if">${iconIf}</div><div class="cmd-btn cmd-loop">${iconLoop}</div></div></div>
+  <div class="qsec-new"><div class="qsec-top"><div class="qsec-title">Sequence</div><button class="qclear">✕ CLEAR</button></div><div class="q-scroll-wrap"><div class="q-list"><div class="cmd-btn cmd-fwd sm">${arrUp}</div><div class="cmd-btn cmd-lft sm">${arrLeft}</div><div class="cmd-btn cmd-rgt sm">${arrRight}</div><div class="cmd-btn cmd-if sm">${iconIf}</div><div class="cmd-btn cmd-add sm" title="Add Command"><svg viewBox="0 0 24 24"><path d="M12 5v14m-7-7h14"/></svg></div></div></div></div>
+  <div class="re"><button class="run">▶ RUN</button><button class="exit">✕ EXIT</button></div>
+  <div class="echo"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;"><div class="echt" style="margin:0;">ECHO SAYS</div><div style="font-size:9px;color:var(--cyan);background:rgba(0,212,255,0.1);padding:3px 8px;border-radius:10px;font-weight:700;display:flex;align-items:center;gap:4px;cursor:pointer;">💡 Hints</div></div><div class="echb">Start small: use the highlighted 3×3 zone to learn forward, left, and right before the full grid opens up.</div></div>
+  `;
+};
+
+function S_Game(){return `<div style="flex:1;display:flex;flex-direction:column">${coreGameMarkup()}</div>`;}
+
+function S_Tutorial(){
+  return `
+<div style="flex:1;display:flex;flex-direction:column;position:relative;">
+  ${coreGameMarkup(true)}
+  <div class="modal-overlay" style="justify-content:flex-end; padding-bottom:230px; background:rgba(0,0,0,0.85); backdrop-filter:none;">
+    <div style="background:var(--amber);color:#000;padding:8px 12px;border-radius:8px;font-size:11px;font-weight:700;box-shadow:0 10px 20px rgba(245,158,11,0.3);position:relative;margin-left:-80px;">
+      Tap to add a Forward block!
+      <div style="position:absolute;bottom:-5px;left:20px;width:10px;height:10px;background:var(--amber);transform:rotate(45deg);"></div>
     </div>
   </div>
-  
-  <div class="qsec-new">
-    <div class="qsec-top">
-      <div class="qsec-title">Sequence</div>
-      <button class="qclear">✕ CLEAR</button>
-    </div>
-    
-    <div class="q-scroll-wrap">
-      <div class="q-list">
-        <div class="cmd-btn cmd-fwd sm">${arrUp}</div>
-        <div class="cmd-btn cmd-lft sm">${arrLeft}</div>
-        <div class="cmd-btn cmd-rgt sm">${arrRight}</div>
-        <div class="cmd-btn cmd-if sm">${iconIf}</div>
-        
-        <!-- RESTORED: [ + ] Add Command Button in Queue -->
-        <div class="cmd-btn cmd-add sm" title="Add Command"><svg viewBox="0 0 24 24"><path d="M12 5v14m-7-7h14"/></svg></div>
+  <style>
+    /* Spotlight effect for Tutorial */
+    #tut-fwd { position:relative; z-index:101; box-shadow:0 0 0 4px var(--bg), 0 0 0 6px var(--amber); animation:tutPulse 1.5s infinite; }
+    @keyframes tutPulse { 0% {box-shadow:0 0 0 4px var(--bg), 0 0 0 6px rgba(245,158,11,0.8);} 100% {box-shadow:0 0 0 4px var(--bg), 0 0 0 14px rgba(245,158,11,0);} }
+  </style>
+</div>`;
+}
+
+function S_GamePause(){
+  return `
+<div style="flex:1;display:flex;flex-direction:column;position:relative;">
+  ${coreGameMarkup()}
+  <div class="modal-overlay">
+    <div class="modal-box" style="text-align:center;padding:24px;">
+      <div style="font-family:'Orbitron',monospace;color:var(--cyan);font-size:16px;margin-bottom:20px;letter-spacing:2px;">PAUSED</div>
+      <div style="display:flex;flex-direction:column;gap:10px;">
+        <button class="btn-p" style="font-size:12px;padding:12px;">▶ Resume</button>
+        <button class="btn-p btn-s" style="font-size:12px;padding:12px;color:var(--t1);">↺ Restart Level</button>
+        <button class="btn-p btn-s" style="font-size:12px;padding:12px;color:var(--t1);">⚙ Settings</button>
+        <button class="btn-p btn-s" style="font-size:12px;padding:12px;border-color:var(--red-b);color:var(--red);">✕ Abandon Mission</button>
       </div>
     </div>
   </div>
+</div>`;
+}
 
-  <div class="re">
-    <button class="run">▶ RUN</button>
-    <button class="exit">✕ EXIT</button>
+function S_GameHints(){
+  return `
+<div style="flex:1;display:flex;flex-direction:column;position:relative;">
+  ${coreGameMarkup()}
+  <div class="modal-overlay" style="background:rgba(0,0,0,0.5);"></div>
+  <div class="echo-sheet">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;">
+      <div style="display:flex;align-items:center;gap:8px;">
+        <div style="width:24px;height:24px;background:rgba(0,212,255,0.15);border-radius:6px;display:flex;align-items:center;justify-content:center;color:var(--cyan);">💡</div>
+        <div style="font-family:'Orbitron',monospace;font-size:12px;color:var(--cyan);letter-spacing:1px;">ECHO TERMINAL</div>
+      </div>
+      <div style="color:var(--t3);font-size:16px;cursor:pointer;">✕</div>
+    </div>
+    
+    <div style="background:rgba(0,212,255,0.05);border:1px solid rgba(0,212,255,0.2);border-radius:12px;padding:12px;margin-bottom:12px;">
+      <div style="font-size:9px;color:var(--cyan);font-weight:700;margin-bottom:4px;letter-spacing:1px;">HINT 1 · GENERAL</div>
+      <div style="font-size:11px;color:var(--t1);line-height:1.5;">The robot needs to face the correct direction before moving. Use the Turn Left block first.</div>
+    </div>
+
+    <div style="background:rgba(255,255,255,0.02);border:1px dashed var(--bdr2);border-radius:12px;padding:16px;text-align:center;">
+      <div style="font-size:14px;margin-bottom:6px;">🔒</div>
+      <div style="font-size:9px;color:var(--t3);font-weight:700;margin-bottom:8px;letter-spacing:1px;">HINT 2 · EXACT SEQUENCE</div>
+      <button class="btn-p btn-s" style="font-size:10px;padding:8px 16px;width:auto;color:var(--amber);border-color:var(--amber-b);">Unlock for 10 XP</button>
+    </div>
   </div>
-  <div class="echo"><div class="echt">ECHO SAYS</div><div class="echb">Start small: use the highlighted 3×3 zone to learn forward, left, and right before the full grid opens up.</div></div>
+</div>`;
+}
+
+function S_Settings(){return `
+<div style="flex:1;display:flex;flex-direction:column;">
+  <div class="ghdr"><div class="ghdr-r1"><div class="back"><svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg></div><div class="stitle">SETTINGS</div></div></div>
+  <div style="padding:16px;">
+    
+    <div style="font-size:10px;color:var(--cyan);font-weight:700;letter-spacing:1px;margin:16px 0 8px;">PREFERENCES</div>
+    <div style="background:var(--bg3);border:1px solid var(--bdr2);border-radius:16px;overflow:hidden;">
+      <div style="display:flex;justify-content:space-between;align-items:center;padding:16px;border-bottom:1px solid var(--bdr);">
+        <div style="font-size:12px;color:var(--t1);font-weight:600;">Sound Effects</div>
+        <div class="toggle on"><div class="knob"></div></div>
+      </div>
+      <div style="display:flex;justify-content:space-between;align-items:center;padding:16px;">
+        <div style="font-size:12px;color:var(--t1);font-weight:600;">Haptic Feedback</div>
+        <div class="toggle"><div class="knob"></div></div>
+      </div>
+    </div>
+
+    <div style="font-size:10px;color:var(--cyan);font-weight:700;letter-spacing:1px;margin:24px 0 8px;">ACCOUNT</div>
+    <div style="background:var(--bg3);border:1px solid var(--bdr2);border-radius:16px;overflow:hidden;">
+      <div style="padding:16px;border-bottom:1px solid var(--bdr);font-size:12px;color:var(--t1);font-weight:600;display:flex;justify-content:space-between;cursor:pointer;">
+        Edit Profile <span>→</span>
+      </div>
+      <div style="padding:16px;border-bottom:1px solid var(--bdr);font-size:12px;color:var(--red);font-weight:600;cursor:pointer;">
+        Reset Progress
+      </div>
+      <div style="padding:16px;font-size:12px;color:var(--red);font-weight:600;cursor:pointer;">
+        Logout
+      </div>
+    </div>
+    
+    <div style="text-align:center;margin-top:40px;font-size:10px;color:var(--t3);">Auri's Journey v1.0.0<br>Core Engine Online</div>
+  </div>
 </div>`;}
+
+function S_Error(){return `
+<div style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:24px;text-align:center;">
+  <div style="width:64px;height:64px;background:rgba(239,68,68,0.1);border-radius:50%;display:flex;align-items:center;justify-content:center;margin-bottom:20px;border:1px solid rgba(239,68,68,0.3);">
+    <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="var(--red)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path><line x1="12" y1="9" x2="12" y2="13"></line><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>
+  </div>
+  <div style="font-family:'Orbitron',monospace;font-size:16px;color:var(--t1);margin-bottom:8px;letter-spacing:1px;">CONNECTION LOST</div>
+  <div style="font-size:12px;color:var(--t2);line-height:1.6;margin-bottom:32px;">Echo cannot sync your progress to the server. Please check your network connection.</div>
+  <button class="btn-p btn-s" style="color:var(--t1);font-size:12px;">↺ Retry Connection</button>
+</div>`;}
+
 
 function S_Complete(){return `
 <div style="flex:1;display:flex;flex-direction:column">
@@ -455,42 +461,24 @@ function S_Complete(){return `
     <div><div style="font-size:10px;color:var(--t3);letter-spacing:.4px;font-weight:700;">SECTOR 1 · MISSION 1</div><div style="font-size:11px;color:var(--t2);margin-top:2px">Restore the power gate</div></div>
     ${xpBadge('2,480 XP')}
   </div>
-  
   <div style="display:flex;flex-direction:column;align-items:center;padding:12px 0 16px">
     <div class="sring"><div class="scheck"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="var(--green)" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></div></div>
     <div class="ctitle">MISSION COMPLETE</div>
     <div class="csub">Power Gate Restored!</div>
     <div class="xpr"><svg width="12" height="12" viewBox="0 0 24 24">${bol}</svg>+ 120 XP</div>
   </div>
-  
   <div class="mcard">
-    <div class="mb">
-      <div class="mpl">EFFICIENCY</div>
-      <div class="mn">4</div><div class="ml">Steps used</div>
-      <div class="mbadge bg">Optimal</div>
-    </div>
+    <div class="mb"><div class="mpl">EFFICIENCY</div><div class="mn">4</div><div class="ml">Steps used</div><div class="mbadge bg">Optimal</div></div>
     <div class="mdiv"></div>
-    <div class="mb">
-      <div class="mpl">SPEED</div>
-      <div class="mn" style="color:var(--cyan)">12s</div><div class="ml">Time taken</div>
-      <div class="mbadge bc">Fast</div>
-    </div>
+    <div class="mb"><div class="mpl">SPEED</div><div class="mn" style="color:var(--cyan)">12s</div><div class="ml">Time taken</div><div class="mbadge bc">Fast</div></div>
   </div>
-  
   <div class="conccard">
-    <div class="conclbl">✦ CONCEPT MASTERED</div>
-    <div class="conct">Sequential Reasoning</div>
-    <div class="concd">You used ordered instructions to reach the target efficiently. Core skill unlocked.</div>
+    <div class="conclbl">✦ CONCEPT MASTERED</div><div class="conct">Sequential Reasoning</div><div class="concd">You used ordered instructions to reach the target efficiently. Core skill unlocked.</div>
   </div>
-  
   <div class="comp-xp-wrap">
-    <div class="xpbar-lbl">
-      <span style="font-size:10px;color:var(--t2);font-weight:600;">Level 12 <span style="color:var(--t4);margin:0 4px;">→</span> Level 13</span>
-      <span style="font-size:10px;color:var(--green);font-weight:700;">+120 XP</span>
-    </div>
+    <div class="xpbar-lbl"><span style="font-size:10px;color:var(--t2);font-weight:600;">Level 12 <span style="color:var(--t4);margin:0 4px;">→</span> Level 13</span><span style="font-size:10px;color:var(--green);font-weight:700;">+120 XP</span></div>
     <div class="xpbar-track"><div class="xpbar-fill anim" style="width:74%"></div></div>
   </div>
-  
   <div class="comp-actions">
     <button class="btn-p">Next Mission →</button>
     <button class="btn-p btn-replay" style="font-size:13px;font-weight:600">↺ Replay Level</button>
@@ -498,94 +486,64 @@ function S_Complete(){return `
 </div>`;}
 
 function S_Profile(){
-  const skills=[
-    ['Sequences', 90, '#00D4FF', '#0891B2'],
-    ['Conditions', 65, '#7C5EFF', '#5B3FCC'],
-    ['Loops', 40, '#F59E0B', '#B45309'],
-    ['Debugging', 55, '#EF4444', '#B91C1C']
-  ];
+  const skills=[['Sequences', 90, '#00D4FF', '#0891B2'],['Conditions', 65, '#7C5EFF', '#5B3FCC'],['Loops', 40, '#F59E0B', '#B45309'],['Debugging', 55, '#EF4444', '#B91C1C']];
   return `
 <div style="flex:1;display:flex;flex-direction:column;padding-bottom:14px;overflow-x:hidden;">
-  
   <div style="padding:16px 16px 0; display:flex; justify-content:space-between; align-items:center;">
     <div class="back" style="margin:0;"><svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg></div>
     <div style="font-family:'Orbitron',monospace;font-size:11px;color:var(--t3);letter-spacing:2px;font-weight:700;">PROFILE</div>
-    <div style="width:30px;"></div> <!-- visual spacer for centering -->
+    <div style="width:30px;"></div>
   </div>
-
   <div class="prohero" style="padding-top:8px;">
-    <div class="avring" style="width:90px;height:90px;margin-bottom:18px;box-shadow:0 0 25px rgba(124,94,255,0.4);animation:pulseAvatar 2.5s infinite;">
-      <svg width="48" height="48" viewBox="0 0 44 44" fill="none"><rect x="8" y="12" width="28" height="23" rx="8" fill="#1A1040" stroke="#7C5EFF" stroke-width="1.5"/><circle cx="16" cy="22" r="2.5" fill="#7C5EFF"/><circle cx="28" cy="22" r="2.5" fill="#7C5EFF"/><rect x="18" y="27" width="8" height="3" rx="1.5" fill="#7C5EFF" opacity=".5"/></svg>
-      <div class="odot" style="width:16px;height:16px;border-width:3px;bottom:0px;right:0px;"></div>
-    </div>
-    
+    <div class="avring" style="width:90px;height:90px;margin-bottom:18px;box-shadow:0 0 25px rgba(124,94,255,0.4);animation:pulseAvatar 2.5s infinite;"><svg width="48" height="48" viewBox="0 0 44 44" fill="none"><rect x="8" y="12" width="28" height="23" rx="8" fill="#1A1040" stroke="#7C5EFF" stroke-width="1.5"/><circle cx="16" cy="22" r="2.5" fill="#7C5EFF"/><circle cx="28" cy="22" r="2.5" fill="#7C5EFF"/><rect x="18" y="27" width="8" height="3" rx="1.5" fill="#7C5EFF" opacity=".5"/></svg><div class="odot" style="width:16px;height:16px;border-width:3px;bottom:0px;right:0px;"></div></div>
     <div class="uname" style="font-family:'Orbitron',monospace;font-size:18px;color:#FFFFFF;text-shadow:0 0 12px rgba(255,255,255,0.3);letter-spacing:0.5px;">@commander_auri</div>
     <div class="urank" style="font-size:11px;color:var(--t3);text-transform:uppercase;letter-spacing:1.5px;margin-bottom:20px;">Commander</div>
-    
-    <div class="lvpill" style="font-size:12px;padding:8px 18px;background:linear-gradient(135deg, rgba(245,158,11,0.15), rgba(245,158,11,0.05));border:1.5px solid rgba(245,158,11,0.4);box-shadow:0 4px 15px rgba(245,158,11,0.15);border-radius:24px;margin-bottom:24px;">
-      <svg width="14" height="14" viewBox="0 0 24 24">${bol}</svg>2,480 XP <span style="color:rgba(245,158,11,0.4);margin:0 6px;">|</span> Level 12
-    </div>
+    <div class="lvpill" style="font-size:12px;padding:8px 18px;background:linear-gradient(135deg, rgba(245,158,11,0.15), rgba(245,158,11,0.05));border:1.5px solid rgba(245,158,11,0.4);box-shadow:0 4px 15px rgba(245,158,11,0.15);border-radius:24px;margin-bottom:24px;"><svg width="14" height="14" viewBox="0 0 24 24">${bol}</svg>2,480 XP <span style="color:rgba(245,158,11,0.4);margin:0 6px;">|</span> Level 12</div>
   </div>
-  
   <div style="width:65%;height:1px;background:linear-gradient(90deg,transparent,rgba(84,96,112,0.3),transparent);margin:0 auto 24px;"></div>
-  
   <div class="prostats">
     <div class="psc"><div class="psn" style="color:var(--cyan);text-shadow:0 0 10px rgba(0,212,255,0.3);">12</div><div class="psl">LEVEL</div></div>
     <div class="psc"><div class="psn" style="color:var(--amber);text-shadow:0 0 10px rgba(245,158,11,0.3);">7</div><div class="psl">DAY STREAK</div></div>
     <div class="psc"><div class="psn" style="color:var(--purple);text-shadow:0 0 10px rgba(124,94,255,0.3);">34</div><div class="psl">MISSIONS</div></div>
     <div class="psc"><div class="psn" style="color:var(--green);text-shadow:0 0 10px rgba(16,185,129,0.3);">4<span style="font-size:14px;opacity:0.7">h</span> 12<span style="font-size:14px;opacity:0.7">m</span></div><div class="psl">PLAY TIME</div></div>
   </div>
-  
   <div class="conccard" style="margin:0 14px 20px; padding:12px 14px; background:rgba(16,185,129,0.04); border-color:rgba(16,185,129,0.2);">
     <div class="conclbl" style="color:var(--green);">✦ LEARNING INSIGHTS</div>
-    <div style="font-size:11px; color:var(--t1); margin-bottom:8px; display:flex; gap:8px; align-items:center;">
-      <span style="color:var(--cyan);font-weight:900;">↑</span> <div>Strongest concept: <strong>Sequences</strong></div>
-    </div>
-    <div style="font-size:11px; color:var(--t2); display:flex; gap:8px; align-items:center;">
-      <span style="color:var(--amber);font-weight:900;">★</span> <div>Recommended next: <strong style="color:var(--t1)">Conditional Forest</strong></div>
-    </div>
+    <div style="font-size:11px; color:var(--t1); margin-bottom:8px; display:flex; gap:8px; align-items:center;"><span style="color:var(--cyan);font-weight:900;">↑</span> <div>Strongest concept: <strong>Sequences</strong></div></div>
+    <div style="font-size:11px; color:var(--t2); display:flex; gap:8px; align-items:center;"><span style="color:var(--amber);font-weight:900;">★</span> <div>Recommended next: <strong style="color:var(--t1)">Conditional Forest</strong></div></div>
   </div>
-  
   <div class="procont">
     <div class="sectitle">SKILL MAP</div>
     ${skills.map(([n,p,c1,c2])=>`<div class="skillrow"><span class="sknm">${n}</span><div class="sktrack"><div class="skfill" style="width:${p}%;background:linear-gradient(90deg, ${c2}, ${c1});box-shadow:0 0 8px ${c1}40;"></div></div><span class="skpct">${p}%</span></div>`).join('')}
   </div>
-
   <div class="ach-wrap">
     <div class="sectitle">ACHIEVEMENTS</div>
     <div class="ach-scroll">
-       <div class="ach-item">
-         <div class="ach-box" style="background:rgba(0,212,255,0.1); border:1.5px solid rgba(0,212,255,0.3); box-shadow:0 0 12px rgba(0,212,255,0.15);">🏆</div>
-         <div class="ach-title">First<br>Mission</div>
-       </div>
-       <div class="ach-item">
-         <div class="ach-box" style="background:rgba(124,94,255,0.1); border:1.5px solid rgba(124,94,255,0.3); box-shadow:0 0 12px rgba(124,94,255,0.15);">♾️</div>
-         <div class="ach-title">Loop<br>Master</div>
-       </div>
-       <div class="ach-item">
-         <div class="ach-box" style="background:rgba(245,158,11,0.1); border:1.5px solid rgba(245,158,11,0.3); box-shadow:0 0 12px rgba(245,158,11,0.15);">⚡</div>
-         <div class="ach-title">Speed<br>Runner</div>
-       </div>
-       <div class="ach-item" style="opacity:0.25; filter:grayscale(1);">
-         <div class="ach-box" style="background:var(--bg4); border:1.5px dashed var(--bdr2);">🔒</div>
-         <div class="ach-title" style="color:var(--t3);">Level<br>10</div>
-       </div>
+       <div class="ach-item"><div class="ach-box" style="background:rgba(0,212,255,0.1); border:1.5px solid rgba(0,212,255,0.3); box-shadow:0 0 12px rgba(0,212,255,0.15);">🏆</div><div class="ach-title">First<br>Mission</div></div>
+       <div class="ach-item"><div class="ach-box" style="background:rgba(124,94,255,0.1); border:1.5px solid rgba(124,94,255,0.3); box-shadow:0 0 12px rgba(124,94,255,0.15);">♾️</div><div class="ach-title">Loop<br>Master</div></div>
+       <div class="ach-item"><div class="ach-box" style="background:rgba(245,158,11,0.1); border:1.5px solid rgba(245,158,11,0.3); box-shadow:0 0 12px rgba(245,158,11,0.15);">⚡</div><div class="ach-title">Speed<br>Runner</div></div>
+       <div class="ach-item" style="opacity:0.25; filter:grayscale(1);"><div class="ach-box" style="background:var(--bg4); border:1.5px dashed var(--bdr2);">🔒</div><div class="ach-title" style="color:var(--t3);">Level<br>10</div></div>
     </div>
   </div>
-  
-  <div style="padding:0 14px;">
-    <button class="pro-btn">Continue Playing →</button>
-  </div>
-
+  <div style="padding:0 14px;"><button class="pro-btn">Continue Playing →</button></div>
 </div>`;}
 
 const screens = [
+  {id:'onboarding1',label:'00a · Intro 1',fn:S_Onboarding},
+  {id:'onboarding2',label:'00b · Intro 2',fn:S_Onboarding2},
+  {id:'onboarding3',label:'00c · Intro 3',fn:S_Onboarding3},
   {id:'signin',label:'01 · Sign In',fn:S_SignIn},
   {id:'signup',label:'02 · Sign Up',fn:S_SignUp},
-  {id:'menu',label:'03 · Menu',fn:S_Menu},
-  {id:'game',label:'04 · Game',fn:S_Game},
-  {id:'complete',label:'05 · Complete',fn:S_Complete},
-  {id:'profile',label:'06 · Profile',fn:S_Profile}
+  {id:'loading',label:'03 · Loading',fn:S_Loading},
+  {id:'menu',label:'04 · Hub/Menu',fn:S_Menu},
+  {id:'tutorial',label:'05 · Tutorial',fn:S_Tutorial},
+  {id:'game',label:'06 · Game Core',fn:S_Game},
+  {id:'pause',label:'07 · Game Pause',fn:S_GamePause},
+  {id:'hints',label:'08 · Game Hints',fn:S_GameHints},
+  {id:'complete',label:'09 · Success',fn:S_Complete},
+  {id:'profile',label:'10 · Profile',fn:S_Profile},
+  {id:'settings',label:'11 · Settings',fn:S_Settings},
+  {id:'error',label:'12 · Error State',fn:S_Error}
 ];
 
 const tabsEl=document.getElementById('tabs');

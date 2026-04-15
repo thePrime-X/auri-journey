@@ -1,6 +1,1 @@
-enum ExecutionStatus {
-  idle,
-  running,
-  success,
-  failure,
-}
+enum ExecutionStatus { idle, running, success, failure }

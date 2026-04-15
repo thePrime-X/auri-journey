@@ -1,9 +1,4 @@
-enum Direction {
-  up,
-  right,
-  down,
-  left,
-}
+enum Direction { up, right, down, left }
 
 extension DirectionX on Direction {
   Direction get turnLeft {

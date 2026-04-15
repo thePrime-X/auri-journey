@@ -12,23 +12,17 @@ class ExecutionStateNotifier extends Notifier<ExecutionState> {
   ExecutionState build() {
     final level = ref.watch(levelStateProvider);
 
-    return ExecutionState.initial(
-      startPosition: level.startPosition,
-    );
+    return ExecutionState.initial(startPosition: level.startPosition);
   }
 
   void resetFromLevel() {
     final level = ref.read(levelStateProvider);
 
-    state = ExecutionState.initial(
-      startPosition: level.startPosition,
-    );
+    state = ExecutionState.initial(startPosition: level.startPosition);
   }
 
   void addCommand(CommandType command) {
-    state = state.copyWith(
-      commandQueue: [...state.commandQueue, command],
-    );
+    state = state.copyWith(commandQueue: [...state.commandQueue, command]);
   }
 
   void removeCommandAt(int index) {
@@ -36,9 +30,7 @@ class ExecutionStateNotifier extends Notifier<ExecutionState> {
 
     final updatedQueue = [...state.commandQueue]..removeAt(index);
 
-    state = state.copyWith(
-      commandQueue: updatedQueue,
-    );
+    state = state.copyWith(commandQueue: updatedQueue);
   }
 
   void clearCommands() {
@@ -66,8 +58,6 @@ class ExecutionStateNotifier extends Notifier<ExecutionState> {
   }
 
   void incrementAttemptCount() {
-    state = state.copyWith(
-      attemptCount: state.attemptCount + 1,
-    );
+    state = state.copyWith(attemptCount: state.attemptCount + 1);
   }
 }

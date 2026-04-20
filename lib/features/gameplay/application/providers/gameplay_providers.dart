@@ -8,8 +8,7 @@ import 'level_state_notifier.dart';
 final levelStateProvider = NotifierProvider<LevelStateNotifier, LevelState>(
   LevelStateNotifier.new,
 );
- 
- 
+
 final executionStateProvider =
     NotifierProvider<ExecutionStateNotifier, ExecutionState>(
       ExecutionStateNotifier.new,

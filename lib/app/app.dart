@@ -7,12 +7,11 @@ class App extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
+    return MaterialApp.router(
       title: "Auri's Journey",
       debugShowCheckedModeBanner: false,
       theme: AppTheme.darkTheme,
-      initialRoute: '/login',
-      onGenerateRoute: AppRouter.onGenerateRoute,
+      routerConfig: AppRouter.router,
     );
   }
 }

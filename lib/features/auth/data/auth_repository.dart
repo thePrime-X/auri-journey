@@ -1,0 +1,72 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+
+class AuthRepository {
+  AuthRepository({FirebaseAuth? auth, FirebaseFirestore? firestore})
+    : _auth = auth ?? FirebaseAuth.instance,
+      _firestore = firestore ?? FirebaseFirestore.instance;
+
+  final FirebaseAuth _auth;
+  final FirebaseFirestore _firestore;
+
+  Future<UserCredential> login({
+    required String email,
+    required String password,
+  }) async {
+    final credential = await _auth.signInWithEmailAndPassword(
+      email: email.trim(),
+      password: password.trim(),
+    );
+
+    final user = credential.user;
+    if (user == null) {
+      throw FirebaseAuthException(code: 'user-null', message: 'Login failed.');
+    }
+
+    final userDoc = _firestore.collection('users').doc(user.uid);
+    final snapshot = await userDoc.get();
+
+    if (snapshot.exists) {
+      await userDoc.update({'lastLoginAt': FieldValue.serverTimestamp()});
+    }
+
+    return credential;
+  }
+
+  Future<UserCredential> signup({
+    required String email,
+    required String password,
+  }) async {
+    final trimmedEmail = email.trim();
+
+    final credential = await _auth.createUserWithEmailAndPassword(
+      email: trimmedEmail,
+      password: password.trim(),
+    );
+
+    final user = credential.user;
+    if (user == null) {
+      throw FirebaseAuthException(
+        code: 'user-null',
+        message: 'User creation failed.',
+      );
+    }
+
+    final displayName = trimmedEmail.split('@').first;
+
+    await _firestore.collection('users').doc(user.uid).set({
+      'displayName': displayName,
+      'createdAt': FieldValue.serverTimestamp(),
+      'lastLoginAt': FieldValue.serverTimestamp(),
+      'currentLevel': 'level_1',
+      'totalXP': 0,
+      'puzzlesCompleted': 0,
+    });
+
+    return credential;
+  }
+
+  Future<void> logout() async {
+    await _auth.signOut();
+  }
+}

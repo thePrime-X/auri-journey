@@ -6,10 +6,6 @@ import '../../../../features/auth/application/auth_state_provider.dart';
 class DashboardScreen extends ConsumerWidget {
   const DashboardScreen({super.key});
 
-  void _logout(WidgetRef ref) {
-    ref.read(authStateProvider.notifier).logout();
-  }
-
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     return Scaffold(
@@ -388,7 +384,9 @@ class DashboardScreen extends ConsumerWidget {
                   SizedBox(
                     width: double.infinity,
                     child: OutlinedButton(
-                      onPressed: () => _logout(ref),
+                      onPressed: () async {
+                        await ref.read(authStateProvider.notifier).logout();
+                      },
                       style: OutlinedButton.styleFrom(
                         foregroundColor: AppColors.textPrimary,
                         side: const BorderSide(color: AppColors.border2),

@@ -52,10 +52,7 @@ class _SignupScreenState extends State<SignupScreen> {
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(20),
                         gradient: const RadialGradient(
-                          colors: [
-                            Color(0xFF1A0A4A),
-                            Color(0xFF06030F),
-                          ],
+                          colors: [Color(0xFF1A0A4A), Color(0xFF06030F)],
                         ),
                         border: Border.all(
                           color: AppColors.purple.withValues(alpha: 0.35),

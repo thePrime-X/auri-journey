@@ -49,10 +49,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(20),
                         gradient: const RadialGradient(
-                          colors: [
-                            Color(0xFF0A3D5C),
-                            Color(0xFF030C18),
-                          ],
+                          colors: [Color(0xFF0A3D5C), Color(0xFF030C18)],
                         ),
                         border: Border.all(
                           color: AppColors.cyan.withValues(alpha: 0.35),

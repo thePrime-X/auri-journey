@@ -8,7 +8,7 @@ class CurrentMissionCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return NeonCard(
-      borderColor: AppColors.cyan.withValues(alpha:0.35),
+      borderColor: AppColors.cyan.withValues(alpha: 0.35),
       backgroundColor: AppColors.bg3,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -46,7 +46,9 @@ class CurrentMissionCard extends StatelessWidget {
                 decoration: BoxDecoration(
                   color: AppColors.purple.withValues(alpha: 0.12),
                   borderRadius: BorderRadius.circular(12),
-                  border: Border.all(color: AppColors.purple.withValues(alpha: 0.25)),
+                  border: Border.all(
+                    color: AppColors.purple.withValues(alpha: 0.25),
+                  ),
                 ),
                 child: const Text(
                   'Loop',

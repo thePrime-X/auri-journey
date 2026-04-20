@@ -118,10 +118,7 @@ class DashboardScreen extends StatelessWidget {
                   SizedBox(height: 4),
                   Text(
                     '⟳ Resets in 6h 42m',
-                    style: TextStyle(
-                      color: AppColors.textMuted,
-                      fontSize: 11,
-                    ),
+                    style: TextStyle(color: AppColors.textMuted, fontSize: 11),
                   ),
                 ],
               ),
@@ -418,9 +415,7 @@ class _ReadyPill extends StatelessWidget {
       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(
-          color: AppColors.green.withValues(alpha: 0.25),
-        ),
+        border: Border.all(color: AppColors.green.withValues(alpha: 0.25)),
         color: AppColors.green.withValues(alpha: 0.12),
       ),
       child: const Text(
@@ -467,10 +462,7 @@ class _MiniStat extends StatelessWidget {
           const SizedBox(height: 4),
           Text(
             label,
-            style: const TextStyle(
-              color: AppColors.textMuted,
-              fontSize: 10,
-            ),
+            style: const TextStyle(color: AppColors.textMuted, fontSize: 10),
           ),
         ],
       ),

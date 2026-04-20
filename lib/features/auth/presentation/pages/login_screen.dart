@@ -1,15 +1,17 @@
 import 'package:flutter/material.dart';
 import '../../../../core/theme/app_colors.dart';
 import 'package:go_router/go_router.dart';
+import '../../application/auth_state_provider.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-class LoginScreen extends StatefulWidget {
+class LoginScreen extends ConsumerStatefulWidget {
   const LoginScreen({super.key});
 
   @override
-  State<LoginScreen> createState() => _LoginScreenState();
+  ConsumerState<LoginScreen> createState() => _LoginScreenState();
 }
 
-class _LoginScreenState extends State<LoginScreen> {
+class _LoginScreenState extends ConsumerState<LoginScreen> {
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
 
@@ -24,8 +26,8 @@ class _LoginScreenState extends State<LoginScreen> {
     context.push('/signup');
   }
 
-  void _goToDashboard() {
-    context.go('/dashboard');
+  void _login() {
+    ref.read(authStateProvider.notifier).setAuthenticated(true);
   }
 
   @override
@@ -170,7 +172,7 @@ class _LoginScreenState extends State<LoginScreen> {
                         ),
                       ),
                       child: ElevatedButton(
-                        onPressed: _goToDashboard,
+                        onPressed: _login,
                         style: ElevatedButton.styleFrom(
                           backgroundColor: Colors.transparent,
                           shadowColor: Colors.transparent,

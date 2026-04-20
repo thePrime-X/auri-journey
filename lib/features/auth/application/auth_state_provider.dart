@@ -31,7 +31,7 @@ class AuthState {
   }
 }
 
-class AuthStateNotifier extends Notifier<AuthState> with ChangeNotifier {
+class AuthStateNotifier extends Notifier<AuthState> {
   @override
   AuthState build() => const AuthState.initial();
 
@@ -41,12 +41,10 @@ class AuthStateNotifier extends Notifier<AuthState> with ChangeNotifier {
       isLoading: false,
       errorMessage: null,
     );
-    notifyListeners();
   }
 
   void logout() {
     state = const AuthState.initial();
-    notifyListeners();
   }
 }
 

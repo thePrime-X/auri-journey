@@ -1,50 +1,42 @@
-import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
-import '../features/auth/application/auth_state_provider.dart';
-import '../features/auth/presentation/screens/login_screen.dart';
-import '../features/auth/presentation/screens/signup_screen.dart';
-import '../features/dashboard/presentation/screens/dashboard_screen.dart';
+import '../features/auth/presentation/pages/login_screen.dart';
+import '../features/auth/presentation/pages/signup_screen.dart';
+import '../features/dashboard/presentation/pages/dashboard_screen.dart';
 
-final routerProvider = Provider<GoRouter>((ref) {
-  final authNotifier = ref.watch(authStateProvider.notifier);
+class AppRouter {
+  AppRouter._();
 
-  return GoRouter(
+  static final GoRouter router = GoRouter(
     initialLocation: '/login',
-    refreshListenable: authNotifier,
-    redirect: (context, state) {
-      final authState = ref.read(authStateProvider);
-      final isAuthenticated = authState.isAuthenticated;
-      final location = state.matchedLocation;
-
-      final isPublicRoute = location == '/login' || location == '/signup';
-
-      if (!isAuthenticated && !isPublicRoute) {
-        return '/login';
-      }
-
-      if (isAuthenticated && isPublicRoute) {
-        return '/dashboard';
-      }
-
-      return null;
-    },
-    routes: [
+    routes: <RouteBase>[
       GoRoute(
         path: '/login',
         name: 'login',
-        builder: (context, state) => const LoginScreen(),
+        builder: (BuildContext context, GoRouterState state) {
+          return const LoginScreen();
+        },
       ),
       GoRoute(
         path: '/signup',
         name: 'signup',
-        builder: (context, state) => const SignupScreen(),
+        builder: (BuildContext context, GoRouterState state) {
+          return const SignupScreen();
+        },
       ),
       GoRoute(
         path: '/dashboard',
         name: 'dashboard',
-        builder: (context, state) => const DashboardScreen(),
+        builder: (BuildContext context, GoRouterState state) {
+          return const DashboardScreen();
+        },
       ),
     ],
+    errorBuilder: (context, state) => Scaffold(
+      body: Center(
+        child: Text('Route not found: ${state.uri}'),
+      ),
+    ),
   );
-});
+}

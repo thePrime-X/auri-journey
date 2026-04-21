@@ -1,0 +1,263 @@
+import 'package:flutter/material.dart';
+import '../../../../core/theme/app_colors.dart';
+import '../../domain/models/coordinate.dart';
+import '../../domain/models/level_state.dart';
+import '../widgets/command_block.dart';
+import '../widgets/command_palette.dart';
+import '../widgets/game_action_bar.dart';
+import '../widgets/game_grid.dart';
+
+class GameplayScreen extends StatelessWidget {
+  final LevelState level;
+
+  const GameplayScreen({super.key, required this.level});
+
+  @override
+  Widget build(BuildContext context) {
+    final demoLevel = level.copyWith(
+      startPosition: const Coordinate(row: 3, col: 2),
+      targetPosition: const Coordinate(row: 1, col: 2),
+      obstacles: const [Coordinate(row: 2, col: 1)],
+    );
+
+    final Coordinate auriPosition = const Coordinate(row: 3, col: 2);
+
+    return Scaffold(
+      backgroundColor: AppColors.bg,
+      body: SafeArea(
+        child: ListView(
+          padding: const EdgeInsets.all(16),
+          children: [
+            Row(
+              children: [
+                Container(
+                  width: 34,
+                  height: 34,
+                  decoration: BoxDecoration(
+                    color: AppColors.bg3,
+                    borderRadius: BorderRadius.circular(10),
+                    border: Border.all(color: AppColors.border),
+                  ),
+                  child: const Icon(
+                    Icons.arrow_back_ios_new_rounded,
+                    color: AppColors.textSecondary,
+                    size: 16,
+                  ),
+                ),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const Text(
+                        'SECTOR 1',
+                        style: TextStyle(
+                          color: AppColors.textPrimary,
+                          fontSize: 14,
+                          fontWeight: FontWeight.w700,
+                          letterSpacing: 0.5,
+                        ),
+                      ),
+                      const SizedBox(height: 2),
+                      Text(
+                        demoLevel.title,
+                        style: const TextStyle(
+                          color: AppColors.textMuted,
+                          fontSize: 11,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: const [
+                    Icon(Icons.bolt, color: AppColors.amber, size: 16),
+                    SizedBox(width: 4),
+                    Text(
+                      '2,289',
+                      style: TextStyle(
+                        color: AppColors.amber,
+                        fontWeight: FontWeight.w800,
+                        fontSize: 12,
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+            const SizedBox(height: 20),
+            const Text(
+              'EXECUTION GRID · 3×3 TRAINING ZONE',
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                color: AppColors.textMuted,
+                fontSize: 10,
+                letterSpacing: 1.5,
+                fontWeight: FontWeight.w700,
+              ),
+            ),
+            const SizedBox(height: 10),
+            AspectRatio(
+              aspectRatio: 1,
+              child: GameGrid(level: demoLevel, auriPosition: auriPosition),
+            ),
+            const SizedBox(height: 20),
+            CommandPalette(commands: demoLevel.availableCommands),
+            const SizedBox(height: 16),
+            Container(
+              padding: const EdgeInsets.all(14),
+              decoration: BoxDecoration(
+                color: AppColors.bg3.withValues(alpha: 0.55),
+                borderRadius: BorderRadius.circular(16),
+                border: Border.all(
+                  color: AppColors.border2.withValues(alpha: 0.6),
+                ),
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    children: [
+                      const Expanded(
+                        child: Text(
+                          'Sequence',
+                          style: TextStyle(
+                            color: AppColors.textMuted,
+                            fontSize: 12,
+                            fontWeight: FontWeight.w700,
+                          ),
+                        ),
+                      ),
+                      Text(
+                        '✕ CLEAR',
+                        style: TextStyle(
+                          color: AppColors.textMuted.withValues(alpha: 0.55),
+                          fontSize: 11,
+                          fontWeight: FontWeight.w700,
+                          letterSpacing: 0.5,
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 12),
+                  Container(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 4,
+                      vertical: 2,
+                    ),
+                    decoration: BoxDecoration(
+                      color: AppColors.bg.withValues(alpha: 0.18),
+                      borderRadius: BorderRadius.circular(14),
+                    ),
+                    child: SizedBox(
+                      height: 52,
+                      child: ListView(
+                        scrollDirection: Axis.horizontal,
+                        children: const [
+                          _EmptySequenceSlot(),
+                          SizedBox(width: 12),
+                          _EmptySequenceSlot(),
+                          SizedBox(width: 12),
+                          CommandBlock(isSmall: true, isAddPlaceholder: true),
+                        ],
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(height: 14),
+            const GameActionBar(),
+            const SizedBox(height: 14),
+            Container(
+              padding: const EdgeInsets.all(14),
+              decoration: BoxDecoration(
+                color: AppColors.bg3,
+                borderRadius: BorderRadius.circular(14),
+                border: Border.all(
+                  color: AppColors.cyan.withValues(alpha: 0.35),
+                ),
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    children: [
+                      const Expanded(
+                        child: Text(
+                          'ECHO SAYS',
+                          style: TextStyle(
+                            color: AppColors.cyan,
+                            fontSize: 10,
+                            fontWeight: FontWeight.w800,
+                            letterSpacing: 1.2,
+                          ),
+                        ),
+                      ),
+                      Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 10,
+                          vertical: 6,
+                        ),
+                        decoration: BoxDecoration(
+                          color: AppColors.cyan.withValues(alpha: 0.10),
+                          borderRadius: BorderRadius.circular(999),
+                        ),
+                        child: const Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Icon(
+                              Icons.lightbulb,
+                              color: AppColors.amber,
+                              size: 14,
+                            ),
+                            SizedBox(width: 4),
+                            Text(
+                              'Hints',
+                              style: TextStyle(
+                                color: AppColors.cyan,
+                                fontSize: 11,
+                                fontWeight: FontWeight.w700,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 10),
+                  const Text(
+                    'Start small: use the highlighted 3×3 zone to learn forward, left, and right before the full grid opens up.',
+                    style: TextStyle(
+                      color: AppColors.textSecondary,
+                      fontSize: 12,
+                      height: 1.6,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _EmptySequenceSlot extends StatelessWidget {
+  const _EmptySequenceSlot();
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: 48,
+      height: 48,
+      decoration: BoxDecoration(
+        color: Colors.transparent,
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: AppColors.textMuted.withValues(alpha: 0.18)),
+      ),
+    );
+  }
+}

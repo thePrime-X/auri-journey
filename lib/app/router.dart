@@ -8,7 +8,6 @@ import '../features/auth/presentation/pages/loading_screen.dart';
 import '../features/auth/presentation/pages/login_screen.dart';
 import '../features/auth/presentation/pages/signup_screen.dart';
 import '../features/dashboard/presentation/pages/dashboard_screen.dart';
-import '../features/gameplay/presentation/pages/gameplay_screen.dart';
 import '../features/onboarding/application/onboarding_provider.dart';
 import '../features/onboarding/presentation/pages/intro_one_screen.dart';
 import '../features/onboarding/presentation/pages/intro_three_screen.dart';

@@ -161,91 +161,126 @@ class GameplayScreen extends ConsumerWidget {
             const SizedBox(height: 20),
             CommandPalette(commands: demoLevel.availableCommands),
             const SizedBox(height: 16),
-            Container(
-              padding: const EdgeInsets.all(14),
-              decoration: BoxDecoration(
-                color: AppColors.bg3.withValues(alpha: 0.55),
-                borderRadius: BorderRadius.circular(16),
-                border: Border.all(
-                  color: AppColors.border2.withValues(alpha: 0.6),
-                ),
-              ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
-                    children: [
-                      const Expanded(
-                        child: Text(
-                          'Sequence',
-                          style: TextStyle(
-                            color: AppColors.textMuted,
-                            fontSize: 12,
-                            fontWeight: FontWeight.w700,
-                          ),
-                        ),
-                      ),
-                      GestureDetector(
-                        onTap: () {
-                          ref
-                              .read(commandSequenceProvider.notifier)
-                              .clearSequence();
-                        },
-                        child: Text(
-                          '✕ CLEAR',
-                          style: TextStyle(
-                            color: AppColors.textMuted.withValues(alpha: 0.75),
-                            fontSize: 11,
-                            fontWeight: FontWeight.w700,
-                            letterSpacing: 0.5,
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 12),
-                  Container(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 4,
-                      vertical: 2,
-                    ),
-                    decoration: BoxDecoration(
-                      color: AppColors.bg.withValues(alpha: 0.18),
-                      borderRadius: BorderRadius.circular(14),
-                    ),
-                    child: SizedBox(
-                      height: 52,
-                      child: ListView.separated(
-                        scrollDirection: Axis.horizontal,
-                        itemCount: sequence.length + 1,
-                        separatorBuilder: (context, index) =>
-                            const SizedBox(width: 12),
-                        itemBuilder: (context, index) {
-                          if (index < sequence.length) {
-                            return CommandBlock(
-                              command: sequence[index],
-                              isSmall: true,
-                            );
-                          }
+            DragTarget<CommandType>(
+              onWillAcceptWithDetails: (details) => true,
+              onAcceptWithDetails: (details) {
+                ref
+                    .read(commandSequenceProvider.notifier)
+                    .addCommand(details.data);
+              },
+              builder: (context, candidateData, rejectedData) {
+                final isHovering = candidateData.isNotEmpty;
 
-                          return CommandBlock(
-                            isSmall: true,
-                            isAddPlaceholder: true,
+                return AnimatedContainer(
+                  duration: const Duration(milliseconds: 150),
+                  padding: const EdgeInsets.all(14),
+                  decoration: BoxDecoration(
+                    color: isHovering
+                        ? AppColors.cyan.withValues(alpha: 0.08)
+                        : AppColors.bg3.withValues(alpha: 0.55),
+                    borderRadius: BorderRadius.circular(16),
+                    border: Border.all(
+                      color: isHovering
+                          ? AppColors.cyan.withValues(alpha: 0.55)
+                          : AppColors.border2.withValues(alpha: 0.6),
+                    ),
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        children: [
+                          const Expanded(
+                            child: Text(
+                              'Sequence',
+                              style: TextStyle(
+                                color: AppColors.textMuted,
+                                fontSize: 12,
+                                fontWeight: FontWeight.w700,
+                              ),
+                            ),
+                          ),
+                          GestureDetector(
                             onTap: () {
-                              _showInsertCommandSheet(
-                                context,
-                                ref,
-                                demoLevel.availableCommands,
-                                index,
+                              ref
+                                  .read(commandSequenceProvider.notifier)
+                                  .clearSequence();
+                            },
+                            child: Text(
+                              '✕ CLEAR',
+                              style: TextStyle(
+                                color: AppColors.textMuted.withValues(
+                                  alpha: 0.75,
+                                ),
+                                fontSize: 11,
+                                fontWeight: FontWeight.w700,
+                                letterSpacing: 0.5,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 12),
+                      Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 4,
+                          vertical: 2,
+                        ),
+                        decoration: BoxDecoration(
+                          color: AppColors.bg.withValues(alpha: 0.18),
+                          borderRadius: BorderRadius.circular(14),
+                          border: isHovering
+                              ? Border.all(
+                                  color: AppColors.cyan.withValues(alpha: 0.35),
+                                )
+                              : null,
+                        ),
+                        child: SizedBox(
+                          height: 52,
+                          child: ListView.separated(
+                            scrollDirection: Axis.horizontal,
+                            itemCount: sequence.length + 1,
+                            separatorBuilder: (context, index) =>
+                                const SizedBox(width: 12),
+                            itemBuilder: (context, index) {
+                              if (index < sequence.length) {
+                                return CommandBlock(
+                                  command: sequence[index],
+                                  isSmall: true,
+                                );
+                              }
+
+                              return CommandBlock(
+                                isSmall: true,
+                                isAddPlaceholder: true,
+                                onTap: () {
+                                  _showInsertCommandSheet(
+                                    context,
+                                    ref,
+                                    demoLevel.availableCommands,
+                                    index,
+                                  );
+                                },
                               );
                             },
-                          );
-                        },
+                          ),
+                        ),
                       ),
-                    ),
+                      if (isHovering) ...[
+                        const SizedBox(height: 10),
+                        const Text(
+                          'Drop command here',
+                          style: TextStyle(
+                            color: AppColors.cyan,
+                            fontSize: 11,
+                            fontWeight: FontWeight.w700,
+                          ),
+                        ),
+                      ],
+                    ],
                   ),
-                ],
-              ),
+                );
+              },
             ),
             const SizedBox(height: 14),
             const GameActionBar(),
@@ -308,7 +343,7 @@ class GameplayScreen extends ConsumerWidget {
                   ),
                   const SizedBox(height: 10),
                   const Text(
-                    'Start small: use the highlighted 3×3 zone to learn forward, left, and right before the full grid opens up.',
+                    'Start small: drag command blocks into the sequence zone or tap the + button to insert them.',
                     style: TextStyle(
                       color: AppColors.textSecondary,
                       fontSize: 12,

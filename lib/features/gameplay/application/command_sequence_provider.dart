@@ -9,13 +9,15 @@ class CommandSequenceNotifier extends Notifier<List<CommandType>> {
     return [];
   }
 
+  bool get canAddMore => state.length < maxSequenceLength;
+
   void addCommand(CommandType command) {
-    if (state.length >= maxSequenceLength) return;
+    if (!canAddMore) return;
     state = [...state, command];
   }
 
   void insertCommand({required int index, required CommandType command}) {
-    if (state.length >= maxSequenceLength) return;
+    if (!canAddMore) return;
     if (index < 0 || index > state.length) return;
 
     final updated = [...state];

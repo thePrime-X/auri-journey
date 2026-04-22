@@ -34,9 +34,8 @@ class CommandPalette extends ConsumerWidget {
             itemBuilder: (context, index) {
               final command = commands[index];
 
-              return CommandBlock(
+              return _PaletteDraggableBlock(
                 command: command,
-                isDraggable: true,
                 onTap: () {
                   ref
                       .read(commandSequenceProvider.notifier)
@@ -47,6 +46,28 @@ class CommandPalette extends ConsumerWidget {
           ),
         ),
       ],
+    );
+  }
+}
+
+class _PaletteDraggableBlock extends StatelessWidget {
+  final CommandType command;
+  final VoidCallback onTap;
+
+  const _PaletteDraggableBlock({required this.command, required this.onTap});
+
+  @override
+  Widget build(BuildContext context) {
+    final block = CommandBlock(command: command, onTap: onTap);
+
+    return LongPressDraggable<CommandType>(
+      data: command,
+      feedback: Material(
+        color: Colors.transparent,
+        child: Opacity(opacity: 0.95, child: CommandBlock(command: command)),
+      ),
+      childWhenDragging: Opacity(opacity: 0.35, child: block),
+      child: block,
     );
   }
 }

@@ -235,35 +235,74 @@ class GameplayScreen extends ConsumerWidget {
                                 )
                               : null,
                         ),
-                        child: SizedBox(
-                          height: 52,
-                          child: ListView.separated(
-                            scrollDirection: Axis.horizontal,
-                            itemCount: sequence.length + 1,
-                            separatorBuilder: (context, index) =>
-                                const SizedBox(width: 12),
-                            itemBuilder: (context, index) {
-                              if (index < sequence.length) {
-                                return CommandBlock(
-                                  command: sequence[index],
-                                  isSmall: true,
-                                );
-                              }
+                        child: ListView.builder(
+                          scrollDirection: Axis.horizontal,
+                          itemCount: sequence.length * 2 + 1,
+                          itemBuilder: (context, index) {
+                            // EVEN index = SLOT (+)
+                            if (index.isEven) {
+                              final insertIndex = index ~/ 2;
 
-                              return CommandBlock(
-                                isSmall: true,
-                                isAddPlaceholder: true,
-                                onTap: () {
-                                  _showInsertCommandSheet(
-                                    context,
-                                    ref,
-                                    demoLevel.availableCommands,
-                                    index,
-                                  );
-                                },
+                              return Padding(
+                                padding: const EdgeInsets.only(right: 12),
+                                child: DragTarget<CommandType>(
+                                  onWillAcceptWithDetails: (details) => true,
+                                  onAcceptWithDetails: (details) {
+                                    ref
+                                        .read(commandSequenceProvider.notifier)
+                                        .insertCommand(
+                                          index: insertIndex,
+                                          command: details.data,
+                                        );
+                                  },
+                                  builder:
+                                      (context, candidateData, rejectedData) {
+                                        final isHovering =
+                                            candidateData.isNotEmpty;
+
+                                        return AnimatedContainer(
+                                          duration: const Duration(
+                                            milliseconds: 120,
+                                          ),
+                                          decoration: isHovering
+                                              ? BoxDecoration(
+                                                  borderRadius:
+                                                      BorderRadius.circular(12),
+                                                  border: Border.all(
+                                                    color: AppColors.cyan,
+                                                    width: 2,
+                                                  ),
+                                                )
+                                              : null,
+                                          child: CommandBlock(
+                                            isSmall: true,
+                                            isAddPlaceholder: true,
+                                            onTap: () {
+                                              _showInsertCommandSheet(
+                                                context,
+                                                ref,
+                                                demoLevel.availableCommands,
+                                                insertIndex,
+                                              );
+                                            },
+                                          ),
+                                        );
+                                      },
+                                ),
                               );
-                            },
-                          ),
+                            }
+
+                            // ODD index = COMMAND
+                            final commandIndex = index ~/ 2;
+
+                            return Padding(
+                              padding: const EdgeInsets.only(right: 12),
+                              child: CommandBlock(
+                                command: sequence[commandIndex],
+                                isSmall: true,
+                              ),
+                            );
+                          },
                         ),
                       ),
                       if (isHovering) ...[

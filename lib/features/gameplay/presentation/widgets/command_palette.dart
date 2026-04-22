@@ -36,6 +36,7 @@ class CommandPalette extends ConsumerWidget {
 
               return CommandBlock(
                 command: command,
+                isDraggable: true,
                 onTap: () {
                   ref
                       .read(commandSequenceProvider.notifier)

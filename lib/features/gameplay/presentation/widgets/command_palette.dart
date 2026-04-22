@@ -1,15 +1,17 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../core/theme/app_colors.dart';
+import '../../application/command_sequence_provider.dart';
 import '../../domain/models/command_type.dart';
 import 'command_block.dart';
 
-class CommandPalette extends StatelessWidget {
+class CommandPalette extends ConsumerWidget {
   final List<CommandType> commands;
 
   const CommandPalette({super.key, required this.commands});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -30,7 +32,16 @@ class CommandPalette extends StatelessWidget {
             itemCount: commands.length,
             separatorBuilder: (context, index) => const SizedBox(width: 14),
             itemBuilder: (context, index) {
-              return CommandBlock(command: commands[index]);
+              final command = commands[index];
+
+              return CommandBlock(
+                command: command,
+                onTap: () {
+                  ref
+                      .read(commandSequenceProvider.notifier)
+                      .addCommand(command);
+                },
+              );
             },
           ),
         ),

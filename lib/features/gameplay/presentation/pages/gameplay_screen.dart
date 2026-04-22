@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../core/theme/app_colors.dart';
+import '../../application/command_sequence_provider.dart';
+import '../../domain/models/command_type.dart';
 import '../../domain/models/coordinate.dart';
 import '../../domain/models/level_state.dart';
 import '../widgets/command_block.dart';
@@ -7,20 +10,76 @@ import '../widgets/command_palette.dart';
 import '../widgets/game_action_bar.dart';
 import '../widgets/game_grid.dart';
 
-class GameplayScreen extends StatelessWidget {
+class GameplayScreen extends ConsumerWidget {
   final LevelState level;
 
   const GameplayScreen({super.key, required this.level});
 
+  Future<void> _showInsertCommandSheet(
+    BuildContext context,
+    WidgetRef ref,
+    List<CommandType> availableCommands,
+    int insertIndex,
+  ) async {
+    await showModalBottomSheet<void>(
+      context: context,
+      backgroundColor: AppColors.bg2,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+      ),
+      builder: (context) {
+        return Padding(
+          padding: const EdgeInsets.fromLTRB(16, 20, 16, 24),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const Text(
+                'Insert Command',
+                style: TextStyle(
+                  color: AppColors.textPrimary,
+                  fontSize: 18,
+                  fontWeight: FontWeight.w700,
+                ),
+              ),
+              const SizedBox(height: 6),
+              const Text(
+                'Choose a command to add to the sequence.',
+                style: TextStyle(color: AppColors.textSecondary, fontSize: 12),
+              ),
+              const SizedBox(height: 16),
+              Wrap(
+                spacing: 12,
+                runSpacing: 12,
+                children: availableCommands.map((command) {
+                  return GestureDetector(
+                    onTap: () {
+                      ref
+                          .read(commandSequenceProvider.notifier)
+                          .insertCommand(index: insertIndex, command: command);
+                      Navigator.of(context).pop();
+                    },
+                    child: CommandBlock(command: command),
+                  );
+                }).toList(),
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final demoLevel = level.copyWith(
       startPosition: const Coordinate(row: 3, col: 2),
-      targetPosition: const Coordinate(row: 1, col: 2),
-      obstacles: const [Coordinate(row: 2, col: 1)],
+      targetPosition: const Coordinate(row: 2, col: 2),
+      obstacles: const [],
     );
 
     final Coordinate auriPosition = const Coordinate(row: 3, col: 2);
+    final sequence = ref.watch(commandSequenceProvider);
 
     return Scaffold(
       backgroundColor: AppColors.bg,
@@ -98,10 +157,7 @@ class GameplayScreen extends StatelessWidget {
               ),
             ),
             const SizedBox(height: 10),
-            AspectRatio(
-              aspectRatio: 1,
-              child: GameGrid(level: demoLevel, auriPosition: auriPosition),
-            ),
+            GameGrid(level: demoLevel, auriPosition: auriPosition),
             const SizedBox(height: 20),
             CommandPalette(commands: demoLevel.availableCommands),
             const SizedBox(height: 16),
@@ -129,13 +185,20 @@ class GameplayScreen extends StatelessWidget {
                           ),
                         ),
                       ),
-                      Text(
-                        '✕ CLEAR',
-                        style: TextStyle(
-                          color: AppColors.textMuted.withValues(alpha: 0.55),
-                          fontSize: 11,
-                          fontWeight: FontWeight.w700,
-                          letterSpacing: 0.5,
+                      GestureDetector(
+                        onTap: () {
+                          ref
+                              .read(commandSequenceProvider.notifier)
+                              .clearSequence();
+                        },
+                        child: Text(
+                          '✕ CLEAR',
+                          style: TextStyle(
+                            color: AppColors.textMuted.withValues(alpha: 0.75),
+                            fontSize: 11,
+                            fontWeight: FontWeight.w700,
+                            letterSpacing: 0.5,
+                          ),
                         ),
                       ),
                     ],
@@ -152,15 +215,32 @@ class GameplayScreen extends StatelessWidget {
                     ),
                     child: SizedBox(
                       height: 52,
-                      child: ListView(
+                      child: ListView.separated(
                         scrollDirection: Axis.horizontal,
-                        children: const [
-                          _EmptySequenceSlot(),
-                          SizedBox(width: 12),
-                          _EmptySequenceSlot(),
-                          SizedBox(width: 12),
-                          CommandBlock(isSmall: true, isAddPlaceholder: true),
-                        ],
+                        itemCount: sequence.length + 1,
+                        separatorBuilder: (context, index) =>
+                            const SizedBox(width: 12),
+                        itemBuilder: (context, index) {
+                          if (index < sequence.length) {
+                            return CommandBlock(
+                              command: sequence[index],
+                              isSmall: true,
+                            );
+                          }
+
+                          return CommandBlock(
+                            isSmall: true,
+                            isAddPlaceholder: true,
+                            onTap: () {
+                              _showInsertCommandSheet(
+                                context,
+                                ref,
+                                demoLevel.availableCommands,
+                                index,
+                              );
+                            },
+                          );
+                        },
                       ),
                     ),
                   ),
@@ -240,23 +320,6 @@ class GameplayScreen extends StatelessWidget {
             ),
           ],
         ),
-      ),
-    );
-  }
-}
-
-class _EmptySequenceSlot extends StatelessWidget {
-  const _EmptySequenceSlot();
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      width: 48,
-      height: 48,
-      decoration: BoxDecoration(
-        color: Colors.transparent,
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: AppColors.textMuted.withValues(alpha: 0.18)),
       ),
     );
   }

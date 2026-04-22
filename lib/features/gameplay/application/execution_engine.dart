@@ -8,18 +8,19 @@ import '../domain/models/level_state.dart';
 class ExecutionEngine {
   const ExecutionEngine();
 
-  ExecutionState runSequence({
+  List<ExecutionState> buildExecutionTrace({
     required LevelState level,
     required List<CommandType> commands,
-    Direction startDirection = Direction.up,
     int attemptCount = 0,
   }) {
-    ExecutionState state = ExecutionState.fromCommandQueue(
+    final List<ExecutionState> trace = [];
+
+    ExecutionState state = ExecutionState.initial(
       startPosition: level.startPosition,
-      direction: startDirection,
-      commandQueue: commands,
-      attemptCount: attemptCount,
-    );
+      direction: level.startDirection,
+    ).copyWith(attemptCount: attemptCount);
+
+    trace.add(state);
 
     for (int i = 0; i < commands.length; i++) {
       final command = commands[i];
@@ -42,36 +43,62 @@ class ExecutionEngine {
           );
 
           if (hasCollision) {
-            return state.copyWith(status: ExecutionStatus.failure);
+            state = state.copyWith(status: ExecutionStatus.failure);
+            trace.add(state);
+            return trace;
           }
 
           state = state.copyWith(currentPosition: nextPosition);
+          trace.add(state);
 
           if (level.isTarget(state.currentPosition)) {
-            return state.copyWith(status: ExecutionStatus.success);
+            state = state.copyWith(status: ExecutionStatus.success);
+            trace.add(state);
+            return trace;
           }
           break;
 
         case CommandType.turnLeft:
           state = state.copyWith(direction: state.direction.turnLeft);
+          trace.add(state);
           break;
 
         case CommandType.turnRight:
           state = state.copyWith(direction: state.direction.turnRight);
+          trace.add(state);
           break;
 
         case CommandType.ifPathClear:
         case CommandType.loop:
         case CommandType.loopUntil:
-          return state.copyWith(status: ExecutionStatus.failure);
+          state = state.copyWith(status: ExecutionStatus.failure);
+          trace.add(state);
+          return trace;
       }
     }
 
     if (level.isTarget(state.currentPosition)) {
-      return state.copyWith(status: ExecutionStatus.success);
+      state = state.copyWith(status: ExecutionStatus.success);
+    } else {
+      state = state.copyWith(status: ExecutionStatus.failure);
     }
 
-    return state.copyWith(status: ExecutionStatus.failure);
+    trace.add(state);
+    return trace;
+  }
+
+  ExecutionState runSequence({
+    required LevelState level,
+    required List<CommandType> commands,
+    int attemptCount = 0,
+  }) {
+    final trace = buildExecutionTrace(
+      level: level,
+      commands: commands,
+      attemptCount: attemptCount,
+    );
+
+    return trace.last;
   }
 
   bool checkCollision({

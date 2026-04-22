@@ -24,6 +24,9 @@ dev_dependencies:
 flutter:
   uses-material-design: true
 
+  assets:
+    - assets/data/levels.json
+
   fonts:
     - family: Orbitron
       fonts:

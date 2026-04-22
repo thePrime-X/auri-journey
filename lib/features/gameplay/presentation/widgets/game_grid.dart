@@ -6,8 +6,14 @@ import 'grid_cell.dart';
 class GameGrid extends StatelessWidget {
   final LevelState level;
   final Coordinate auriPosition;
+  final bool showTrainingZone;
 
-  const GameGrid({super.key, required this.level, required this.auriPosition});
+  const GameGrid({
+    super.key,
+    required this.level,
+    required this.auriPosition,
+    this.showTrainingZone = false,
+  });
 
   bool _isInCenterTrainingZone(Coordinate coordinate) {
     return coordinate.row >= 1 &&
@@ -37,7 +43,8 @@ class GameGrid extends StatelessWidget {
         final isAuri = cellCoordinate == auriPosition;
         final isGoal = cellCoordinate == level.targetPosition;
         final isObstacle = level.obstacles.contains(cellCoordinate);
-        final isTrainingZone = _isInCenterTrainingZone(cellCoordinate);
+        final isTrainingZone =
+            showTrainingZone && _isInCenterTrainingZone(cellCoordinate);
 
         return GridCell(
           isAuri: isAuri,

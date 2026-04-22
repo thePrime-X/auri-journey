@@ -1,44 +1,28 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../../domain/models/command_type.dart';
 import '../../domain/models/coordinate.dart';
 import '../../domain/models/direction.dart';
 import '../../domain/models/execution_state.dart';
 import '../../domain/models/execution_status.dart';
-import 'gameplay_providers.dart';
+import '../../domain/models/level_state.dart';
 
 class ExecutionStateNotifier extends Notifier<ExecutionState> {
   @override
   ExecutionState build() {
-    final level = ref.watch(levelStateProvider);
-
-    return ExecutionState.initial(startPosition: level.startPosition);
-  }
-
-  void resetFromLevel() {
-    final level = ref.read(levelStateProvider);
-
-    state = ExecutionState.initial(startPosition: level.startPosition);
-  }
-
-  void addCommand(CommandType command) {
-    state = state.copyWith(commandQueue: [...state.commandQueue, command]);
-  }
-
-  void removeCommandAt(int index) {
-    if (index < 0 || index >= state.commandQueue.length) return;
-
-    final updatedQueue = [...state.commandQueue]..removeAt(index);
-
-    state = state.copyWith(commandQueue: updatedQueue);
-  }
-
-  void clearCommands() {
-    state = state.copyWith(
-      commandQueue: [],
-      currentStepIndex: 0,
-      status: ExecutionStatus.idle,
+    return ExecutionState.initial(
+      startPosition: const Coordinate(row: 0, col: 0),
     );
+  }
+
+  void resetFromLevel(LevelState level) {
+    state = ExecutionState.initial(
+      startPosition: level.startPosition,
+      direction: level.startDirection,
+    );
+  }
+
+  void applyExecutionState(ExecutionState newState) {
+    state = newState;
   }
 
   void updatePosition(Coordinate position) {

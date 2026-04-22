@@ -38,11 +38,7 @@ class GridCell extends StatelessWidget {
     } else if (isAuri) {
       backgroundColor = AppColors.cyan.withValues(alpha: 0.08);
       borderColor = AppColors.cyan.withValues(alpha: 0.30);
-      child = const Icon(
-        Icons.smart_toy_rounded,
-        color: AppColors.cyan,
-        size: 24,
-      );
+      child = const Text('🤖', style: TextStyle(fontSize: 22));
     }
 
     return AspectRatio(

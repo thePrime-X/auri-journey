@@ -1,4 +1,4 @@
-import 'package:auri_app/features/gameplay/data/sample_level.dart';
+import '../features/gameplay/presentation/pages/gameplay_loader_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -74,7 +74,7 @@ final goRouterProvider = Provider<GoRouter>((ref) {
         path: '/gameplay',
         name: 'gameplay',
         builder: (BuildContext context, GoRouterState state) {
-          return const GameplayScreen(level: sampleLevel);
+          return const GameplayLoaderScreen();
         },
       ),
     ],

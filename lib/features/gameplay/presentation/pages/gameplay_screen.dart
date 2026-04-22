@@ -1,7 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
+
 import '../../../../core/theme/app_colors.dart';
 import '../../application/command_sequence_provider.dart';
+import '../../application/execution_engine_provider.dart';
+import '../../application/gameplay_providers.dart';
 import '../../domain/models/command_type.dart';
 import '../../domain/models/coordinate.dart';
 import '../../domain/models/level_state.dart';
@@ -10,75 +14,73 @@ import '../widgets/command_palette.dart';
 import '../widgets/game_action_bar.dart';
 import '../widgets/game_grid.dart';
 
-class GameplayScreen extends ConsumerWidget {
+class GameplayScreen extends ConsumerStatefulWidget {
   final LevelState level;
 
   const GameplayScreen({super.key, required this.level});
 
-  Future<void> _showInsertCommandSheet(
-    BuildContext context,
-    WidgetRef ref,
-    List<CommandType> availableCommands,
-    int insertIndex,
-  ) async {
-    await showModalBottomSheet<void>(
-      context: context,
-      backgroundColor: AppColors.bg2,
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
-      ),
-      builder: (context) {
-        return Padding(
-          padding: const EdgeInsets.fromLTRB(16, 20, 16, 24),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              const Text(
-                'Insert Command',
-                style: TextStyle(
-                  color: AppColors.textPrimary,
-                  fontSize: 18,
-                  fontWeight: FontWeight.w700,
-                ),
-              ),
-              const SizedBox(height: 6),
-              const Text(
-                'Choose a command to add to the sequence.',
-                style: TextStyle(color: AppColors.textSecondary, fontSize: 12),
-              ),
-              const SizedBox(height: 16),
-              Wrap(
-                spacing: 12,
-                runSpacing: 12,
-                children: availableCommands.map((command) {
-                  return GestureDetector(
-                    onTap: () {
-                      ref
-                          .read(commandSequenceProvider.notifier)
-                          .insertCommand(index: insertIndex, command: command);
-                      Navigator.of(context).pop();
-                    },
-                    child: CommandBlock(command: command),
-                  );
-                }).toList(),
-              ),
-            ],
-          ),
-        );
-      },
+  @override
+  ConsumerState<GameplayScreen> createState() => _GameplayScreenState();
+}
+
+class _GameplayScreenState extends ConsumerState<GameplayScreen> {
+  bool _isAnimating = false;
+
+  @override
+  void initState() {
+    super.initState();
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      ref.read(executionStateProvider.notifier).resetFromLevel(widget.level);
+    });
+  }
+
+  Future<void> _runSequenceAnimated() async {
+    if (_isAnimating) return;
+
+    final sequence = ref.read(commandSequenceProvider);
+    final commands = sequence.whereType<CommandType>().toList();
+
+    if (commands.isEmpty) return;
+
+    setState(() {
+      _isAnimating = true;
+    });
+
+    final executionNotifier = ref.read(executionStateProvider.notifier);
+    final currentExecution = ref.read(executionStateProvider);
+    final engine = ref.read(executionEngineProvider);
+
+    executionNotifier.resetFromLevel(widget.level);
+    executionNotifier.incrementAttemptCount();
+
+    final trace = engine.buildExecutionTrace(
+      level: widget.level,
+      commands: commands,
+      attemptCount: currentExecution.attemptCount + 1,
     );
+
+    for (final step in trace) {
+      executionNotifier.applyExecutionState(step);
+      await Future.delayed(const Duration(milliseconds: 350));
+    }
+
+    if (mounted) {
+      setState(() {
+        _isAnimating = false;
+      });
+    }
+  }
+
+  void _exitToDashboard() {
+    if (_isAnimating) return;
+    context.go('/dashboard');
   }
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final demoLevel = level.copyWith(
-      startPosition: const Coordinate(row: 3, col: 2),
-      targetPosition: const Coordinate(row: 2, col: 2),
-      obstacles: const [],
-    );
-
-    final Coordinate auriPosition = const Coordinate(row: 3, col: 2);
+  Widget build(BuildContext context) {
+    final executionState = ref.watch(executionStateProvider);
+    final Coordinate auriPosition = executionState.currentPosition;
     final sequence = ref.watch(commandSequenceProvider);
 
     return Scaffold(
@@ -89,18 +91,21 @@ class GameplayScreen extends ConsumerWidget {
           children: [
             Row(
               children: [
-                Container(
-                  width: 34,
-                  height: 34,
-                  decoration: BoxDecoration(
-                    color: AppColors.bg3,
-                    borderRadius: BorderRadius.circular(10),
-                    border: Border.all(color: AppColors.border),
-                  ),
-                  child: const Icon(
-                    Icons.arrow_back_ios_new_rounded,
-                    color: AppColors.textSecondary,
-                    size: 16,
+                GestureDetector(
+                  onTap: _exitToDashboard,
+                  child: Container(
+                    width: 34,
+                    height: 34,
+                    decoration: BoxDecoration(
+                      color: AppColors.bg3,
+                      borderRadius: BorderRadius.circular(10),
+                      border: Border.all(color: AppColors.border),
+                    ),
+                    child: const Icon(
+                      Icons.arrow_back_ios_new_rounded,
+                      color: AppColors.textSecondary,
+                      size: 16,
+                    ),
                   ),
                 ),
                 const SizedBox(width: 12),
@@ -119,7 +124,7 @@ class GameplayScreen extends ConsumerWidget {
                       ),
                       const SizedBox(height: 2),
                       Text(
-                        demoLevel.title,
+                        widget.level.title,
                         style: const TextStyle(
                           color: AppColors.textMuted,
                           fontSize: 11,
@@ -146,10 +151,10 @@ class GameplayScreen extends ConsumerWidget {
               ],
             ),
             const SizedBox(height: 20),
-            const Text(
-              'EXECUTION GRID · 3×3 TRAINING ZONE',
+            Text(
+              'EXECUTION GRID · ${widget.level.gridSize}×${widget.level.gridSize}',
               textAlign: TextAlign.center,
-              style: TextStyle(
+              style: const TextStyle(
                 color: AppColors.textMuted,
                 fontSize: 10,
                 letterSpacing: 1.5,
@@ -157,9 +162,16 @@ class GameplayScreen extends ConsumerWidget {
               ),
             ),
             const SizedBox(height: 10),
-            GameGrid(level: demoLevel, auriPosition: auriPosition),
+            AspectRatio(
+              aspectRatio: 1,
+              child: GameGrid(
+                level: widget.level,
+                auriPosition: auriPosition,
+                showTrainingZone: false,
+              ),
+            ),
             const SizedBox(height: 20),
-            CommandPalette(commands: demoLevel.availableCommands),
+            CommandPalette(commands: widget.level.availableCommands),
             const SizedBox(height: 16),
             Container(
               padding: const EdgeInsets.all(14),
@@ -187,17 +199,37 @@ class GameplayScreen extends ConsumerWidget {
                       ),
                       GestureDetector(
                         onTap: () {
+                          if (_isAnimating) return;
                           ref
                               .read(commandSequenceProvider.notifier)
                               .clearSequence();
                         },
-                        child: Text(
-                          '✕ CLEAR',
-                          style: TextStyle(
-                            color: AppColors.textMuted.withValues(alpha: 0.75),
-                            fontSize: 11,
-                            fontWeight: FontWeight.w700,
-                            letterSpacing: 0.5,
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 10,
+                            vertical: 6,
+                          ),
+                          decoration: BoxDecoration(
+                            color: AppColors.red.withValues(alpha: 0.10),
+                            borderRadius: BorderRadius.circular(999),
+                            border: Border.all(
+                              color: AppColors.red.withValues(alpha: 0.30),
+                            ),
+                            boxShadow: [
+                              BoxShadow(
+                                color: AppColors.red.withValues(alpha: 0.18),
+                                blurRadius: 10,
+                              ),
+                            ],
+                          ),
+                          child: const Text(
+                            '✕ CLEAR',
+                            style: TextStyle(
+                              color: AppColors.red,
+                              fontSize: 11,
+                              fontWeight: FontWeight.w800,
+                              letterSpacing: 0.5,
+                            ),
                           ),
                         ),
                       ),
@@ -215,34 +247,33 @@ class GameplayScreen extends ConsumerWidget {
                     ),
                     child: SizedBox(
                       height: 52,
-                      child: ListView.builder(
+                      child: ListView.separated(
                         scrollDirection: Axis.horizontal,
-                        itemCount: sequence.length * 2 + 1,
+                        itemCount: sequence.length + 1,
+                        separatorBuilder: (context, index) =>
+                            const SizedBox(width: 12),
                         itemBuilder: (context, index) {
-                          if (index.isEven) {
-                            final insertIndex = index ~/ 2;
+                          if (index < sequence.length) {
+                            final item = sequence[index];
 
-                            return Padding(
-                              padding: const EdgeInsets.only(right: 12),
-                              child: DragTarget<Object>(
-                                onWillAcceptWithDetails: (details) => true,
+                            if (item == null) {
+                              return DragTarget<Object>(
+                                onWillAcceptWithDetails: (details) =>
+                                    !_isAnimating,
                                 onAcceptWithDetails: (details) {
                                   final data = details.data;
 
                                   if (data is _DraggedCommandData) {
                                     ref
                                         .read(commandSequenceProvider.notifier)
-                                        .moveCommand(
-                                          fromIndex: data.sequenceIndex!,
-                                          toInsertIndex: insertIndex,
+                                        .moveCommandToEmptySlot(
+                                          fromIndex: data.sequenceIndex,
+                                          toIndex: index,
                                         );
                                   } else if (data is CommandType) {
                                     ref
                                         .read(commandSequenceProvider.notifier)
-                                        .insertCommand(
-                                          index: insertIndex,
-                                          command: data,
-                                        );
+                                        .fillSlot(index: index, command: data);
                                   }
                                 },
                                 builder:
@@ -254,50 +285,42 @@ class GameplayScreen extends ConsumerWidget {
                                         duration: const Duration(
                                           milliseconds: 120,
                                         ),
-                                        decoration: isHovering
-                                            ? BoxDecoration(
-                                                borderRadius:
-                                                    BorderRadius.circular(12),
-                                                border: Border.all(
-                                                  color: AppColors.cyan,
-                                                  width: 2,
-                                                ),
-                                              )
-                                            : null,
-                                        child: CommandBlock(
-                                          isSmall: true,
-                                          isAddPlaceholder: true,
-                                          onTap: () {
-                                            _showInsertCommandSheet(
-                                              context,
-                                              ref,
-                                              demoLevel.availableCommands,
-                                              insertIndex,
-                                            );
-                                          },
+                                        width: 48,
+                                        height: 48,
+                                        decoration: BoxDecoration(
+                                          color: isHovering
+                                              ? AppColors.cyan.withValues(
+                                                  alpha: 0.10,
+                                                )
+                                              : Colors.transparent,
+                                          borderRadius: BorderRadius.circular(
+                                            12,
+                                          ),
+                                          border: Border.all(
+                                            color: isHovering
+                                                ? AppColors.cyan
+                                                : AppColors.textMuted
+                                                      .withValues(alpha: 0.22),
+                                            width: isHovering ? 2 : 1,
+                                          ),
                                         ),
                                       );
                                     },
-                              ),
-                            );
-                          }
+                              );
+                            }
 
-                          final commandIndex = index ~/ 2;
-                          final command = sequence[commandIndex];
-
-                          return Padding(
-                            padding: const EdgeInsets.only(right: 12),
-                            child: LongPressDraggable<_DraggedCommandData>(
-                              data: _DraggedCommandData.fromSequence(
-                                command: command,
-                                sequenceIndex: commandIndex,
+                            return LongPressDraggable<_DraggedCommandData>(
+                              data: _DraggedCommandData(
+                                command: item,
+                                sequenceIndex: index,
                               ),
+                              maxSimultaneousDrags: _isAnimating ? 0 : 1,
                               feedback: Material(
                                 color: Colors.transparent,
                                 child: Opacity(
                                   opacity: 0.95,
                                   child: CommandBlock(
-                                    command: command,
+                                    command: item,
                                     isSmall: true,
                                   ),
                                 ),
@@ -305,15 +328,34 @@ class GameplayScreen extends ConsumerWidget {
                               childWhenDragging: Opacity(
                                 opacity: 0.35,
                                 child: CommandBlock(
-                                  command: command,
+                                  command: item,
                                   isSmall: true,
                                 ),
                               ),
-                              child: CommandBlock(
-                                command: command,
-                                isSmall: true,
+                              child: GestureDetector(
+                                onTap: () {
+                                  if (_isAnimating) return;
+                                  ref
+                                      .read(commandSequenceProvider.notifier)
+                                      .removeCommandAt(index);
+                                },
+                                child: CommandBlock(
+                                  command: item,
+                                  isSmall: true,
+                                ),
                               ),
-                            ),
+                            );
+                          }
+
+                          return CommandBlock(
+                            isSmall: true,
+                            isAddPlaceholder: true,
+                            onTap: () {
+                              if (_isAnimating) return;
+                              ref
+                                  .read(commandSequenceProvider.notifier)
+                                  .addEmptySlot();
+                            },
                           );
                         },
                       ),
@@ -323,7 +365,11 @@ class GameplayScreen extends ConsumerWidget {
               ),
             ),
             const SizedBox(height: 14),
-            const GameActionBar(),
+            GameActionBar(
+              onRun: _runSequenceAnimated,
+              onExit: _exitToDashboard,
+              isBusy: _isAnimating,
+            ),
             const SizedBox(height: 14),
             Container(
               padding: const EdgeInsets.all(14),
@@ -382,9 +428,9 @@ class GameplayScreen extends ConsumerWidget {
                     ],
                   ),
                   const SizedBox(height: 10),
-                  const Text(
-                    'Start small: drag command blocks into the sequence zone or long-press existing sequence blocks to reorder them.',
-                    style: TextStyle(
+                  Text(
+                    'Goal: guide Auri from ${widget.level.startPosition.row},${widget.level.startPosition.col} to ${widget.level.targetPosition.row},${widget.level.targetPosition.col}.',
+                    style: const TextStyle(
                       color: AppColors.textSecondary,
                       fontSize: 12,
                       height: 1.6,
@@ -402,23 +448,10 @@ class GameplayScreen extends ConsumerWidget {
 
 class _DraggedCommandData {
   final CommandType command;
-  final bool isFromSequence;
-  final int? sequenceIndex;
+  final int sequenceIndex;
 
-  const _DraggedCommandData._({
+  const _DraggedCommandData({
     required this.command,
-    required this.isFromSequence,
     required this.sequenceIndex,
   });
-
-  factory _DraggedCommandData.fromSequence({
-    required CommandType command,
-    required int sequenceIndex,
-  }) {
-    return _DraggedCommandData._(
-      command: command,
-      isFromSequence: true,
-      sequenceIndex: sequenceIndex,
-    );
-  }
 }

@@ -25,6 +25,22 @@ class CommandSequenceNotifier extends Notifier<List<CommandType>> {
     state = updated;
   }
 
+  void moveCommand({required int fromIndex, required int toInsertIndex}) {
+    if (fromIndex < 0 || fromIndex >= state.length) return;
+    if (toInsertIndex < 0 || toInsertIndex > state.length) return;
+
+    final updated = [...state];
+    final command = updated.removeAt(fromIndex);
+
+    var adjustedIndex = toInsertIndex;
+    if (fromIndex < toInsertIndex) {
+      adjustedIndex -= 1;
+    }
+
+    updated.insert(adjustedIndex, command);
+    state = updated;
+  }
+
   void removeLastCommand() {
     if (state.isEmpty) return;
     state = state.sublist(0, state.length - 1);

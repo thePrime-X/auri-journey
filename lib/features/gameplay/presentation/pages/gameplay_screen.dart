@@ -161,165 +161,166 @@ class GameplayScreen extends ConsumerWidget {
             const SizedBox(height: 20),
             CommandPalette(commands: demoLevel.availableCommands),
             const SizedBox(height: 16),
-            DragTarget<CommandType>(
-              onWillAcceptWithDetails: (details) => true,
-              onAcceptWithDetails: (details) {
-                ref
-                    .read(commandSequenceProvider.notifier)
-                    .addCommand(details.data);
-              },
-              builder: (context, candidateData, rejectedData) {
-                final isHovering = candidateData.isNotEmpty;
-
-                return AnimatedContainer(
-                  duration: const Duration(milliseconds: 150),
-                  padding: const EdgeInsets.all(14),
-                  decoration: BoxDecoration(
-                    color: isHovering
-                        ? AppColors.cyan.withValues(alpha: 0.08)
-                        : AppColors.bg3.withValues(alpha: 0.55),
-                    borderRadius: BorderRadius.circular(16),
-                    border: Border.all(
-                      color: isHovering
-                          ? AppColors.cyan.withValues(alpha: 0.55)
-                          : AppColors.border2.withValues(alpha: 0.6),
-                    ),
-                  ),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
+            Container(
+              padding: const EdgeInsets.all(14),
+              decoration: BoxDecoration(
+                color: AppColors.bg3.withValues(alpha: 0.55),
+                borderRadius: BorderRadius.circular(16),
+                border: Border.all(
+                  color: AppColors.border2.withValues(alpha: 0.6),
+                ),
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
                     children: [
-                      Row(
-                        children: [
-                          const Expanded(
-                            child: Text(
-                              'Sequence',
-                              style: TextStyle(
-                                color: AppColors.textMuted,
-                                fontSize: 12,
-                                fontWeight: FontWeight.w700,
-                              ),
-                            ),
+                      const Expanded(
+                        child: Text(
+                          'Sequence',
+                          style: TextStyle(
+                            color: AppColors.textMuted,
+                            fontSize: 12,
+                            fontWeight: FontWeight.w700,
                           ),
-                          GestureDetector(
-                            onTap: () {
-                              ref
-                                  .read(commandSequenceProvider.notifier)
-                                  .clearSequence();
-                            },
-                            child: Text(
-                              '✕ CLEAR',
-                              style: TextStyle(
-                                color: AppColors.textMuted.withValues(
-                                  alpha: 0.75,
-                                ),
-                                fontSize: 11,
-                                fontWeight: FontWeight.w700,
-                                letterSpacing: 0.5,
-                              ),
-                            ),
-                          ),
-                        ],
+                        ),
                       ),
-                      const SizedBox(height: 12),
-                      Container(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 4,
-                          vertical: 2,
+                      GestureDetector(
+                        onTap: () {
+                          ref
+                              .read(commandSequenceProvider.notifier)
+                              .clearSequence();
+                        },
+                        child: Text(
+                          '✕ CLEAR',
+                          style: TextStyle(
+                            color: AppColors.textMuted.withValues(alpha: 0.75),
+                            fontSize: 11,
+                            fontWeight: FontWeight.w700,
+                            letterSpacing: 0.5,
+                          ),
                         ),
-                        decoration: BoxDecoration(
-                          color: AppColors.bg.withValues(alpha: 0.18),
-                          borderRadius: BorderRadius.circular(14),
-                          border: isHovering
-                              ? Border.all(
-                                  color: AppColors.cyan.withValues(alpha: 0.35),
-                                )
-                              : null,
-                        ),
-                        child: ListView.builder(
-                          scrollDirection: Axis.horizontal,
-                          itemCount: sequence.length * 2 + 1,
-                          itemBuilder: (context, index) {
-                            // EVEN index = SLOT (+)
-                            if (index.isEven) {
-                              final insertIndex = index ~/ 2;
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 12),
+                  Container(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 4,
+                      vertical: 2,
+                    ),
+                    decoration: BoxDecoration(
+                      color: AppColors.bg.withValues(alpha: 0.18),
+                      borderRadius: BorderRadius.circular(14),
+                    ),
+                    child: SizedBox(
+                      height: 52,
+                      child: ListView.builder(
+                        scrollDirection: Axis.horizontal,
+                        itemCount: sequence.length * 2 + 1,
+                        itemBuilder: (context, index) {
+                          if (index.isEven) {
+                            final insertIndex = index ~/ 2;
 
-                              return Padding(
-                                padding: const EdgeInsets.only(right: 12),
-                                child: DragTarget<CommandType>(
-                                  onWillAcceptWithDetails: (details) => true,
-                                  onAcceptWithDetails: (details) {
+                            return Padding(
+                              padding: const EdgeInsets.only(right: 12),
+                              child: DragTarget<Object>(
+                                onWillAcceptWithDetails: (details) => true,
+                                onAcceptWithDetails: (details) {
+                                  final data = details.data;
+
+                                  if (data is _DraggedCommandData) {
+                                    ref
+                                        .read(commandSequenceProvider.notifier)
+                                        .moveCommand(
+                                          fromIndex: data.sequenceIndex!,
+                                          toInsertIndex: insertIndex,
+                                        );
+                                  } else if (data is CommandType) {
                                     ref
                                         .read(commandSequenceProvider.notifier)
                                         .insertCommand(
                                           index: insertIndex,
-                                          command: details.data,
+                                          command: data,
                                         );
-                                  },
-                                  builder:
-                                      (context, candidateData, rejectedData) {
-                                        final isHovering =
-                                            candidateData.isNotEmpty;
+                                  }
+                                },
+                                builder:
+                                    (context, candidateData, rejectedData) {
+                                      final isHovering =
+                                          candidateData.isNotEmpty;
 
-                                        return AnimatedContainer(
-                                          duration: const Duration(
-                                            milliseconds: 120,
-                                          ),
-                                          decoration: isHovering
-                                              ? BoxDecoration(
-                                                  borderRadius:
-                                                      BorderRadius.circular(12),
-                                                  border: Border.all(
-                                                    color: AppColors.cyan,
-                                                    width: 2,
-                                                  ),
-                                                )
-                                              : null,
-                                          child: CommandBlock(
-                                            isSmall: true,
-                                            isAddPlaceholder: true,
-                                            onTap: () {
-                                              _showInsertCommandSheet(
-                                                context,
-                                                ref,
-                                                demoLevel.availableCommands,
-                                                insertIndex,
-                                              );
-                                            },
-                                          ),
-                                        );
-                                      },
-                                ),
-                              );
-                            }
-
-                            // ODD index = COMMAND
-                            final commandIndex = index ~/ 2;
-
-                            return Padding(
-                              padding: const EdgeInsets.only(right: 12),
-                              child: CommandBlock(
-                                command: sequence[commandIndex],
-                                isSmall: true,
+                                      return AnimatedContainer(
+                                        duration: const Duration(
+                                          milliseconds: 120,
+                                        ),
+                                        decoration: isHovering
+                                            ? BoxDecoration(
+                                                borderRadius:
+                                                    BorderRadius.circular(12),
+                                                border: Border.all(
+                                                  color: AppColors.cyan,
+                                                  width: 2,
+                                                ),
+                                              )
+                                            : null,
+                                        child: CommandBlock(
+                                          isSmall: true,
+                                          isAddPlaceholder: true,
+                                          onTap: () {
+                                            _showInsertCommandSheet(
+                                              context,
+                                              ref,
+                                              demoLevel.availableCommands,
+                                              insertIndex,
+                                            );
+                                          },
+                                        ),
+                                      );
+                                    },
                               ),
                             );
-                          },
-                        ),
+                          }
+
+                          final commandIndex = index ~/ 2;
+                          final command = sequence[commandIndex];
+
+                          return Padding(
+                            padding: const EdgeInsets.only(right: 12),
+                            child: LongPressDraggable<_DraggedCommandData>(
+                              data: _DraggedCommandData.fromSequence(
+                                command: command,
+                                sequenceIndex: commandIndex,
+                              ),
+                              feedback: Material(
+                                color: Colors.transparent,
+                                child: Opacity(
+                                  opacity: 0.95,
+                                  child: CommandBlock(
+                                    command: command,
+                                    isSmall: true,
+                                  ),
+                                ),
+                              ),
+                              childWhenDragging: Opacity(
+                                opacity: 0.35,
+                                child: CommandBlock(
+                                  command: command,
+                                  isSmall: true,
+                                ),
+                              ),
+                              child: CommandBlock(
+                                command: command,
+                                isSmall: true,
+                              ),
+                            ),
+                          );
+                        },
                       ),
-                      if (isHovering) ...[
-                        const SizedBox(height: 10),
-                        const Text(
-                          'Drop command here',
-                          style: TextStyle(
-                            color: AppColors.cyan,
-                            fontSize: 11,
-                            fontWeight: FontWeight.w700,
-                          ),
-                        ),
-                      ],
-                    ],
+                    ),
                   ),
-                );
-              },
+                ],
+              ),
             ),
             const SizedBox(height: 14),
             const GameActionBar(),
@@ -382,7 +383,7 @@ class GameplayScreen extends ConsumerWidget {
                   ),
                   const SizedBox(height: 10),
                   const Text(
-                    'Start small: drag command blocks into the sequence zone or tap the + button to insert them.',
+                    'Start small: drag command blocks into the sequence zone or long-press existing sequence blocks to reorder them.',
                     style: TextStyle(
                       color: AppColors.textSecondary,
                       fontSize: 12,
@@ -395,6 +396,29 @@ class GameplayScreen extends ConsumerWidget {
           ],
         ),
       ),
+    );
+  }
+}
+
+class _DraggedCommandData {
+  final CommandType command;
+  final bool isFromSequence;
+  final int? sequenceIndex;
+
+  const _DraggedCommandData._({
+    required this.command,
+    required this.isFromSequence,
+    required this.sequenceIndex,
+  });
+
+  factory _DraggedCommandData.fromSequence({
+    required CommandType command,
+    required int sequenceIndex,
+  }) {
+    return _DraggedCommandData._(
+      command: command,
+      isFromSequence: true,
+      sequenceIndex: sequenceIndex,
     );
   }
 }

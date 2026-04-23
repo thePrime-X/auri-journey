@@ -16,11 +16,7 @@ class GameplayLoaderScreen extends ConsumerWidget {
     return levelsAsync.when(
       data: (levels) {
         if (levels.isEmpty) {
-          return const Scaffold(
-            body: Center(
-              child: Text('No levels found'),
-            ),
-          );
+          return const Scaffold(body: Center(child: Text('No levels found')));
         }
 
         final safeIndex = currentLevelIndex.clamp(0, levels.length - 1);
@@ -28,16 +24,10 @@ class GameplayLoaderScreen extends ConsumerWidget {
 
         return GameplayScreen(level: level);
       },
-      loading: () => const Scaffold(
-        body: Center(
-          child: CircularProgressIndicator(),
-        ),
-      ),
-      error: (error, stackTrace) => Scaffold(
-        body: Center(
-          child: Text('Error: $error'),
-        ),
-      ),
+      loading: () =>
+          const Scaffold(body: Center(child: CircularProgressIndicator())),
+      error: (error, stackTrace) =>
+          Scaffold(body: Center(child: Text('Error: $error'))),
     );
   }
 }

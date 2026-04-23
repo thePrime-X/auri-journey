@@ -33,25 +33,15 @@ class GridCell extends StatelessWidget {
     if (isObstacle) {
       backgroundColor = AppColors.red.withValues(alpha: 0.06);
       borderColor = AppColors.red.withValues(alpha: 0.25);
-      child = const Icon(
-        Icons.close_rounded,
-        color: AppColors.red,
-        size: 20,
-      );
+      child = const Icon(Icons.close_rounded, color: AppColors.red, size: 20);
     } else if (isGoal) {
       backgroundColor = AppColors.amber.withValues(alpha: 0.08);
       borderColor = AppColors.amber.withValues(alpha: 0.30);
-      child = const Icon(
-        Icons.bolt,
-        color: AppColors.amber,
-        size: 22,
-      );
+      child = const Icon(Icons.bolt, color: AppColors.amber, size: 22);
     } else if (isAuri) {
       backgroundColor = AppColors.cyan.withValues(alpha: 0.08);
       borderColor = AppColors.cyan.withValues(alpha: 0.30);
-      child = _AuriFace(
-        direction: auriDirection ?? Direction.up,
-      );
+      child = _AuriFace(direction: auriDirection ?? Direction.up);
     }
 
     return AspectRatio(
@@ -68,13 +58,10 @@ class GridCell extends StatelessWidget {
   }
 }
 
-
 class _AuriFace extends StatefulWidget {
   final Direction direction;
 
-  const _AuriFace({
-    required this.direction,
-  });
+  const _AuriFace({required this.direction});
 
   @override
   State<_AuriFace> createState() => _AuriFaceState();
@@ -122,9 +109,9 @@ class _AuriFaceState extends State<_AuriFace> {
 
     final raw = (toIndex - fromIndex + 4) % 4;
 
-    if (raw == 1) return 0.25;   // clockwise 90
-    if (raw == 3) return -0.25;  // counterclockwise 90
-    if (raw == 2) return 0.5;    // 180 fallback
+    if (raw == 1) return 0.25; // clockwise 90
+    if (raw == 3) return -0.25; // counterclockwise 90
+    if (raw == 2) return 0.5; // 180 fallback
 
     return 0.0;
   }
@@ -168,9 +155,9 @@ class _AuriFaceState extends State<_AuriFace> {
                       decoration: BoxDecoration(
                         boxShadow: [
                           BoxShadow(
-                            color: const Color(0xFF34D8FF).withValues(
-                              alpha: _isTurning ? 0.7 : 0.45,
-                            ),
+                            color: const Color(
+                              0xFF34D8FF,
+                            ).withValues(alpha: _isTurning ? 0.7 : 0.45),
                             blurRadius: _isTurning ? 16 : 10,
                             spreadRadius: _isTurning ? 2 : 1,
                           ),

@@ -518,6 +518,11 @@ class _GameplayScreenState extends ConsumerState<GameplayScreen> {
                                   child: CommandBlock(
                                     command: item,
                                     isSmall: true,
+                                    isHighlighted:
+                                        executionState.currentStepIndex ==
+                                            index &&
+                                        executionState.status ==
+                                            ExecutionStatus.running,
                                   ),
                                 ),
                               ),
@@ -526,6 +531,11 @@ class _GameplayScreenState extends ConsumerState<GameplayScreen> {
                                 child: CommandBlock(
                                   command: item,
                                   isSmall: true,
+                                  isHighlighted:
+                                      executionState.currentStepIndex ==
+                                          index &&
+                                      executionState.status ==
+                                          ExecutionStatus.running,
                                 ),
                               ),
                               child: GestureDetector(

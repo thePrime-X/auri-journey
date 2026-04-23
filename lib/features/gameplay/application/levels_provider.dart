@@ -6,45 +6,84 @@ import '../domain/models/level_state.dart';
 import '../domain/models/coordinate.dart';
 import '../domain/models/command_type.dart';
 import '../domain/models/direction.dart';
+import '../application/firestore_provider.dart';
 
 final levelsProvider = FutureProvider<List<LevelState>>((ref) async {
-  final jsonString = await rootBundle.loadString('assets/data/levels.json');
+  try {
+    final service = ref.read(levelsFirestoreServiceProvider);
+    final firestoreData = await service.fetchLevels();
 
-  final List<dynamic> data = json.decode(jsonString);
+    return firestoreData
+        .map<LevelState>((levelJson) => _parseLevel(levelJson))
+        .toList();
+  } catch (_) {
+    final jsonString = await rootBundle.loadString('assets/data/levels.json');
+    final List<dynamic> data = json.decode(jsonString);
 
-  return data.map((levelJson) {
-    return LevelState(
-      id: levelJson['id'],
-      title: levelJson['title'],
-      order: levelJson['order'],
-      isUnlockedByDefault: levelJson['isUnlockedByDefault'],
-      gridSize: levelJson['gridSize'],
-      startPosition: Coordinate(
-        row: levelJson['startPosition']['row'],
-        col: levelJson['startPosition']['col'],
-      ),
-      startDirection: _parseDirection(levelJson['startDirection']),
-      targetPosition: Coordinate(
-        row: levelJson['targetPosition']['row'],
-        col: levelJson['targetPosition']['col'],
-      ),
-      obstacles: (levelJson['obstacles'] as List)
-          .map((o) => Coordinate(row: o['row'], col: o['col']))
-          .toList(),
-      availableCommands: (levelJson['availableCommands'] as List)
-          .map((c) => _parseCommand(c))
-          .toList(),
-      rewardXp: levelJson['rewardXp'],
-      learningObjective: levelJson['learningObjective'],
-      optimalSolution: (levelJson['optimalSolution'] as List)
-          .map((c) => _parseCommand(c))
-          .toList(),
-      reflectionPrompt: levelJson['reflectionPrompt'],
-      firstFailureHint: levelJson['hints']?['first']?.toString() ?? '',
-      repeatedFailureHint: levelJson['hints']?['repeat']?.toString() ?? '',
-    );
-  }).toList();
+    return data
+        .map<LevelState>(
+          (levelJson) => _parseLevel(levelJson as Map<String, dynamic>),
+        )
+        .toList();
+  }
 });
+
+LevelState _parseLevel(Map<String, dynamic> levelJson) {
+  final start = levelJson['startPosition'] as Map<String, dynamic>? ?? {};
+  final target = levelJson['targetPosition'] as Map<String, dynamic>? ?? {};
+
+  return LevelState(
+    id: levelJson['id'] as String,
+    title: levelJson['title'] as String,
+    order: (levelJson['order'] as num).toInt(),
+    isUnlockedByDefault: levelJson['isUnlockedByDefault'] as bool,
+    gridSize: (levelJson['gridSize'] as num).toInt(),
+
+    startPosition: Coordinate(
+      row: (start['row'] as num).toInt(),
+      col: (start['col'] as num).toInt(),
+    ),
+
+    startDirection: _parseDirection(levelJson['startDirection'] as String),
+
+    targetPosition: Coordinate(
+      row: (target['row'] as num).toInt(),
+      col: (target['col'] as num).toInt(),
+    ),
+
+    obstacles: ((levelJson['obstacles'] ?? []) as List)
+        .map(
+          (o) => Coordinate(
+            row: (o['row'] as num).toInt(),
+            col: (o['col'] as num).toInt(),
+          ),
+        )
+        .toList(),
+
+    availableCommands: ((levelJson['availableCommands'] ?? []) as List)
+        .map((c) => _parseCommand(c as String))
+        .toList(),
+
+    rewardXp: (levelJson['rewardXp'] as num).toInt(),
+
+    learningObjective: levelJson['learningObjective'] as String,
+
+    optimalSolution: ((levelJson['optimalSolution'] ?? []) as List)
+        .map((c) => _parseCommand(c))
+        .toList(),
+
+    reflectionPrompt: levelJson['reflectionPrompt'] as String,
+
+    firstFailureHint:
+        levelJson['firstFailureHint']?.toString() ??
+        levelJson['hints']?['first']?.toString() ??
+        '',
+    repeatedFailureHint:
+        levelJson['repeatedFailureHint']?.toString() ??
+        levelJson['hints']?['repeat']?.toString() ??
+        '',
+  );
+}
 
 Direction _parseDirection(String value) {
   switch (value) {

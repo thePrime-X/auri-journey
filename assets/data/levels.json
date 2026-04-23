@@ -1,0 +1,143 @@
+[
+  {
+    "id": "level_1",
+    "order": 1,
+    "isUnlockedByDefault": true,
+    "title": "First Step",
+    "gridSize": 5,
+    "startPosition": { "row": 4, "col": 2 },
+    "startDirection": "UP",
+    "targetPosition": { "row": 2, "col": 2 },
+    "obstacles": [],
+    "availableCommands": ["MOVE_FORWARD"],
+    "rewardXp": 10,
+    "learningObjective": "Understand that one command equals one movement step.",
+    "optimalSolution": ["MOVE_FORWARD", "MOVE_FORWARD"],
+    "reflectionPrompt": "What did you expect Auri to do after each step?",
+    "hints": {
+      "first": "Auri moves one tile each time you use Move Forward.",
+      "repeat": "Count the tiles between Auri and the goal and match them with your commands."
+    }
+  },
+  {
+    "id": "level_2",
+    "order": 2,
+    "isUnlockedByDefault": false,
+    "title": "Turn and Go",
+    "gridSize": 5,
+    "startPosition": { "row": 4, "col": 1 },
+    "startDirection": "UP",
+    "targetPosition": { "row": 4, "col": 3 },
+    "obstacles": [],
+    "availableCommands": ["MOVE_FORWARD", "TURN_LEFT", "TURN_RIGHT"],
+    "rewardXp": 15,
+    "learningObjective": "Understand direction before movement.",
+    "optimalSolution": ["TURN_RIGHT", "MOVE_FORWARD", "MOVE_FORWARD"],
+    "reflectionPrompt": "Was Auri facing the correct direction before moving?",
+    "hints": {
+      "first": "Auri only moves forward in the direction it is facing.",
+      "repeat": "The goal is to the right, so Auri must turn right first."
+    }
+  },
+  {
+    "id": "level_3",
+    "order": 3,
+    "isUnlockedByDefault": false,
+    "title": "Around the Rock",
+    "gridSize": 5,
+    "startPosition": { "row": 4, "col": 2 },
+    "startDirection": "UP",
+    "targetPosition": { "row": 0, "col": 2 },
+    "obstacles": [
+      { "row": 2, "col": 2 }
+    ],
+    "availableCommands": ["MOVE_FORWARD", "TURN_LEFT", "TURN_RIGHT"],
+    "rewardXp": 20,
+    "learningObjective": "Avoid obstacles and plan a path.",
+    "optimalSolution": [
+      "MOVE_FORWARD",
+      "TURN_RIGHT",
+      "MOVE_FORWARD",
+      "TURN_LEFT",
+      "MOVE_FORWARD",
+      "MOVE_FORWARD",
+      "TURN_LEFT",
+      "MOVE_FORWARD",
+      "TURN_RIGHT",
+      "MOVE_FORWARD"
+    ],
+    "reflectionPrompt": "What happened when Auri tried to move straight toward the goal?",
+    "hints": {
+      "first": "Something is blocking the direct path.",
+      "repeat": "Try going around the obstacle, then turn back toward the goal."
+    }
+  },
+  {
+    "id": "level_4",
+    "order": 4,
+    "isUnlockedByDefault": false,
+    "title": "Shortest Route",
+    "gridSize": 5,
+    "startPosition": { "row": 4, "col": 0 },
+    "startDirection": "UP",
+    "targetPosition": { "row": 0, "col": 2 },
+    "obstacles": [
+      { "row": 2, "col": 1 }
+    ],
+    "availableCommands": ["MOVE_FORWARD", "TURN_LEFT", "TURN_RIGHT"],
+    "rewardXp": 25,
+    "learningObjective": "Find efficient solutions.",
+    "optimalSolution": [
+      "MOVE_FORWARD",
+      "MOVE_FORWARD",
+      "TURN_RIGHT",
+      "MOVE_FORWARD",
+      "MOVE_FORWARD",
+      "TURN_LEFT",
+      "MOVE_FORWARD",
+      "MOVE_FORWARD"
+    ],
+    "reflectionPrompt": "Did your solution reach the goal in the simplest way?",
+    "hints": {
+      "first": "There is more than one path, but some are shorter.",
+      "repeat": "Move upward first, then cross toward the goal."
+    }
+  },
+  {
+    "id": "level_5",
+    "order": 5,
+    "isUnlockedByDefault": false,
+    "title": "Final Trial",
+    "gridSize": 5,
+    "startPosition": { "row": 4, "col": 0 },
+    "startDirection": "UP",
+    "targetPosition": { "row": 0, "col": 4 },
+    "obstacles": [
+      { "row": 2, "col": 0 },
+      { "row": 2, "col": 1 },
+      { "row": 2, "col": 3 }
+    ],
+    "availableCommands": ["MOVE_FORWARD", "TURN_LEFT", "TURN_RIGHT"],
+    "rewardXp": 30,
+    "learningObjective": "Combine all learned mechanics.",
+    "optimalSolution": [
+      "MOVE_FORWARD",
+      "TURN_RIGHT",
+      "MOVE_FORWARD",
+      "MOVE_FORWARD",
+      "TURN_LEFT",
+      "MOVE_FORWARD",
+      "MOVE_FORWARD",
+      "TURN_RIGHT",
+      "MOVE_FORWARD",
+      "MOVE_FORWARD",
+      "TURN_LEFT",
+      "MOVE_FORWARD"
+    ],
+    "reflectionPrompt": "At which step did Auri stop behaving as expected?",
+    "hints": {
+      "first": "The direct path is blocked.",
+      "repeat": "Go through the open center, then move toward the goal."
+    }
+  }
+]

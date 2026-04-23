@@ -1,5 +1,7 @@
+import 'package:auri_app/features/auth/data/auth_repository.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 @immutable
 class AuthState {
@@ -31,20 +33,94 @@ class AuthState {
   }
 }
 
+final authRepositoryProvider = Provider<AuthRepository>((ref) {
+  return AuthRepository();
+});
+
 class AuthStateNotifier extends Notifier<AuthState> {
   @override
   AuthState build() => const AuthState.initial();
 
-  void setAuthenticated(bool value) {
-    state = state.copyWith(
-      isAuthenticated: value,
-      isLoading: false,
-      errorMessage: null,
-    );
+  Future<void> login({required String email, required String password}) async {
+    state = state.copyWith(isLoading: true, errorMessage: null);
+
+    try {
+      await ref
+          .read(authRepositoryProvider)
+          .login(email: email, password: password);
+
+      state = state.copyWith(
+        isAuthenticated: true,
+        isLoading: false,
+        errorMessage: null,
+      );
+    } on FirebaseAuthException catch (e) {
+      state = state.copyWith(
+        isAuthenticated: false,
+        isLoading: false,
+        errorMessage: _mapFirebaseAuthError(e),
+      );
+    } catch (_) {
+      state = state.copyWith(
+        isAuthenticated: false,
+        isLoading: false,
+        errorMessage: 'Unexpected error occurred.',
+      );
+    }
   }
 
-  void logout() {
+  Future<void> signup({required String email, required String password}) async {
+    state = state.copyWith(isLoading: true, errorMessage: null);
+
+    try {
+      await ref
+          .read(authRepositoryProvider)
+          .signup(email: email, password: password);
+
+      state = state.copyWith(
+        isAuthenticated: true,
+        isLoading: false,
+        errorMessage: null,
+      );
+    } on FirebaseAuthException catch (e) {
+      state = state.copyWith(
+        isAuthenticated: false,
+        isLoading: false,
+        errorMessage: _mapFirebaseAuthError(e),
+      );
+    } catch (_) {
+      state = state.copyWith(
+        isAuthenticated: false,
+        isLoading: false,
+        errorMessage: 'Unexpected error occurred.',
+      );
+    }
+  }
+
+  Future<void> logout() async {
+    await ref.read(authRepositoryProvider).logout();
     state = const AuthState.initial();
+  }
+
+  String _mapFirebaseAuthError(FirebaseAuthException e) {
+    switch (e.code) {
+      case 'invalid-email':
+        return 'Invalid email address.';
+      case 'user-disabled':
+        return 'This account has been disabled.';
+      case 'user-not-found':
+      case 'wrong-password':
+      case 'invalid-credential':
+        return 'Incorrect email or password.';
+      case 'email-already-in-use':
+        return 'This email is already registered.';
+      case 'weak-password':
+        return 'Password is too weak.';
+      case 'too-many-requests':
+        return 'Too many attempts. Try again later.';
+      default:
+        return e.message ?? 'Authentication failed.';
+    }
   }
 }
 

@@ -1,18 +1,45 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-
+import '../features/gameplay/presentation/pages/gameplay_loader_screen.dart';
 import '../features/auth/application/auth_state_provider.dart';
+import '../features/auth/presentation/pages/loading_screen.dart';
 import '../features/auth/presentation/pages/login_screen.dart';
 import '../features/auth/presentation/pages/signup_screen.dart';
 import '../features/dashboard/presentation/pages/dashboard_screen.dart';
+import '../features/onboarding/application/onboarding_provider.dart';
+import '../features/onboarding/presentation/pages/intro_one_screen.dart';
+import '../features/onboarding/presentation/pages/intro_three_screen.dart';
+import '../features/onboarding/presentation/pages/intro_two_screen.dart';
 
 final goRouterProvider = Provider<GoRouter>((ref) {
   final authState = ref.watch(authStateProvider);
+  final onboardingCompleted = ref.watch(onboardingCompletedProvider);
 
   return GoRouter(
-    initialLocation: '/login',
+    initialLocation: '/intro-1',
     routes: <RouteBase>[
+      GoRoute(
+        path: '/intro-1',
+        name: 'intro-1',
+        builder: (BuildContext context, GoRouterState state) {
+          return const IntroOneScreen();
+        },
+      ),
+      GoRoute(
+        path: '/intro-2',
+        name: 'intro-2',
+        builder: (BuildContext context, GoRouterState state) {
+          return const IntroTwoScreen();
+        },
+      ),
+      GoRoute(
+        path: '/intro-3',
+        name: 'intro-3',
+        builder: (BuildContext context, GoRouterState state) {
+          return const IntroThreeScreen();
+        },
+      ),
       GoRoute(
         path: '/login',
         name: 'login',
@@ -28,26 +55,60 @@ final goRouterProvider = Provider<GoRouter>((ref) {
         },
       ),
       GoRoute(
+        path: '/loading',
+        name: 'loading',
+        builder: (BuildContext context, GoRouterState state) {
+          return const LoadingScreen();
+        },
+      ),
+      GoRoute(
         path: '/dashboard',
         name: 'dashboard',
         builder: (BuildContext context, GoRouterState state) {
           return const DashboardScreen();
         },
       ),
+      GoRoute(
+        path: '/gameplay',
+        name: 'gameplay',
+        builder: (BuildContext context, GoRouterState state) {
+          return const GameplayLoaderScreen();
+        },
+      ),
     ],
     redirect: (BuildContext context, GoRouterState state) {
-      final isAuthenticated = authState.isAuthenticated;
       final location = state.matchedLocation;
+      final isAuthenticated = authState.isAuthenticated;
 
-      final isAuthPage = location == '/login' || location == '/signup';
-      final isDashboardPage = location == '/dashboard';
+      final isIntroRoute =
+          location == '/intro-1' ||
+          location == '/intro-2' ||
+          location == '/intro-3';
 
-      if (!isAuthenticated && isDashboardPage) {
+      final isAuthRoute = location == '/login' || location == '/signup';
+
+      final isDashboardRoute = location == '/dashboard';
+      final isGameplayRoute = location == '/gameplay';
+      final isLoadingRoute = location == '/loading';
+
+      if (!onboardingCompleted && !isIntroRoute) {
+        return '/intro-1';
+      }
+
+      if (onboardingCompleted && isIntroRoute) {
+        return isAuthenticated ? '/dashboard' : '/login';
+      }
+
+      if (!isAuthenticated && (isDashboardRoute || isGameplayRoute)) {
         return '/login';
       }
 
-      if (isAuthenticated && isAuthPage) {
+      if (isAuthenticated && isAuthRoute) {
         return '/dashboard';
+      }
+
+      if (isLoadingRoute) {
+        return null;
       }
 
       return null;

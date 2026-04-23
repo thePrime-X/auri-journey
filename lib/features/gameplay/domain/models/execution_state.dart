@@ -37,13 +37,27 @@ class ExecutionState {
     );
   }
 
-  // 🔹 Status helpers
+  factory ExecutionState.fromCommandQueue({
+    required Coordinate startPosition,
+    Direction direction = Direction.up,
+    required List<CommandType> commandQueue,
+    int attemptCount = 0,
+  }) {
+    return ExecutionState(
+      currentPosition: startPosition,
+      direction: direction,
+      commandQueue: List.unmodifiable(commandQueue),
+      status: ExecutionStatus.running,
+      currentStepIndex: 0,
+      attemptCount: attemptCount,
+    );
+  }
+
   bool get isIdle => status == ExecutionStatus.idle;
   bool get isRunning => status == ExecutionStatus.running;
   bool get isSuccess => status == ExecutionStatus.success;
   bool get isFailure => status == ExecutionStatus.failure;
 
-  // 🔹 Current command helper
   CommandType? get currentCommand {
     if (currentStepIndex < 0 || currentStepIndex >= commandQueue.length) {
       return null;

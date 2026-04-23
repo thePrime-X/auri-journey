@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
-import '../../../../core/theme/app_colors.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+
+import '../../../../core/theme/app_colors.dart';
 import '../../application/auth_state_provider.dart';
 
 class SignupScreen extends ConsumerStatefulWidget {
@@ -25,16 +26,40 @@ class _SignupScreenState extends ConsumerState<SignupScreen> {
     super.dispose();
   }
 
+  Future<void> _signup() async {
+    if (passwordController.text != confirmPasswordController.text) {
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(const SnackBar(content: Text('Passwords do not match.')));
+      return;
+    }
+
+    await ref
+        .read(authStateProvider.notifier)
+        .signup(email: emailController.text, password: passwordController.text);
+  }
+
   void _goToLogin() {
     context.go('/login');
   }
 
-  void _signup() {
-    ref.read(authStateProvider.notifier).setAuthenticated(true);
-  }
-
   @override
   Widget build(BuildContext context) {
+    final authState = ref.watch(authStateProvider);
+
+    ref.listen<AuthState>(authStateProvider, (previous, next) {
+      if (next.isAuthenticated) {
+        context.go('/dashboard');
+      }
+
+      if (next.errorMessage != null &&
+          next.errorMessage != previous?.errorMessage) {
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text(next.errorMessage!)));
+      }
+    });
+
     return Scaffold(
       backgroundColor: AppColors.bg,
       body: SafeArea(
@@ -54,16 +79,16 @@ class _SignupScreenState extends ConsumerState<SignupScreen> {
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(20),
                         gradient: const RadialGradient(
-                          colors: [Color(0xFF1A0A4A), Color(0xFF06030F)],
+                          colors: [Color(0xFF0A3D5C), Color(0xFF030C18)],
                         ),
                         border: Border.all(
-                          color: AppColors.purple.withValues(alpha: 0.35),
+                          color: AppColors.cyan.withValues(alpha: 0.35),
                         ),
                       ),
                       child: const Icon(
-                        Icons.memory_rounded,
+                        Icons.rocket_launch_rounded,
                         size: 42,
-                        color: AppColors.purple,
+                        color: AppColors.cyan,
                       ),
                     ),
                   ),
@@ -75,23 +100,13 @@ class _SignupScreenState extends ConsumerState<SignupScreen> {
                         fontSize: 12,
                         letterSpacing: 2,
                         fontWeight: FontWeight.w700,
-                        color: AppColors.purple,
+                        color: AppColors.textMuted,
                       ),
                     ),
                   ),
-                  const SizedBox(height: 22),
+                  const SizedBox(height: 28),
                   const Text(
-                    'CREATE ACCOUNT',
-                    style: TextStyle(
-                      color: AppColors.textMuted,
-                      fontSize: 10,
-                      letterSpacing: 1.5,
-                      fontWeight: FontWeight.w600,
-                    ),
-                  ),
-                  const SizedBox(height: 6),
-                  const Text(
-                    'Sign Up',
+                    'Create Account',
                     style: TextStyle(
                       fontSize: 28,
                       fontWeight: FontWeight.w700,
@@ -100,7 +115,7 @@ class _SignupScreenState extends ConsumerState<SignupScreen> {
                   ),
                   const SizedBox(height: 4),
                   const Text(
-                    'Join the mission, Commander',
+                    'Begin your adventure',
                     style: TextStyle(
                       fontSize: 13,
                       color: AppColors.textSecondary,
@@ -129,7 +144,7 @@ class _SignupScreenState extends ConsumerState<SignupScreen> {
                       ),
                       focusedBorder: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(14),
-                        borderSide: const BorderSide(color: AppColors.purple),
+                        borderSide: const BorderSide(color: AppColors.cyan),
                       ),
                     ),
                   ),
@@ -156,7 +171,7 @@ class _SignupScreenState extends ConsumerState<SignupScreen> {
                       ),
                       focusedBorder: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(14),
-                        borderSide: const BorderSide(color: AppColors.purple),
+                        borderSide: const BorderSide(color: AppColors.cyan),
                       ),
                     ),
                   ),
@@ -168,7 +183,7 @@ class _SignupScreenState extends ConsumerState<SignupScreen> {
                     decoration: InputDecoration(
                       hintText: 'Confirm Password',
                       prefixIcon: const Icon(
-                        Icons.lock_outline,
+                        Icons.lock_reset_outlined,
                         color: AppColors.textMuted,
                       ),
                       filled: true,
@@ -183,37 +198,45 @@ class _SignupScreenState extends ConsumerState<SignupScreen> {
                       ),
                       focusedBorder: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(14),
-                        borderSide: const BorderSide(color: AppColors.purple),
+                        borderSide: const BorderSide(color: AppColors.cyan),
                       ),
                     ),
                   ),
-                  const SizedBox(height: 20),
+                  const SizedBox(height: 22),
                   SizedBox(
                     height: 54,
                     child: DecoratedBox(
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(14),
                         gradient: const LinearGradient(
-                          colors: [AppColors.purple, AppColors.purple2],
+                          colors: [AppColors.cyan, AppColors.cyan2],
                         ),
                       ),
                       child: ElevatedButton(
-                        onPressed: _signup,
+                        onPressed: authState.isLoading ? null : _signup,
                         style: ElevatedButton.styleFrom(
                           backgroundColor: Colors.transparent,
                           shadowColor: Colors.transparent,
-                          foregroundColor: Colors.white,
+                          foregroundColor: Colors.black,
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(14),
                           ),
                         ),
-                        child: const Text(
-                          'Start Adventure →',
-                          style: TextStyle(
-                            fontSize: 15,
-                            fontWeight: FontWeight.w800,
-                          ),
-                        ),
+                        child: authState.isLoading
+                            ? const SizedBox(
+                                width: 20,
+                                height: 20,
+                                child: CircularProgressIndicator(
+                                  strokeWidth: 2,
+                                ),
+                              )
+                            : const Text(
+                                'Start Adventure →',
+                                style: TextStyle(
+                                  fontSize: 15,
+                                  fontWeight: FontWeight.w800,
+                                ),
+                              ),
                       ),
                     ),
                   ),
@@ -232,7 +255,7 @@ class _SignupScreenState extends ConsumerState<SignupScreen> {
                         child: const Text(
                           'Sign in',
                           style: TextStyle(
-                            color: AppColors.purple,
+                            color: AppColors.cyan,
                             fontWeight: FontWeight.w700,
                           ),
                         ),

@@ -1,7 +1,7 @@
 import 'dart:convert';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-
+import 'package:flutter/foundation.dart';
 import '../domain/models/level_state.dart';
 import '../domain/models/coordinate.dart';
 import '../domain/models/command_type.dart';
@@ -13,10 +13,15 @@ final levelsProvider = FutureProvider<List<LevelState>>((ref) async {
     final service = ref.read(levelsFirestoreServiceProvider);
     final firestoreData = await service.fetchLevels();
 
+    debugPrint('🔥 Loaded levels from Firestore'); // 👈 HERE
+
     return firestoreData
         .map<LevelState>((levelJson) => _parseLevel(levelJson))
         .toList();
-  } catch (_) {
+  } catch (e) {
+    debugPrint('📦 Loaded levels from local JSON fallback'); // 👈 HERE
+    debugPrint('Error: $e'); // 👈 optional but VERY useful
+
     final jsonString = await rootBundle.loadString('assets/data/levels.json');
     final List<dynamic> data = json.decode(jsonString);
 

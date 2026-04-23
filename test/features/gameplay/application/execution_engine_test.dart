@@ -27,10 +27,7 @@ void main() {
       ],
       rewardXp: 10,
       learningObjective: 'Test movement and turning.',
-      optimalSolution: [
-        CommandType.moveForward,
-        CommandType.moveForward,
-      ],
+      optimalSolution: [CommandType.moveForward, CommandType.moveForward],
       reflectionPrompt: 'What happened?',
       firstFailureHint: 'Try moving forward.',
       repeatedFailureHint: 'Move up toward the goal.',
@@ -182,10 +179,7 @@ void main() {
       test('returns success when target is reached', () {
         final result = engine.runSequence(
           level: baseLevel,
-          commands: const [
-            CommandType.moveForward,
-            CommandType.moveForward,
-          ],
+          commands: const [CommandType.moveForward, CommandType.moveForward],
         );
 
         expect(result.currentPosition, const Coordinate(row: 0, col: 2));
@@ -327,14 +321,14 @@ void main() {
       test('includes movement steps in trace', () {
         final trace = engine.buildExecutionTrace(
           level: baseLevel,
-          commands: const [
-            CommandType.moveForward,
-            CommandType.moveForward,
-          ],
+          commands: const [CommandType.moveForward, CommandType.moveForward],
         );
 
         expect(
-          trace.any((state) => state.currentPosition == const Coordinate(row: 1, col: 2)),
+          trace.any(
+            (state) =>
+                state.currentPosition == const Coordinate(row: 1, col: 2),
+          ),
           true,
         );
         expect(trace.last.status, ExecutionStatus.success);

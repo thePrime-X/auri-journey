@@ -51,115 +51,103 @@ class _GameplayScreenState extends ConsumerState<GameplayScreen> {
     }
   }
 
-Future<void> _showSuccessDialog() async {
-  await showDialog<void>(
-    context: context,
-    barrierDismissible: false,
-    builder: (context) {
-      return AlertDialog(
-        backgroundColor: AppColors.bg2,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(20),
-        ),
-        title: const Row(
-          children: [
-            Text(
-              '✅',
-              style: TextStyle(fontSize: 22),
-            ),
-            SizedBox(width: 10),
-            Expanded(
-              child: Text(
-                'Level Complete',
-                style: TextStyle(
-                  color: AppColors.textPrimary,
-                  fontWeight: FontWeight.w800,
+  Future<void> _showSuccessDialog() async {
+    await showDialog<void>(
+      context: context,
+      barrierDismissible: false,
+      builder: (context) {
+        return AlertDialog(
+          backgroundColor: AppColors.bg2,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(20),
+          ),
+          title: const Row(
+            children: [
+              Text('✅', style: TextStyle(fontSize: 22)),
+              SizedBox(width: 10),
+              Expanded(
+                child: Text(
+                  'Level Complete',
+                  style: TextStyle(
+                    color: AppColors.textPrimary,
+                    fontWeight: FontWeight.w800,
+                  ),
                 ),
+              ),
+            ],
+          ),
+          content: Text(
+            'Auri reached the goal.\n\n+${widget.level.rewardXp} XP earned',
+            style: const TextStyle(color: AppColors.textSecondary, height: 1.5),
+          ),
+          actions: [
+            ElevatedButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              style: ElevatedButton.styleFrom(
+                backgroundColor: AppColors.cyan,
+                foregroundColor: Colors.black,
+              ),
+              child: const Text(
+                'Next Level',
+                style: TextStyle(fontWeight: FontWeight.w800),
               ),
             ),
           ],
-        ),
-        content: Text(
-          'Auri reached the goal.\n\n+${widget.level.rewardXp} XP earned',
-          style: const TextStyle(
-            color: AppColors.textSecondary,
-            height: 1.5,
-          ),
-        ),
-        actions: [
-          ElevatedButton(
-            onPressed: () {
-              Navigator.of(context).pop();
-            },
-            style: ElevatedButton.styleFrom(
-              backgroundColor: AppColors.cyan,
-              foregroundColor: Colors.black,
-            ),
-            child: const Text(
-              'Next Level',
-              style: TextStyle(fontWeight: FontWeight.w800),
-            ),
-          ),
-        ],
-      );
-    },
-  );
-}
+        );
+      },
+    );
+  }
 
-Future<void> _showAllLevelsCompletedDialog() async {
-  await showDialog<void>(
-    context: context,
-    barrierDismissible: false,
-    builder: (context) {
-      return AlertDialog(
-        backgroundColor: AppColors.bg2,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(20),
-        ),
-        title: const Row(
-          children: [
-            Text(
-              '🎉',
-              style: TextStyle(fontSize: 22),
-            ),
-            SizedBox(width: 10),
-            Expanded(
-              child: Text(
-                'All Levels Completed',
-                style: TextStyle(
-                  color: AppColors.textPrimary,
-                  fontWeight: FontWeight.w800,
+  Future<void> _showAllLevelsCompletedDialog() async {
+    await showDialog<void>(
+      context: context,
+      barrierDismissible: false,
+      builder: (context) {
+        return AlertDialog(
+          backgroundColor: AppColors.bg2,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(20),
+          ),
+          title: const Row(
+            children: [
+              Text('🎉', style: TextStyle(fontSize: 22)),
+              SizedBox(width: 10),
+              Expanded(
+                child: Text(
+                  'All Levels Completed',
+                  style: TextStyle(
+                    color: AppColors.textPrimary,
+                    fontWeight: FontWeight.w800,
+                  ),
                 ),
+              ),
+            ],
+          ),
+          content: const Text(
+            'Congratulations! You completed all available levels.\n\nYou can replay the final level as many times as you want.',
+            style: TextStyle(color: AppColors.textSecondary, height: 1.5),
+          ),
+          actions: [
+            ElevatedButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              style: ElevatedButton.styleFrom(
+                backgroundColor: AppColors.cyan,
+                foregroundColor: Colors.black,
+              ),
+              child: const Text(
+                'Replay Level 5',
+                style: TextStyle(fontWeight: FontWeight.w800),
               ),
             ),
           ],
-        ),
-        content: const Text(
-          'Congratulations! You completed all available levels.\n\nYou can replay the final level as many times as you want.',
-          style: TextStyle(
-            color: AppColors.textSecondary,
-            height: 1.5,
-          ),
-        ),
-        actions: [
-          ElevatedButton(
-            onPressed: () {
-              Navigator.of(context).pop();
-            },
-            style: ElevatedButton.styleFrom(
-              backgroundColor: AppColors.cyan,
-              foregroundColor: Colors.black,
-            ),
-            child: const Text(
-              'Replay Level 5',
-              style: TextStyle(fontWeight: FontWeight.w800),
-            ),
-          ),
-        ],
-      );
-    },
-  );
-}
+        );
+      },
+    );
+  }
 
   Future<void> _showFailureDialog({required String hint}) async {
     await showDialog<void>(

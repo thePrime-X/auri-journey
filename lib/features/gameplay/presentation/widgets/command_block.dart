@@ -8,6 +8,7 @@ class CommandBlock extends StatelessWidget {
   final bool isSmall;
   final bool isAddPlaceholder;
   final bool isDraggable;
+  final bool isHighlighted;
 
   const CommandBlock({
     super.key,
@@ -16,6 +17,7 @@ class CommandBlock extends StatelessWidget {
     this.isSmall = false,
     this.isAddPlaceholder = false,
     this.isDraggable = false,
+    this.isHighlighted = false,
   });
 
   @override
@@ -24,7 +26,11 @@ class CommandBlock extends StatelessWidget {
       return _buildAddPlaceholder();
     }
 
-    final block = _CommandBlockVisual(command: command!, isSmall: isSmall);
+    final block = _CommandBlockVisual(
+      command: command!,
+      isSmall: isSmall,
+      isHighlighted: isHighlighted,
+    );
 
     if (!isDraggable) {
       return GestureDetector(onTap: onTap, child: block);
@@ -40,6 +46,7 @@ class CommandBlock extends StatelessWidget {
             command: command!,
             isSmall: isSmall,
             isDraggingFeedback: true,
+            isHighlighted: isHighlighted,
           ),
         ),
       ),
@@ -75,11 +82,13 @@ class _CommandBlockVisual extends StatelessWidget {
   final CommandType command;
   final bool isSmall;
   final bool isDraggingFeedback;
+  final bool isHighlighted;
 
   const _CommandBlockVisual({
     required this.command,
     required this.isSmall,
     this.isDraggingFeedback = false,
+    this.isHighlighted = false,
   });
 
   @override
@@ -87,27 +96,36 @@ class _CommandBlockVisual extends StatelessWidget {
     final style = _styleFor(command);
     final double size = isSmall ? 48 : 64;
 
-    return Container(
+    return AnimatedContainer(
+      duration: const Duration(milliseconds: 180),
       width: size,
       height: size,
       decoration: BoxDecoration(
         color: style.backgroundColor,
         borderRadius: BorderRadius.circular(isSmall ? 12 : 14),
-        border: Border.all(color: style.borderColor),
-        boxShadow: isDraggingFeedback
-            ? [
-                BoxShadow(
-                  color: Colors.black.withValues(alpha: 0.25),
-                  blurRadius: 10,
-                  offset: const Offset(0, 4),
-                ),
-              ]
-            : null,
+        border: Border.all(
+          color: isHighlighted ? AppColors.cyan : style.borderColor,
+          width: isHighlighted ? 2 : 1,
+        ),
+        boxShadow: [
+          if (isDraggingFeedback)
+            BoxShadow(
+              color: Colors.black.withValues(alpha: 0.25),
+              blurRadius: 10,
+              offset: const Offset(0, 4),
+            ),
+          if (isHighlighted)
+            BoxShadow(
+              color: AppColors.cyan.withValues(alpha: 0.28),
+              blurRadius: 14,
+              spreadRadius: 1,
+            ),
+        ],
       ),
       child: Center(
         child: Icon(
           style.icon,
-          color: style.iconColor,
+          color: isHighlighted ? AppColors.cyan : style.iconColor,
           size: isSmall ? 22 : 28,
         ),
       ),

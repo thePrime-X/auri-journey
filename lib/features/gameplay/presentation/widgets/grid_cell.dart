@@ -41,7 +41,7 @@ class GridCell extends StatelessWidget {
     } else if (isAuri) {
       backgroundColor = AppColors.cyan.withValues(alpha: 0.08);
       borderColor = AppColors.cyan.withValues(alpha: 0.30);
-      child = _AuriFace(direction: auriDirection ?? Direction.up);
+      child = _AuriFace(direction: auriDirection!);
     }
 
     return AspectRatio(
@@ -70,12 +70,13 @@ class _AuriFace extends StatefulWidget {
 class _AuriFaceState extends State<_AuriFace> {
   late Direction _previousDirection;
   bool _isTurning = false;
-  double _turns = 0.0;
+  late double _turns;
 
   @override
   void initState() {
     super.initState();
     _previousDirection = widget.direction;
+    _turns = _directionToTurns(widget.direction);
   }
 
   @override
@@ -94,6 +95,19 @@ class _AuriFaceState extends State<_AuriFace> {
         setState(() => _isTurning = false);
       }
     });
+  }
+
+  double _directionToTurns(Direction direction) {
+    switch (direction) {
+      case Direction.up:
+        return 0.0;
+      case Direction.right:
+        return 0.25;
+      case Direction.down:
+        return 0.5;
+      case Direction.left:
+        return -0.25;
+    }
   }
 
   double _getTurnDelta(Direction from, Direction to) {

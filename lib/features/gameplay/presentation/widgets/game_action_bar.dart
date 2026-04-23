@@ -2,7 +2,16 @@ import 'package:flutter/material.dart';
 import '../../../../core/theme/app_colors.dart';
 
 class GameActionBar extends StatelessWidget {
-  const GameActionBar({super.key});
+  final VoidCallback onRun;
+  final VoidCallback onExit;
+  final bool isBusy;
+
+  const GameActionBar({
+    super.key,
+    required this.onRun,
+    required this.onExit,
+    this.isBusy = false,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -13,22 +22,32 @@ class GameActionBar extends StatelessWidget {
           child: SizedBox(
             height: 52,
             child: ElevatedButton(
-              onPressed: () {},
+              onPressed: isBusy ? null : onRun,
               style: ElevatedButton.styleFrom(
                 backgroundColor: AppColors.cyan,
                 foregroundColor: Colors.black,
+                disabledBackgroundColor: AppColors.cyan.withValues(alpha: 0.45),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(16),
                 ),
               ),
-              child: const Text(
-                '▶ RUN',
-                style: TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.w900,
-                  letterSpacing: 0.5,
-                ),
-              ),
+              child: isBusy
+                  ? const SizedBox(
+                      width: 22,
+                      height: 22,
+                      child: CircularProgressIndicator(
+                        strokeWidth: 2.2,
+                        color: Colors.black,
+                      ),
+                    )
+                  : const Text(
+                      '▶ RUN',
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w900,
+                        letterSpacing: 0.5,
+                      ),
+                    ),
             ),
           ),
         ),
@@ -37,7 +56,7 @@ class GameActionBar extends StatelessWidget {
           child: SizedBox(
             height: 52,
             child: OutlinedButton(
-              onPressed: () {},
+              onPressed: isBusy ? null : onExit,
               style: OutlinedButton.styleFrom(
                 foregroundColor: AppColors.textSecondary,
                 side: const BorderSide(color: AppColors.border2),

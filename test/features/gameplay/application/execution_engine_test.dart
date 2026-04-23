@@ -13,8 +13,11 @@ void main() {
     const baseLevel = LevelState(
       id: 'level_1',
       title: 'Test Level',
+      order: 1,
+      isUnlockedByDefault: true,
       gridSize: 5,
       startPosition: Coordinate(row: 2, col: 2),
+      startDirection: Direction.up,
       targetPosition: Coordinate(row: 0, col: 2),
       obstacles: [],
       availableCommands: [
@@ -23,6 +26,14 @@ void main() {
         CommandType.turnRight,
       ],
       rewardXp: 10,
+      learningObjective: 'Test movement and turning.',
+      optimalSolution: [
+        CommandType.moveForward,
+        CommandType.moveForward,
+      ],
+      reflectionPrompt: 'What happened?',
+      firstFailureHint: 'Try moving forward.',
+      repeatedFailureHint: 'Move up toward the goal.',
     );
 
     group('checkCollision', () {
@@ -88,8 +99,11 @@ void main() {
         const levelWithObstacle = LevelState(
           id: 'level_2',
           title: 'Obstacle Level',
+          order: 2,
+          isUnlockedByDefault: false,
           gridSize: 5,
           startPosition: Coordinate(row: 2, col: 2),
+          startDirection: Direction.up,
           targetPosition: Coordinate(row: 0, col: 2),
           obstacles: [Coordinate(row: 1, col: 2)],
           availableCommands: [
@@ -98,6 +112,11 @@ void main() {
             CommandType.turnRight,
           ],
           rewardXp: 10,
+          learningObjective: 'Avoid obstacle.',
+          optimalSolution: [CommandType.turnRight],
+          reflectionPrompt: 'What blocked you?',
+          firstFailureHint: 'There is an obstacle ahead.',
+          repeatedFailureHint: 'Go around it.',
         );
 
         const nextPosition = Coordinate(row: 1, col: 2);
@@ -163,7 +182,10 @@ void main() {
       test('returns success when target is reached', () {
         final result = engine.runSequence(
           level: baseLevel,
-          commands: const [CommandType.moveForward, CommandType.moveForward],
+          commands: const [
+            CommandType.moveForward,
+            CommandType.moveForward,
+          ],
         );
 
         expect(result.currentPosition, const Coordinate(row: 0, col: 2));
@@ -174,8 +196,11 @@ void main() {
         const boundaryLevel = LevelState(
           id: 'level_4',
           title: 'Boundary Collision',
+          order: 4,
+          isUnlockedByDefault: false,
           gridSize: 5,
           startPosition: Coordinate(row: 0, col: 2),
+          startDirection: Direction.up,
           targetPosition: Coordinate(row: 4, col: 4),
           obstacles: [],
           availableCommands: [
@@ -184,6 +209,11 @@ void main() {
             CommandType.turnRight,
           ],
           rewardXp: 10,
+          learningObjective: 'Boundary collision test.',
+          optimalSolution: [CommandType.turnRight],
+          reflectionPrompt: 'What happened at the edge?',
+          firstFailureHint: 'You hit the boundary.',
+          repeatedFailureHint: 'Do not move outside the grid.',
         );
 
         final result = engine.runSequence(
@@ -199,8 +229,11 @@ void main() {
         const levelWithObstacle = LevelState(
           id: 'level_3',
           title: 'Obstacle Collision',
+          order: 3,
+          isUnlockedByDefault: false,
           gridSize: 5,
           startPosition: Coordinate(row: 2, col: 2),
+          startDirection: Direction.up,
           targetPosition: Coordinate(row: 0, col: 2),
           obstacles: [Coordinate(row: 1, col: 2)],
           availableCommands: [
@@ -209,6 +242,11 @@ void main() {
             CommandType.turnRight,
           ],
           rewardXp: 10,
+          learningObjective: 'Obstacle collision test.',
+          optimalSolution: [CommandType.turnRight],
+          reflectionPrompt: 'What blocked you?',
+          firstFailureHint: 'There is something ahead.',
+          repeatedFailureHint: 'Try another route.',
         );
 
         final result = engine.runSequence(
@@ -230,12 +268,38 @@ void main() {
         expect(result.attemptCount, 3);
       });
 
-      test('stores command queue correctly', () {
-        const commands = [CommandType.moveForward, CommandType.turnLeft];
+      test('uses level startDirection by default', () {
+        const rightFacingLevel = LevelState(
+          id: 'level_right',
+          title: 'Right Facing Level',
+          order: 6,
+          isUnlockedByDefault: false,
+          gridSize: 5,
+          startPosition: Coordinate(row: 2, col: 2),
+          startDirection: Direction.right,
+          targetPosition: Coordinate(row: 2, col: 3),
+          obstacles: [],
+          availableCommands: [
+            CommandType.moveForward,
+            CommandType.turnLeft,
+            CommandType.turnRight,
+          ],
+          rewardXp: 10,
+          learningObjective: 'Start direction test.',
+          optimalSolution: [CommandType.moveForward],
+          reflectionPrompt: 'Which way was Auri facing?',
+          firstFailureHint: 'Auri starts facing right.',
+          repeatedFailureHint: 'Move forward once.',
+        );
 
-        final result = engine.runSequence(level: baseLevel, commands: commands);
+        final result = engine.runSequence(
+          level: rightFacingLevel,
+          commands: const [CommandType.moveForward],
+        );
 
-        expect(result.commandQueue, commands);
+        expect(result.currentPosition, const Coordinate(row: 2, col: 3));
+        expect(result.direction, Direction.right);
+        expect(result.status, ExecutionStatus.success);
       });
 
       test('unsupported future commands return failure', () {
@@ -245,6 +309,68 @@ void main() {
         );
 
         expect(result.status, ExecutionStatus.failure);
+      });
+    });
+
+    group('buildExecutionTrace', () {
+      test('returns initial state as first trace item', () {
+        final trace = engine.buildExecutionTrace(
+          level: baseLevel,
+          commands: const [CommandType.moveForward],
+        );
+
+        expect(trace.first.currentPosition, const Coordinate(row: 2, col: 2));
+        expect(trace.first.direction, Direction.up);
+        expect(trace.first.status, ExecutionStatus.idle);
+      });
+
+      test('includes movement steps in trace', () {
+        final trace = engine.buildExecutionTrace(
+          level: baseLevel,
+          commands: const [
+            CommandType.moveForward,
+            CommandType.moveForward,
+          ],
+        );
+
+        expect(
+          trace.any((state) => state.currentPosition == const Coordinate(row: 1, col: 2)),
+          true,
+        );
+        expect(trace.last.status, ExecutionStatus.success);
+      });
+
+      test('ends trace with failure on collision', () {
+        const obstacleLevel = LevelState(
+          id: 'level_trace_fail',
+          title: 'Trace Fail',
+          order: 7,
+          isUnlockedByDefault: false,
+          gridSize: 5,
+          startPosition: Coordinate(row: 2, col: 2),
+          startDirection: Direction.up,
+          targetPosition: Coordinate(row: 0, col: 2),
+          obstacles: [Coordinate(row: 1, col: 2)],
+          availableCommands: [
+            CommandType.moveForward,
+            CommandType.turnLeft,
+            CommandType.turnRight,
+          ],
+          rewardXp: 10,
+          learningObjective: 'Trace failure test.',
+          optimalSolution: [CommandType.turnLeft],
+          reflectionPrompt: 'What blocked the path?',
+          firstFailureHint: 'Obstacle ahead.',
+          repeatedFailureHint: 'Try another route.',
+        );
+
+        final trace = engine.buildExecutionTrace(
+          level: obstacleLevel,
+          commands: const [CommandType.moveForward],
+        );
+
+        expect(trace.last.status, ExecutionStatus.failure);
+        expect(trace.last.currentPosition, const Coordinate(row: 2, col: 2));
       });
     });
   });

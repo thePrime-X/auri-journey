@@ -3,7 +3,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../../core/theme/app_colors.dart';
-import '../../../../features/auth/application/auth_state_provider.dart';
 import '../../../../features/gameplay/application/levels_provider.dart';
 import '../../../../features/gameplay/application/current_level_provider.dart';
 
@@ -469,20 +468,6 @@ class DashboardScreen extends ConsumerWidget {
                     ],
                   ),
                   const SizedBox(height: 16),
-                  SizedBox(
-                    width: double.infinity,
-                    child: OutlinedButton(
-                      onPressed: () async {
-                        await ref.read(authStateProvider.notifier).logout();
-                      },
-                      style: OutlinedButton.styleFrom(
-                        foregroundColor: AppColors.textPrimary,
-                        side: const BorderSide(color: AppColors.border2),
-                        padding: const EdgeInsets.symmetric(vertical: 14),
-                      ),
-                      child: const Text('Log out'),
-                    ),
-                  ),
                 ],
               ),
             ),

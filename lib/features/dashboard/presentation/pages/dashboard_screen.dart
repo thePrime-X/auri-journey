@@ -34,44 +34,71 @@ class DashboardScreen extends ConsumerWidget {
                       ),
                       SizedBox(height: 4),
                       Text(
-                        'Ready to continue, Commander?',
+                        'Ready to continue?',
                         style: TextStyle(
                           color: AppColors.textPrimary,
-                          fontSize: 16,
-                          fontWeight: FontWeight.w700,
+                          fontSize: 18,
+                          fontWeight: FontWeight.w800,
                         ),
                       ),
                     ],
                   ),
                 ),
-                const Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Icon(Icons.bolt, color: AppColors.amber, size: 16),
-                    SizedBox(width: 4),
-                    Text(
-                      '2,480',
-                      style: TextStyle(
-                        color: AppColors.amber,
-                        fontWeight: FontWeight.w800,
-                        fontSize: 12,
-                      ),
-                    ),
-                  ],
-                ),
-                const SizedBox(width: 12),
                 Container(
-                  width: 34,
-                  height: 34,
-                  decoration: BoxDecoration(
-                    color: AppColors.bg3,
-                    borderRadius: BorderRadius.circular(10),
-                    border: Border.all(color: AppColors.border),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 10,
+                    vertical: 6,
                   ),
-                  child: const Icon(
-                    Icons.settings,
-                    color: AppColors.textSecondary,
-                    size: 18,
+                  decoration: BoxDecoration(
+                    color: AppColors.bg3.withValues(alpha: 0.85),
+                    borderRadius: BorderRadius.circular(999),
+                    border: Border.all(
+                      color: AppColors.border2.withValues(alpha: 0.8),
+                    ),
+                  ),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      const Icon(Icons.bolt, color: AppColors.amber, size: 17),
+                      const SizedBox(width: 5),
+                      const Text(
+                        '2,480 XP',
+                        style: TextStyle(
+                          color: AppColors.amber,
+                          fontWeight: FontWeight.w900,
+                          fontSize: 13,
+                        ),
+                      ),
+                      const SizedBox(width: 10),
+                      Container(
+                        width: 40,
+                        height: 40,
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          gradient: const RadialGradient(
+                            colors: [
+                              Color(0xFF1B1F3A), // inner dark
+                              Color(0xFF0F1226),
+                            ],
+                          ),
+                          border: Border.all(color: AppColors.purple, width: 2),
+                          boxShadow: [
+                            BoxShadow(
+                              color: AppColors.purple.withValues(alpha: 0.6),
+                              blurRadius: 14,
+                              spreadRadius: 1,
+                            ),
+                          ],
+                        ),
+                        child: Center(
+                          child: Icon(
+                            Icons.android_rounded, // temporary robot
+                            size: 18,
+                            color: AppColors.purple.withValues(alpha: 0.9),
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
                 ),
               ],

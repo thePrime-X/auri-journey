@@ -12,6 +12,7 @@ import '../features/onboarding/presentation/pages/intro_one_screen.dart';
 import '../features/onboarding/presentation/pages/intro_three_screen.dart';
 import '../features/onboarding/presentation/pages/intro_two_screen.dart';
 import '../features/dashboard/presentation/pages/profile_screen.dart';
+import '../features/dashboard/presentation/pages/settings_screen.dart';
 
 final goRouterProvider = Provider<GoRouter>((ref) {
   final authState = ref.watch(authStateProvider);
@@ -74,6 +75,13 @@ final goRouterProvider = Provider<GoRouter>((ref) {
         name: 'profile',
         builder: (BuildContext context, GoRouterState state) {
           return const ProfileScreen();
+        },
+      ),
+      GoRoute(
+        path: '/settings',
+        name: 'settings',
+        builder: (BuildContext context, GoRouterState state) {
+          return const SettingsScreen();
         },
       ),
       GoRoute(

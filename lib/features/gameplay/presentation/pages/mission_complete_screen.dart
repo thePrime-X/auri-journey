@@ -8,6 +8,9 @@ class MissionCompleteScreen extends StatelessWidget {
   final bool isLastLevel;
   final VoidCallback onNextMission;
   final VoidCallback onReplayLevel;
+  final Duration timeTaken;
+  final int stepsUsed;
+  final int optimalSteps;
 
   const MissionCompleteScreen({
     super.key,
@@ -15,7 +18,26 @@ class MissionCompleteScreen extends StatelessWidget {
     required this.isLastLevel,
     required this.onNextMission,
     required this.onReplayLevel,
+    required this.timeTaken,
+    required this.stepsUsed,
+    required this.optimalSteps,
   });
+
+  String get formattedTime {
+    final seconds = timeTaken.inSeconds;
+    if (seconds < 60) return '${seconds}s';
+
+    final minutes = seconds ~/ 60;
+    final remainingSeconds = seconds % 60;
+    return '${minutes}m ${remainingSeconds}s';
+  }
+
+  String get efficiencyBadge {
+    final extraSteps = stepsUsed - optimalSteps;
+
+    if (extraSteps <= 0) return 'Optimal';
+    return '+$extraSteps steps';
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -145,16 +167,16 @@ class MissionCompleteScreen extends StatelessWidget {
                 Expanded(
                   child: _StatCard(
                     title: 'EFFICIENCY',
-                    value: '${level.optimalSolution.length}',
+                    value: '$stepsUsed',
                     subtitle: 'Steps used',
-                    badge: 'Optimal',
+                    badge: efficiencyBadge,
                   ),
                 ),
                 const SizedBox(width: 12),
-                const Expanded(
+                Expanded(
                   child: _StatCard(
                     title: 'SPEED',
-                    value: '12s',
+                    value: formattedTime,
                     subtitle: 'Time taken',
                     badge: 'Fast',
                     cyan: true,

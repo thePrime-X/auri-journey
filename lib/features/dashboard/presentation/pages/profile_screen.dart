@@ -57,7 +57,10 @@ class _ProfileScreenState extends State<ProfileScreen>
                     ),
                   ),
                 ),
-                _TopIconButton(icon: Icons.settings_outlined, onTap: () {}),
+                _TopIconButton(
+                  icon: Icons.settings_outlined,
+                  onTap: () => context.go('/settings'),
+                ),
               ],
             ),
 
@@ -376,7 +379,13 @@ class _ProfileAvatar extends StatelessWidget {
                         child: Icon(
                           Icons.android_rounded,
                           size: 26,
-                          color: AppColors.purple.withValues(alpha: 0.95),
+                          color: AppColors.purple,
+                          shadows: [
+                            Shadow(
+                              color: AppColors.purple.withValues(alpha: 0.6),
+                              blurRadius: 10,
+                            ),
+                          ],
                         ),
                       ),
                     ),

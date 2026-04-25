@@ -4,12 +4,17 @@ import 'package:go_router/go_router.dart';
 
 import '../../../../core/theme/app_colors.dart';
 import '../../../../features/auth/application/auth_state_provider.dart';
+import '../../../../features/gameplay/application/levels_provider.dart';
+import '../../../../features/gameplay/application/current_level_provider.dart';
 
 class DashboardScreen extends ConsumerWidget {
   const DashboardScreen({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final levelsAsync = ref.watch(levelsProvider);
+    final currentLevelIndex = ref.watch(currentLevelIndexProvider);
+
     return Scaffold(
       backgroundColor: AppColors.bg,
       body: SafeArea(
@@ -108,7 +113,9 @@ class DashboardScreen extends ConsumerWidget {
                 ),
               ],
             ),
+
             const SizedBox(height: 18),
+
             Container(
               padding: const EdgeInsets.all(14),
               decoration: BoxDecoration(
@@ -154,110 +161,153 @@ class DashboardScreen extends ConsumerWidget {
                 ],
               ),
             ),
+
             const SizedBox(height: 16),
-            Container(
-              padding: const EdgeInsets.all(16),
-              decoration: BoxDecoration(
-                color: AppColors.bg3,
-                borderRadius: BorderRadius.circular(18),
-                border: Border.all(
-                  color: AppColors.cyan.withValues(alpha: 0.35),
-                ),
-              ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
+
+            levelsAsync.when(
+              data: (levels) {
+                if (levels.isEmpty) {
+                  return const SizedBox.shrink();
+                }
+
+                final safeIndex = currentLevelIndex.clamp(0, levels.length - 1);
+                final level = levels[safeIndex];
+
+                return Container(
+                  padding: const EdgeInsets.all(16),
+                  decoration: BoxDecoration(
+                    color: AppColors.bg3,
+                    borderRadius: BorderRadius.circular(18),
+                    border: Border.all(
+                      color: AppColors.cyan.withValues(alpha: 0.35),
+                    ),
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      const Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              'CURRENT MISSION',
-                              style: TextStyle(
-                                color: AppColors.cyan,
-                                fontSize: 11,
-                                fontWeight: FontWeight.w800,
+                      Row(
+                        children: [
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                const Text(
+                                  'CURRENT MISSION',
+                                  style: TextStyle(
+                                    color: AppColors.cyan,
+                                    fontSize: 11,
+                                    fontWeight: FontWeight.w800,
+                                  ),
+                                ),
+                                const SizedBox(height: 4),
+                                Text(
+                                  'Sector 1 · Mission ${level.order}',
+                                  style: const TextStyle(
+                                    color: AppColors.textMuted,
+                                    fontSize: 11,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                          Container(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 10,
+                              vertical: 4,
+                            ),
+                            decoration: BoxDecoration(
+                              color: AppColors.purple.withValues(alpha: 0.12),
+                              borderRadius: BorderRadius.circular(12),
+                              border: Border.all(
+                                color: AppColors.purple.withValues(alpha: 0.25),
                               ),
                             ),
-                            SizedBox(height: 4),
-                            Text(
-                              'Sector 2 · Task 2',
-                              style: TextStyle(
-                                color: AppColors.textMuted,
-                                fontSize: 11,
+                            child: Text(
+                              'Level ${level.order}',
+                              style: const TextStyle(
+                                color: AppColors.purple,
+                                fontSize: 10,
+                                fontWeight: FontWeight.w700,
                               ),
                             ),
-                          ],
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 16),
+                      Text(
+                        level.title,
+                        style: const TextStyle(
+                          color: AppColors.textPrimary,
+                          fontSize: 17,
+                          fontWeight: FontWeight.w700,
                         ),
                       ),
-                      Container(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 10,
-                          vertical: 4,
+                      const SizedBox(height: 6),
+                      Text(
+                        level.learningObjective,
+                        style: const TextStyle(
+                          color: AppColors.textSecondary,
+                          fontSize: 12,
+                          height: 1.5,
                         ),
-                        decoration: BoxDecoration(
-                          color: AppColors.purple.withValues(alpha: 0.12),
-                          borderRadius: BorderRadius.circular(12),
-                          border: Border.all(
-                            color: AppColors.purple.withValues(alpha: 0.25),
+                      ),
+                      const SizedBox(height: 16),
+                      SizedBox(
+                        width: double.infinity,
+                        height: 48,
+                        child: ElevatedButton(
+                          onPressed: () {
+                            context.go('/gameplay');
+                          },
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: AppColors.cyan,
+                            foregroundColor: Colors.black,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(14),
+                            ),
                           ),
-                        ),
-                        child: const Text(
-                          'Loop',
-                          style: TextStyle(
-                            color: AppColors.purple,
-                            fontSize: 10,
-                            fontWeight: FontWeight.w700,
+                          child: const Text(
+                            '▶ CONTINUE MISSION',
+                            style: TextStyle(fontWeight: FontWeight.w800),
                           ),
                         ),
                       ),
                     ],
                   ),
-                  const SizedBox(height: 16),
-                  const Text(
-                    'Debug the broken loop',
-                    style: TextStyle(
-                      color: AppColors.textPrimary,
-                      fontSize: 17,
-                      fontWeight: FontWeight.w700,
-                    ),
+                );
+              },
+              loading: () => Container(
+                padding: const EdgeInsets.all(16),
+                decoration: BoxDecoration(
+                  color: AppColors.bg3,
+                  borderRadius: BorderRadius.circular(18),
+                  border: Border.all(
+                    color: AppColors.cyan.withValues(alpha: 0.25),
                   ),
-                  const SizedBox(height: 6),
-                  const Text(
-                    'Fix the logic gate sequence to restore power to the main array.',
-                    style: TextStyle(
-                      color: AppColors.textSecondary,
-                      fontSize: 12,
-                      height: 1.5,
-                    ),
+                ),
+                child: const Text(
+                  'Loading current mission...',
+                  style: TextStyle(color: AppColors.textSecondary),
+                ),
+              ),
+              error: (error, stackTrace) => Container(
+                padding: const EdgeInsets.all(16),
+                decoration: BoxDecoration(
+                  color: AppColors.bg3,
+                  borderRadius: BorderRadius.circular(18),
+                  border: Border.all(
+                    color: AppColors.red.withValues(alpha: 0.25),
                   ),
-                  const SizedBox(height: 16),
-                  SizedBox(
-                    width: double.infinity,
-                    height: 48,
-                    child: ElevatedButton(
-                      onPressed: () {
-                        context.go('/gameplay');
-                      },
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: AppColors.cyan,
-                        foregroundColor: Colors.black,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(14),
-                        ),
-                      ),
-                      child: const Text(
-                        '▶ CONTINUE MISSION',
-                        style: TextStyle(fontWeight: FontWeight.w800),
-                      ),
-                    ),
-                  ),
-                ],
+                ),
+                child: const Text(
+                  'Unable to load current mission.',
+                  style: TextStyle(color: AppColors.textSecondary),
+                ),
               ),
             ),
+
             const SizedBox(height: 16),
+
             Container(
               decoration: BoxDecoration(
                 color: AppColors.bg3,
@@ -353,7 +403,9 @@ class DashboardScreen extends ConsumerWidget {
                 ],
               ),
             ),
+
             const SizedBox(height: 16),
+
             Container(
               padding: const EdgeInsets.all(16),
               decoration: BoxDecoration(

@@ -469,20 +469,6 @@ class DashboardScreen extends ConsumerWidget {
                     ],
                   ),
                   const SizedBox(height: 16),
-                  SizedBox(
-                    width: double.infinity,
-                    child: OutlinedButton(
-                      onPressed: () async {
-                        await ref.read(authStateProvider.notifier).logout();
-                      },
-                      style: OutlinedButton.styleFrom(
-                        foregroundColor: AppColors.textPrimary,
-                        side: const BorderSide(color: AppColors.border2),
-                        padding: const EdgeInsets.symmetric(vertical: 14),
-                      ),
-                      child: const Text('Log out'),
-                    ),
-                  ),
                 ],
               ),
             ),

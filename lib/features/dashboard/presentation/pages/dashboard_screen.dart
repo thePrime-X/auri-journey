@@ -70,31 +70,36 @@ class DashboardScreen extends ConsumerWidget {
                         ),
                       ),
                       const SizedBox(width: 10),
-                      Container(
-                        width: 40,
-                        height: 40,
-                        decoration: BoxDecoration(
-                          shape: BoxShape.circle,
-                          gradient: const RadialGradient(
-                            colors: [
-                              Color(0xFF1B1F3A), // inner dark
-                              Color(0xFF0F1226),
+                      GestureDetector(
+                        onTap: () {
+                          context.go('/profile');
+                        },
+                        child: Container(
+                          width: 40,
+                          height: 40,
+                          decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            gradient: const RadialGradient(
+                              colors: [Color(0xFF1B1F3A), Color(0xFF0F1226)],
+                            ),
+                            border: Border.all(
+                              color: AppColors.purple,
+                              width: 2,
+                            ),
+                            boxShadow: [
+                              BoxShadow(
+                                color: AppColors.purple.withValues(alpha: 0.6),
+                                blurRadius: 14,
+                                spreadRadius: 1,
+                              ),
                             ],
                           ),
-                          border: Border.all(color: AppColors.purple, width: 2),
-                          boxShadow: [
-                            BoxShadow(
-                              color: AppColors.purple.withValues(alpha: 0.6),
-                              blurRadius: 14,
-                              spreadRadius: 1,
+                          child: Center(
+                            child: Icon(
+                              Icons.android_rounded,
+                              size: 18,
+                              color: AppColors.purple.withValues(alpha: 0.9),
                             ),
-                          ],
-                        ),
-                        child: Center(
-                          child: Icon(
-                            Icons.android_rounded, // temporary robot
-                            size: 18,
-                            color: AppColors.purple.withValues(alpha: 0.9),
                           ),
                         ),
                       ),

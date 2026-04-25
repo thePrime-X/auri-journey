@@ -3,7 +3,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../../core/theme/app_colors.dart';
-import '../../../../features/auth/application/auth_state_provider.dart';
 import '../../../../features/gameplay/application/levels_provider.dart';
 import '../../../../features/gameplay/application/current_level_provider.dart';
 

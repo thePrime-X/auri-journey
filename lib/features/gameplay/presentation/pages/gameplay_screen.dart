@@ -2,12 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
-import '../../application/current_level_provider.dart';
-import '../../application/levels_provider.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../application/command_sequence_provider.dart';
+import '../../application/current_level_provider.dart';
 import '../../application/execution_engine_provider.dart';
 import '../../application/gameplay_providers.dart';
+import '../../application/levels_provider.dart';
 import '../../domain/models/command_type.dart';
 import '../../domain/models/coordinate.dart';
 import '../../domain/models/execution_status.dart';
@@ -16,6 +16,7 @@ import '../widgets/command_block.dart';
 import '../widgets/command_palette.dart';
 import '../widgets/game_action_bar.dart';
 import '../widgets/game_grid.dart';
+import 'mission_complete_screen.dart';
 
 class GameplayScreen extends ConsumerStatefulWidget {
   final LevelState level;
@@ -34,8 +35,7 @@ class _GameplayScreenState extends ConsumerState<GameplayScreen> {
     super.initState();
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      ref.read(executionStateProvider.notifier).resetFromLevel(widget.level);
-      ref.read(commandSequenceProvider.notifier).clearSequence();
+      _resetLevelState();
     });
   }
 
@@ -45,105 +45,155 @@ class _GameplayScreenState extends ConsumerState<GameplayScreen> {
 
     if (oldWidget.level.id != widget.level.id) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
-        ref.read(executionStateProvider.notifier).resetFromLevel(widget.level);
-        ref.read(commandSequenceProvider.notifier).clearSequence();
+        _resetLevelState();
       });
     }
   }
 
-  Future<void> _showSuccessDialog() async {
-    await showDialog<void>(
-      context: context,
-      barrierDismissible: false,
-      builder: (context) {
-        return AlertDialog(
-          backgroundColor: AppColors.bg2,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(20),
-          ),
-          title: const Row(
-            children: [
-              Text('✅', style: TextStyle(fontSize: 22)),
-              SizedBox(width: 10),
-              Expanded(
-                child: Text(
-                  'Level Complete',
-                  style: TextStyle(
-                    color: AppColors.textPrimary,
-                    fontWeight: FontWeight.w800,
-                  ),
-                ),
-              ),
-            ],
-          ),
-          content: Text(
-            'Auri reached the goal.\n\n+${widget.level.rewardXp} XP earned',
-            style: const TextStyle(color: AppColors.textSecondary, height: 1.5),
-          ),
-          actions: [
-            ElevatedButton(
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-              style: ElevatedButton.styleFrom(
-                backgroundColor: AppColors.cyan,
-                foregroundColor: Colors.black,
-              ),
-              child: const Text(
-                'Next Level',
-                style: TextStyle(fontWeight: FontWeight.w800),
-              ),
-            ),
-          ],
-        );
-      },
-    );
+  void _resetLevelState() {
+    ref.read(executionStateProvider.notifier).resetFromLevel(widget.level);
+    ref.read(commandSequenceProvider.notifier).clearSequence();
   }
 
-  Future<void> _showAllLevelsCompletedDialog() async {
+  Future<void> _showPauseDialog() async {
+    if (_isAnimating) return;
+
     await showDialog<void>(
       context: context,
-      barrierDismissible: false,
+      barrierDismissible: true,
       builder: (context) {
-        return AlertDialog(
-          backgroundColor: AppColors.bg2,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(20),
-          ),
-          title: const Row(
-            children: [
-              Text('🎉', style: TextStyle(fontSize: 22)),
-              SizedBox(width: 10),
-              Expanded(
-                child: Text(
-                  'All Levels Completed',
+        return Dialog(
+          backgroundColor: Colors.transparent,
+          insetPadding: const EdgeInsets.all(24),
+          child: Container(
+            padding: const EdgeInsets.all(28),
+            decoration: BoxDecoration(
+              color: AppColors.bg3,
+              borderRadius: BorderRadius.circular(22),
+              border: Border.all(
+                color: AppColors.border2.withValues(alpha: 0.9),
+              ),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withValues(alpha: 0.45),
+                  blurRadius: 28,
+                  offset: const Offset(0, 14),
+                ),
+              ],
+            ),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                const Text(
+                  'PAUSED',
                   style: TextStyle(
-                    color: AppColors.textPrimary,
+                    color: AppColors.cyan,
+                    fontSize: 24,
                     fontWeight: FontWeight.w800,
+                    letterSpacing: 2,
                   ),
                 ),
-              ),
-            ],
-          ),
-          content: const Text(
-            'Congratulations! You completed all available levels.\n\nYou can replay the final level as many times as you want.',
-            style: TextStyle(color: AppColors.textSecondary, height: 1.5),
-          ),
-          actions: [
-            ElevatedButton(
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-              style: ElevatedButton.styleFrom(
-                backgroundColor: AppColors.cyan,
-                foregroundColor: Colors.black,
-              ),
-              child: const Text(
-                'Replay Level 5',
-                style: TextStyle(fontWeight: FontWeight.w800),
-              ),
+                const SizedBox(height: 26),
+                SizedBox(
+                  width: double.infinity,
+                  height: 56,
+                  child: ElevatedButton(
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: AppColors.cyan,
+                      foregroundColor: Colors.black,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(16),
+                      ),
+                    ),
+                    child: const Text(
+                      '▶ Resume',
+                      style: TextStyle(
+                        fontSize: 17,
+                        fontWeight: FontWeight.w900,
+                      ),
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 14),
+                SizedBox(
+                  width: double.infinity,
+                  height: 56,
+                  child: OutlinedButton(
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                      _resetLevelState();
+                    },
+                    style: OutlinedButton.styleFrom(
+                      foregroundColor: AppColors.textPrimary,
+                      side: const BorderSide(color: AppColors.border2),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(16),
+                      ),
+                    ),
+                    child: const Text(
+                      '↻ Restart Level',
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w800,
+                      ),
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 14),
+                SizedBox(
+                  width: double.infinity,
+                  height: 56,
+                  child: OutlinedButton(
+                    onPressed: () {},
+                    style: OutlinedButton.styleFrom(
+                      foregroundColor: AppColors.textPrimary,
+                      side: const BorderSide(color: AppColors.border2),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(16),
+                      ),
+                    ),
+                    child: const Text(
+                      '⚙ Settings',
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w800,
+                      ),
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 14),
+                SizedBox(
+                  width: double.infinity,
+                  height: 56,
+                  child: OutlinedButton(
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                      context.go('/dashboard');
+                    },
+                    style: OutlinedButton.styleFrom(
+                      foregroundColor: AppColors.red,
+                      side: BorderSide(
+                        color: AppColors.red.withValues(alpha: 0.65),
+                      ),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(16),
+                      ),
+                    ),
+                    child: const Text(
+                      '✕ Abandon Mission',
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w900,
+                      ),
+                    ),
+                  ),
+                ),
+              ],
             ),
-          ],
+          ),
         );
       },
     );
@@ -244,17 +294,47 @@ class _GameplayScreenState extends ConsumerState<GameplayScreen> {
       final currentIndex = ref.read(currentLevelIndexProvider);
       final isLastLevel = currentIndex >= levels.length - 1;
 
-      if (isLastLevel) {
-        await _showAllLevelsCompletedDialog();
+      if (!mounted) return;
 
-        ref.read(currentLevelIndexProvider.notifier).state = levels.length - 1;
-        ref.read(executionStateProvider.notifier).resetFromLevel(widget.level);
-        ref.read(commandSequenceProvider.notifier).clearSequence();
-      } else {
-        await _showSuccessDialog();
+      await Navigator.of(context).push(
+        MaterialPageRoute(
+          builder: (_) {
+            return MissionCompleteScreen(
+              level: widget.level,
+              isLastLevel: isLastLevel,
+              onNextMission: () {
+                if (isLastLevel) {
+                  Navigator.of(context).pop();
 
-        ref.read(currentLevelIndexProvider.notifier).state = currentIndex + 1;
-      }
+                  ref.read(currentLevelIndexProvider.notifier).state =
+                      levels.length - 1;
+
+                  ref
+                      .read(executionStateProvider.notifier)
+                      .resetFromLevel(widget.level);
+
+                  ref.read(commandSequenceProvider.notifier).clearSequence();
+                  return;
+                }
+
+                Navigator.of(context).pop();
+
+                ref.read(currentLevelIndexProvider.notifier).state =
+                    currentIndex + 1;
+              },
+              onReplayLevel: () {
+                Navigator.of(context).pop();
+
+                ref
+                    .read(executionStateProvider.notifier)
+                    .resetFromLevel(widget.level);
+
+                ref.read(commandSequenceProvider.notifier).clearSequence();
+              },
+            );
+          },
+        ),
+      );
     } else if (finalState.status == ExecutionStatus.failure) {
       final hint = nextAttemptCount <= 1
           ? widget.level.firstFailureHint
@@ -266,152 +346,26 @@ class _GameplayScreenState extends ConsumerState<GameplayScreen> {
     }
   }
 
-  Future<void> _showPauseDialog() async {
-    if (_isAnimating) return;
+  bool _isCommandHighlighted({
+    required int sequenceIndex,
+    required List<CommandType?> sequence,
+  }) {
+    final executionState = ref.read(executionStateProvider);
 
-    await showDialog<void>(
-      context: context,
-      barrierDismissible: true,
-      builder: (context) {
-        return Dialog(
-          backgroundColor: Colors.transparent,
-          insetPadding: const EdgeInsets.all(24),
-          child: Container(
-            padding: const EdgeInsets.all(28),
-            decoration: BoxDecoration(
-              color: AppColors.bg3,
-              borderRadius: BorderRadius.circular(22),
-              border: Border.all(
-                color: AppColors.border2.withValues(alpha: 0.9),
-              ),
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black.withValues(alpha: 0.45),
-                  blurRadius: 28,
-                  offset: const Offset(0, 14),
-                ),
-              ],
-            ),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                const Text(
-                  'PAUSED',
-                  style: TextStyle(
-                    color: AppColors.cyan,
-                    fontSize: 24,
-                    fontWeight: FontWeight.w800,
-                    letterSpacing: 2,
-                  ),
-                ),
-                const SizedBox(height: 26),
+    if (executionState.status != ExecutionStatus.running) {
+      return false;
+    }
 
-                SizedBox(
-                  width: double.infinity,
-                  height: 56,
-                  child: ElevatedButton(
-                    onPressed: () {
-                      Navigator.of(context).pop();
-                    },
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: AppColors.cyan,
-                      foregroundColor: Colors.black,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(16),
-                      ),
-                    ),
-                    child: const Text(
-                      '▶ Resume',
-                      style: TextStyle(
-                        fontSize: 17,
-                        fontWeight: FontWeight.w900,
-                      ),
-                    ),
-                  ),
-                ),
+    final item = sequence[sequenceIndex];
 
-                const SizedBox(height: 14),
+    if (item == null) {
+      return false;
+    }
 
-                SizedBox(
-                  width: double.infinity,
-                  height: 56,
-                  child: OutlinedButton(
-                    onPressed: () {},
-                    style: OutlinedButton.styleFrom(
-                      foregroundColor: AppColors.textPrimary,
-                      side: const BorderSide(color: AppColors.border2),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(16),
-                      ),
-                    ),
-                    child: const Text(
-                      '↻ Restart Level',
-                      style: TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.w800,
-                      ),
-                    ),
-                  ),
-                ),
+    final commandOrderIndex =
+        sequence.take(sequenceIndex + 1).whereType<CommandType>().length - 1;
 
-                const SizedBox(height: 14),
-
-                SizedBox(
-                  width: double.infinity,
-                  height: 56,
-                  child: OutlinedButton(
-                    onPressed: () {},
-                    style: OutlinedButton.styleFrom(
-                      foregroundColor: AppColors.textPrimary,
-                      side: const BorderSide(color: AppColors.border2),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(16),
-                      ),
-                    ),
-                    child: const Text(
-                      '⚙ Settings',
-                      style: TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.w800,
-                      ),
-                    ),
-                  ),
-                ),
-
-                const SizedBox(height: 14),
-
-                SizedBox(
-                  width: double.infinity,
-                  height: 56,
-                  child: OutlinedButton(
-                    onPressed: () {
-                      Navigator.of(context).pop();
-                      context.go('/dashboard');
-                    },
-                    style: OutlinedButton.styleFrom(
-                      foregroundColor: AppColors.red,
-                      side: BorderSide(
-                        color: AppColors.red.withValues(alpha: 0.65),
-                      ),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(16),
-                      ),
-                    ),
-                    child: const Text(
-                      '✕ Abandon Mission',
-                      style: TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.w900,
-                      ),
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ),
-        );
-      },
-    );
+    return commandOrderIndex == executionState.currentStepIndex;
   }
 
   @override
@@ -539,6 +493,7 @@ class _GameplayScreenState extends ConsumerState<GameplayScreen> {
                       GestureDetector(
                         onTap: () {
                           if (_isAnimating) return;
+
                           ref
                               .read(commandSequenceProvider.notifier)
                               .clearSequence();
@@ -648,6 +603,11 @@ class _GameplayScreenState extends ConsumerState<GameplayScreen> {
                               );
                             }
 
+                            final isHighlighted = _isCommandHighlighted(
+                              sequenceIndex: index,
+                              sequence: sequence,
+                            );
+
                             return LongPressDraggable<_DraggedCommandData>(
                               data: _DraggedCommandData(
                                 command: item,
@@ -661,11 +621,7 @@ class _GameplayScreenState extends ConsumerState<GameplayScreen> {
                                   child: CommandBlock(
                                     command: item,
                                     isSmall: true,
-                                    isHighlighted:
-                                        executionState.currentStepIndex ==
-                                            index &&
-                                        executionState.status ==
-                                            ExecutionStatus.running,
+                                    isHighlighted: isHighlighted,
                                   ),
                                 ),
                               ),
@@ -674,16 +630,13 @@ class _GameplayScreenState extends ConsumerState<GameplayScreen> {
                                 child: CommandBlock(
                                   command: item,
                                   isSmall: true,
-                                  isHighlighted:
-                                      executionState.currentStepIndex ==
-                                          index &&
-                                      executionState.status ==
-                                          ExecutionStatus.running,
+                                  isHighlighted: isHighlighted,
                                 ),
                               ),
                               child: GestureDetector(
                                 onTap: () {
                                   if (_isAnimating) return;
+
                                   ref
                                       .read(commandSequenceProvider.notifier)
                                       .removeCommandAt(index);
@@ -691,6 +644,7 @@ class _GameplayScreenState extends ConsumerState<GameplayScreen> {
                                 child: CommandBlock(
                                   command: item,
                                   isSmall: true,
+                                  isHighlighted: isHighlighted,
                                 ),
                               ),
                             );
@@ -701,6 +655,7 @@ class _GameplayScreenState extends ConsumerState<GameplayScreen> {
                             isAddPlaceholder: true,
                             onTap: () {
                               if (_isAnimating) return;
+
                               ref
                                   .read(commandSequenceProvider.notifier)
                                   .addEmptySlot();

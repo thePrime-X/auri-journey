@@ -147,7 +147,10 @@ class _GameplayScreenState extends ConsumerState<GameplayScreen> {
                   width: double.infinity,
                   height: 56,
                   child: OutlinedButton(
-                    onPressed: () {},
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                      context.go('/settings');
+                    },
                     style: OutlinedButton.styleFrom(
                       foregroundColor: AppColors.textPrimary,
                       side: const BorderSide(color: AppColors.border2),
@@ -255,6 +258,8 @@ class _GameplayScreenState extends ConsumerState<GameplayScreen> {
 
     if (commands.isEmpty) return;
 
+    final runStartedAt = DateTime.now();
+
     setState(() {
       _isAnimating = true;
     });
@@ -280,6 +285,7 @@ class _GameplayScreenState extends ConsumerState<GameplayScreen> {
     }
 
     final finalState = trace.last;
+    final timeTaken = DateTime.now().difference(runStartedAt);
 
     if (mounted) {
       setState(() {
@@ -293,6 +299,7 @@ class _GameplayScreenState extends ConsumerState<GameplayScreen> {
       final levels = await ref.read(levelsProvider.future);
       final currentIndex = ref.read(currentLevelIndexProvider);
       final isLastLevel = currentIndex >= levels.length - 1;
+      final commands = sequence.whereType<CommandType>().toList();
 
       if (!mounted) return;
 
@@ -302,6 +309,9 @@ class _GameplayScreenState extends ConsumerState<GameplayScreen> {
             return MissionCompleteScreen(
               level: widget.level,
               isLastLevel: isLastLevel,
+              timeTaken: timeTaken,
+              stepsUsed: commands.length,
+              optimalSteps: widget.level.optimalSolution.length,
               onNextMission: () {
                 if (isLastLevel) {
                   Navigator.of(context).pop();

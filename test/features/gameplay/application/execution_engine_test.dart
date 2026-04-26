@@ -334,6 +334,19 @@ void main() {
         expect(trace.last.status, ExecutionStatus.success);
       });
 
+      test(
+        'empty sequence returns failure when target is not already reached',
+        () {
+          final result = engine.runSequence(
+            level: baseLevel,
+            commands: const [],
+          );
+
+          expect(result.currentPosition, baseLevel.startPosition);
+          expect(result.status, ExecutionStatus.failure);
+        },
+      );
+
       test('ends trace with failure on collision', () {
         const obstacleLevel = LevelState(
           id: 'level_trace_fail',

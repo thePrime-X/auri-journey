@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import 'dart:ui';
 import '../../../../core/theme/app_colors.dart';
 import '../../application/auth_state_provider.dart';
 
@@ -17,6 +18,9 @@ class _SignupScreenState extends ConsumerState<SignupScreen> {
   final TextEditingController passwordController = TextEditingController();
   final TextEditingController confirmPasswordController =
       TextEditingController();
+
+  static const Color signupAccent = AppColors.purple;
+  static const Color signupAccent2 = AppColors.purple2;
 
   @override
   void dispose() {
@@ -72,27 +76,59 @@ class _SignupScreenState extends ConsumerState<SignupScreen> {
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
                   const SizedBox(height: 12),
+
                   Center(
                     child: Container(
                       width: 88,
                       height: 88,
                       decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(20),
+                        borderRadius: BorderRadius.circular(14),
                         gradient: const RadialGradient(
-                          colors: [Color(0xFF0A3D5C), Color(0xFF030C18)],
+                          colors: [Color(0xFF140A3D), Color(0xFF03030A)],
                         ),
                         border: Border.all(
-                          color: AppColors.cyan.withValues(alpha: 0.35),
+                          color: signupAccent.withValues(alpha: 0.45),
                         ),
                       ),
-                      child: const Icon(
-                        Icons.rocket_launch_rounded,
-                        size: 42,
-                        color: AppColors.cyan,
+                      child: Stack(
+                        alignment: Alignment.center,
+                        children: [
+                          // 🌫️ Outer glow (big radius)
+                          ImageFiltered(
+                            imageFilter: ImageFilter.blur(
+                              sigmaX: 18,
+                              sigmaY: 18,
+                            ),
+                            child: Icon(
+                              Icons.login_rounded,
+                              size: 48,
+                              color: signupAccent.withValues(alpha: 0.25),
+                            ),
+                          ),
+
+                          // 🌫️ Inner glow (sharper)
+                          ImageFiltered(
+                            imageFilter: ImageFilter.blur(sigmaX: 8, sigmaY: 8),
+                            child: Icon(
+                              Icons.login_rounded,
+                              size: 46,
+                              color: signupAccent.withValues(alpha: 0.6),
+                            ),
+                          ),
+
+                          // 🔷 Main icon
+                          const Icon(
+                            Icons.login_rounded,
+                            size: 42,
+                            color: signupAccent,
+                          ),
+                        ],
                       ),
                     ),
                   ),
+
                   const SizedBox(height: 12),
+
                   const Center(
                     child: Text(
                       "AURI'S JOURNEY",
@@ -104,7 +140,9 @@ class _SignupScreenState extends ConsumerState<SignupScreen> {
                       ),
                     ),
                   ),
+
                   const SizedBox(height: 28),
+
                   const Text(
                     'Create Account',
                     style: TextStyle(
@@ -113,7 +151,9 @@ class _SignupScreenState extends ConsumerState<SignupScreen> {
                       color: AppColors.textPrimary,
                     ),
                   ),
+
                   const SizedBox(height: 4),
+
                   const Text(
                     'Begin your adventure',
                     style: TextStyle(
@@ -121,95 +161,43 @@ class _SignupScreenState extends ConsumerState<SignupScreen> {
                       color: AppColors.textSecondary,
                     ),
                   ),
+
                   const SizedBox(height: 24),
-                  TextField(
+
+                  _SignupTextField(
                     controller: emailController,
+                    hintText: 'Email Address',
+                    icon: Icons.email_outlined,
                     keyboardType: TextInputType.emailAddress,
-                    style: const TextStyle(color: AppColors.textPrimary),
-                    decoration: InputDecoration(
-                      hintText: 'Email Address',
-                      prefixIcon: const Icon(
-                        Icons.email_outlined,
-                        color: AppColors.textMuted,
-                      ),
-                      filled: true,
-                      fillColor: AppColors.bg3,
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(14),
-                        borderSide: const BorderSide(color: AppColors.border2),
-                      ),
-                      enabledBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(14),
-                        borderSide: const BorderSide(color: AppColors.border2),
-                      ),
-                      focusedBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(14),
-                        borderSide: const BorderSide(color: AppColors.cyan),
-                      ),
-                    ),
                   ),
+
                   const SizedBox(height: 14),
-                  TextField(
+
+                  _SignupTextField(
                     controller: passwordController,
+                    hintText: 'Password',
+                    icon: Icons.lock_outline,
                     obscureText: true,
-                    style: const TextStyle(color: AppColors.textPrimary),
-                    decoration: InputDecoration(
-                      hintText: 'Password',
-                      prefixIcon: const Icon(
-                        Icons.lock_outline,
-                        color: AppColors.textMuted,
-                      ),
-                      filled: true,
-                      fillColor: AppColors.bg3,
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(14),
-                        borderSide: const BorderSide(color: AppColors.border2),
-                      ),
-                      enabledBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(14),
-                        borderSide: const BorderSide(color: AppColors.border2),
-                      ),
-                      focusedBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(14),
-                        borderSide: const BorderSide(color: AppColors.cyan),
-                      ),
-                    ),
                   ),
+
                   const SizedBox(height: 14),
-                  TextField(
+
+                  _SignupTextField(
                     controller: confirmPasswordController,
+                    hintText: 'Confirm Password',
+                    icon: Icons.lock_reset_outlined,
                     obscureText: true,
-                    style: const TextStyle(color: AppColors.textPrimary),
-                    decoration: InputDecoration(
-                      hintText: 'Confirm Password',
-                      prefixIcon: const Icon(
-                        Icons.lock_reset_outlined,
-                        color: AppColors.textMuted,
-                      ),
-                      filled: true,
-                      fillColor: AppColors.bg3,
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(14),
-                        borderSide: const BorderSide(color: AppColors.border2),
-                      ),
-                      enabledBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(14),
-                        borderSide: const BorderSide(color: AppColors.border2),
-                      ),
-                      focusedBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(14),
-                        borderSide: const BorderSide(color: AppColors.cyan),
-                      ),
-                    ),
                   ),
+
                   const SizedBox(height: 22),
+
                   SizedBox(
                     height: 54,
                     child: DecoratedBox(
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(14),
                         gradient: const LinearGradient(
-                          colors: [AppColors.cyan, AppColors.cyan2],
+                          colors: [signupAccent, signupAccent2],
                         ),
                       ),
                       child: ElevatedButton(
@@ -217,7 +205,7 @@ class _SignupScreenState extends ConsumerState<SignupScreen> {
                         style: ElevatedButton.styleFrom(
                           backgroundColor: Colors.transparent,
                           shadowColor: Colors.transparent,
-                          foregroundColor: Colors.black,
+                          foregroundColor: Colors.white,
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(14),
                           ),
@@ -230,17 +218,35 @@ class _SignupScreenState extends ConsumerState<SignupScreen> {
                                   strokeWidth: 2,
                                 ),
                               )
-                            : const Text(
-                                'Start Adventure →',
-                                style: TextStyle(
-                                  fontSize: 15,
-                                  fontWeight: FontWeight.w800,
-                                ),
+                            : Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  const Text(
+                                    'Start Adventure',
+                                    style: TextStyle(
+                                      fontSize: 15,
+                                      fontWeight: FontWeight.w800,
+                                    ),
+                                  ),
+                                  const SizedBox(width: 6),
+                                  Transform.translate(
+                                    offset: const Offset(0, -1),
+                                    child: const Text(
+                                      '→',
+                                      style: TextStyle(
+                                        fontSize: 24,
+                                        fontWeight: FontWeight.w800,
+                                      ),
+                                    ),
+                                  ),
+                                ],
                               ),
                       ),
                     ),
                   ),
+
                   const SizedBox(height: 18),
+
                   Wrap(
                     alignment: WrapAlignment.center,
                     crossAxisAlignment: WrapCrossAlignment.center,
@@ -255,7 +261,7 @@ class _SignupScreenState extends ConsumerState<SignupScreen> {
                         child: const Text(
                           'Sign in',
                           style: TextStyle(
-                            color: AppColors.cyan,
+                            color: signupAccent,
                             fontWeight: FontWeight.w700,
                           ),
                         ),
@@ -266,6 +272,50 @@ class _SignupScreenState extends ConsumerState<SignupScreen> {
               ),
             ),
           ),
+        ),
+      ),
+    );
+  }
+}
+
+class _SignupTextField extends StatelessWidget {
+  final TextEditingController controller;
+  final String hintText;
+  final IconData icon;
+  final bool obscureText;
+  final TextInputType? keyboardType;
+
+  const _SignupTextField({
+    required this.controller,
+    required this.hintText,
+    required this.icon,
+    this.obscureText = false,
+    this.keyboardType,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return TextField(
+      controller: controller,
+      obscureText: obscureText,
+      keyboardType: keyboardType,
+      style: const TextStyle(color: AppColors.textPrimary),
+      decoration: InputDecoration(
+        hintText: hintText,
+        prefixIcon: Icon(icon, color: AppColors.textMuted),
+        filled: true,
+        fillColor: AppColors.bg3,
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(14),
+          borderSide: const BorderSide(color: AppColors.border2),
+        ),
+        enabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(14),
+          borderSide: const BorderSide(color: AppColors.border2),
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(14),
+          borderSide: const BorderSide(color: _SignupScreenState.signupAccent),
         ),
       ),
     );

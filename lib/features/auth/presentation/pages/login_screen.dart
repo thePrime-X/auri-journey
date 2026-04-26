@@ -76,7 +76,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                         ),
                       ),
                       child: const Icon(
-                        Icons.memory_rounded,
+                        Icons.login,
                         size: 42,
                         color: AppColors.cyan,
                       ),

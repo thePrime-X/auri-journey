@@ -447,6 +447,156 @@ class _GameplayScreenState extends ConsumerState<GameplayScreen> {
     );
   }
 
+  Future<void> _showFailureOverlay({
+    required String hint,
+    required bool isRepeatedFailure,
+  }) async {
+    await showDialog<void>(
+      context: context,
+      barrierDismissible: true,
+      builder: (context) {
+        return Dialog(
+          backgroundColor: Colors.transparent,
+          insetPadding: const EdgeInsets.all(24),
+          child: Container(
+            padding: const EdgeInsets.all(24),
+            decoration: BoxDecoration(
+              color: AppColors.bg3,
+              borderRadius: BorderRadius.circular(22),
+              border: Border.all(color: AppColors.red.withValues(alpha: 0.55)),
+              boxShadow: [
+                BoxShadow(
+                  color: AppColors.red.withValues(alpha: 0.18),
+                  blurRadius: 26,
+                  offset: const Offset(0, 12),
+                ),
+                BoxShadow(
+                  color: Colors.black.withValues(alpha: 0.45),
+                  blurRadius: 30,
+                  offset: const Offset(0, 16),
+                ),
+              ],
+            ),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Container(
+                  width: 74,
+                  height: 74,
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    color: AppColors.red.withValues(alpha: 0.08),
+                    border: Border.all(
+                      color: AppColors.red.withValues(alpha: 0.45),
+                    ),
+                  ),
+                  child: const Icon(
+                    Icons.close_rounded,
+                    color: AppColors.red,
+                    size: 42,
+                  ),
+                ),
+                const SizedBox(height: 22),
+                const Text(
+                  'MISSION FAILED',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    fontFamily: 'Orbitron',
+                    color: AppColors.textPrimary,
+                    fontSize: 20,
+                    fontWeight: FontWeight.w800,
+                    letterSpacing: 1.2,
+                  ),
+                ),
+                const SizedBox(height: 8),
+                const Text(
+                  'Auri could not reach the target.',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    fontFamily: 'Exo2',
+                    color: AppColors.textSecondary,
+                    fontSize: 13,
+                    height: 1.5,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+                const SizedBox(height: 24),
+
+                SizedBox(
+                  width: double.infinity,
+                  height: 52,
+                  child: ElevatedButton(
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                      ref
+                          .read(executionStateProvider.notifier)
+                          .resetFromLevel(widget.level);
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: AppColors.red,
+                      foregroundColor: Colors.white,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(15),
+                      ),
+                    ),
+                    child: const Text(
+                      '↻ Try Again',
+                      style: TextStyle(
+                        fontFamily: 'Exo2',
+                        fontSize: 15,
+                        fontWeight: FontWeight.w900,
+                      ),
+                    ),
+                  ),
+                ),
+
+                const SizedBox(height: 12),
+
+                SizedBox(
+                  width: double.infinity,
+                  height: 52,
+                  child: OutlinedButton(
+                    onPressed: () async {
+                      Navigator.of(context).pop();
+
+                      await Future<void>.delayed(
+                        const Duration(milliseconds: 180),
+                      );
+
+                      if (!mounted) return;
+
+                      await _showFailureDialog(
+                        hint: hint,
+                        isRepeatedFailure: isRepeatedFailure,
+                      );
+                    },
+                    style: OutlinedButton.styleFrom(
+                      foregroundColor: AppColors.amber,
+                      side: BorderSide(
+                        color: AppColors.amber.withValues(alpha: 0.55),
+                      ),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(15),
+                      ),
+                    ),
+                    child: const Text(
+                      '💡 Open Hint',
+                      style: TextStyle(
+                        fontFamily: 'Exo2',
+                        fontSize: 15,
+                        fontWeight: FontWeight.w900,
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
+
   Widget _buildExactHintCommandChip(CommandType command) {
     final label = _hintCommandLabel(command);
     final color = _hintCommandColor(command);
@@ -605,7 +755,7 @@ class _GameplayScreenState extends ConsumerState<GameplayScreen> {
 
       ref.read(executionStateProvider.notifier).resetFromLevel(widget.level);
 
-      await _showFailureDialog(
+      await _showFailureOverlay(
         hint: hint,
         isRepeatedFailure: nextAttemptCount > 1,
       );

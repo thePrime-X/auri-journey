@@ -39,6 +39,16 @@ class _GameplayScreenState extends ConsumerState<GameplayScreen> {
     });
   }
 
+  String _echoMessage() {
+    final executionState = ref.read(executionStateProvider);
+
+    if (executionState.status == ExecutionStatus.running) {
+      return 'Executing command sequence...';
+    }
+
+    return widget.level.learningObjective;
+  }
+
   @override
   void didUpdateWidget(covariant GameplayScreen oldWidget) {
     super.didUpdateWidget(oldWidget);
@@ -51,7 +61,9 @@ class _GameplayScreenState extends ConsumerState<GameplayScreen> {
   }
 
   void _resetLevelState() {
-    ref.read(executionStateProvider.notifier).resetFromLevel(widget.level);
+    ref
+        .read(executionStateProvider.notifier)
+        .resetFromLevel(widget.level, preserveAttemptCount: false);
     ref.read(commandSequenceProvider.notifier).clearSequence();
   }
 
@@ -202,7 +214,10 @@ class _GameplayScreenState extends ConsumerState<GameplayScreen> {
     );
   }
 
-  Future<void> _showFailureDialog({required String hint}) async {
+  Future<void> _showFailureDialog({
+    required String hint,
+    required bool isRepeatedFailure,
+  }) async {
     bool isExactHintUnlocked = false;
 
     await showModalBottomSheet<void>(
@@ -296,8 +311,10 @@ class _GameplayScreenState extends ConsumerState<GameplayScreen> {
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            const Text(
-                              'HINT 1 · GENERAL',
+                            Text(
+                              isRepeatedFailure
+                                  ? 'HINT 2 · ECHO SUGGESTION'
+                                  : 'HINT 1 · GENERAL',
                               style: TextStyle(
                                 color: AppColors.cyan,
                                 fontSize: 9,
@@ -588,7 +605,10 @@ class _GameplayScreenState extends ConsumerState<GameplayScreen> {
 
       ref.read(executionStateProvider.notifier).resetFromLevel(widget.level);
 
-      await _showFailureDialog(hint: hint);
+      await _showFailureDialog(
+        hint: hint,
+        isRepeatedFailure: nextAttemptCount > 1,
+      );
     }
   }
 
@@ -946,40 +966,65 @@ class _GameplayScreenState extends ConsumerState<GameplayScreen> {
                           ),
                         ),
                       ),
-                      Container(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 10,
-                          vertical: 6,
-                        ),
-                        decoration: BoxDecoration(
-                          color: AppColors.cyan.withValues(alpha: 0.10),
-                          borderRadius: BorderRadius.circular(999),
-                        ),
-                        child: const Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Icon(
-                              Icons.lightbulb,
-                              color: AppColors.amber,
-                              size: 14,
-                            ),
-                            SizedBox(width: 4),
-                            Text(
-                              'Hints',
-                              style: TextStyle(
-                                color: AppColors.cyan,
-                                fontSize: 11,
-                                fontWeight: FontWeight.w700,
+                      GestureDetector(
+                        onTap: () {
+                          final executionState = ref.read(
+                            executionStateProvider,
+                          );
+                          final isRepeatedFailure =
+                              executionState.attemptCount > 1;
+
+                          final hint = isRepeatedFailure
+                              ? widget.level.repeatedFailureHint
+                              : widget.level.firstFailureHint;
+
+                          _showFailureDialog(
+                            hint: hint,
+                            isRepeatedFailure: isRepeatedFailure,
+                          );
+                        },
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 10,
+                            vertical: 6,
+                          ),
+                          decoration: BoxDecoration(
+                            color: AppColors.cyan.withValues(alpha: 0.10),
+                            borderRadius: BorderRadius.circular(999),
+                            boxShadow: [
+                              BoxShadow(
+                                color: AppColors.amber.withValues(alpha: 0.35),
+                                blurRadius: 12,
+                                spreadRadius: 1,
                               ),
-                            ),
-                          ],
+                            ],
+                          ),
+                          child: const Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Icon(
+                                Icons.lightbulb,
+                                color: AppColors.amber,
+                                size: 14,
+                              ),
+                              SizedBox(width: 4),
+                              Text(
+                                'Hints',
+                                style: TextStyle(
+                                  color: AppColors.cyan,
+                                  fontSize: 11,
+                                  fontWeight: FontWeight.w700,
+                                ),
+                              ),
+                            ],
+                          ),
                         ),
                       ),
                     ],
                   ),
                   const SizedBox(height: 10),
                   Text(
-                    'Goal: guide Auri from ${widget.level.startPosition.row},${widget.level.startPosition.col} to ${widget.level.targetPosition.row},${widget.level.targetPosition.col}.',
+                    _echoMessage(),
                     style: const TextStyle(
                       color: AppColors.textSecondary,
                       fontSize: 12,

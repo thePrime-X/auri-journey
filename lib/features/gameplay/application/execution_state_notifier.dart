@@ -14,11 +14,13 @@ class ExecutionStateNotifier extends Notifier<ExecutionState> {
     );
   }
 
-  void resetFromLevel(LevelState level) {
+  void resetFromLevel(LevelState level, {bool preserveAttemptCount = true}) {
+    final previousAttemptCount = state.attemptCount;
+
     state = ExecutionState.initial(
       startPosition: level.startPosition,
       direction: level.startDirection,
-    );
+    ).copyWith(attemptCount: preserveAttemptCount ? previousAttemptCount : 0);
   }
 
   void applyExecutionState(ExecutionState newState) {

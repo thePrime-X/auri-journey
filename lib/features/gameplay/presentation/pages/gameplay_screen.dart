@@ -684,7 +684,7 @@ class _GameplayScreenState extends ConsumerState<GameplayScreen> {
 
     for (final step in trace) {
       executionNotifier.applyExecutionState(step);
-      await Future.delayed(const Duration(milliseconds: 350));
+      await Future.delayed(const Duration(milliseconds: 500));
     }
 
     final finalState = trace.last;

@@ -35,8 +35,8 @@ class GridCell extends StatelessWidget {
       borderColor = AppColors.red.withValues(alpha: 0.25);
       child = const Icon(Icons.close_rounded, color: AppColors.red, size: 20);
     } else if (isGoal) {
-      backgroundColor = AppColors.amber.withValues(alpha: 0.08);
-      borderColor = AppColors.amber.withValues(alpha: 0.30);
+      backgroundColor = AppColors.bg3;
+      borderColor = AppColors.amber.withValues(alpha: 0.45);
       child = const Icon(Icons.bolt, color: AppColors.amber, size: 22);
     } else if (isAuri) {
       backgroundColor = AppColors.cyan.withValues(alpha: 0.08);
@@ -46,14 +46,25 @@ class GridCell extends StatelessWidget {
 
     return AspectRatio(
       aspectRatio: 1,
-      child: Container(
-        decoration: BoxDecoration(
-          color: backgroundColor,
-          borderRadius: BorderRadius.circular(8),
-          border: Border.all(color: borderColor),
-        ),
-        child: Center(child: child),
-      ),
+      child: isGoal
+          ? _OuterGoalGlow(
+              child: Container(
+                decoration: BoxDecoration(
+                  color: backgroundColor,
+                  borderRadius: BorderRadius.circular(10),
+                  border: Border.all(color: borderColor),
+                ),
+                child: Center(child: child),
+              ),
+            )
+          : Container(
+              decoration: BoxDecoration(
+                color: backgroundColor,
+                borderRadius: BorderRadius.circular(10),
+                border: Border.all(color: borderColor),
+              ),
+              child: Center(child: child),
+            ),
     );
   }
 }
@@ -190,6 +201,70 @@ class _AuriFaceState extends State<_AuriFace> {
           ),
         ],
       ),
+    );
+  }
+}
+
+class _OuterGoalGlow extends StatefulWidget {
+  final Widget child;
+
+  const _OuterGoalGlow({required this.child});
+
+  @override
+  State<_OuterGoalGlow> createState() => _OuterGoalGlowState();
+}
+
+class _OuterGoalGlowState extends State<_OuterGoalGlow>
+    with SingleTickerProviderStateMixin {
+  late final AnimationController _controller;
+
+  @override
+  void initState() {
+    super.initState();
+
+    _controller = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 800),
+    )..repeat(reverse: true);
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return AnimatedBuilder(
+      animation: _controller,
+      child: widget.child,
+      builder: (context, child) {
+        final glow = 0.2 + (_controller.value * 0.25);
+
+        return Stack(
+          clipBehavior: Clip.none,
+          children: [
+            Positioned.fill(
+              child: DecoratedBox(
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(8),
+                  boxShadow: [
+                    BoxShadow(
+                      color: AppColors.amber.withValues(alpha: glow),
+                      blurRadius: 10 + (_controller.value * 10),
+                      spreadRadius: 1.5,
+                    ),
+                  ],
+                ),
+              ),
+            ),
+
+            // Solid cell sits above glow, so inside stays normal.
+            Positioned.fill(child: child!),
+          ],
+        );
+      },
     );
   }
 }

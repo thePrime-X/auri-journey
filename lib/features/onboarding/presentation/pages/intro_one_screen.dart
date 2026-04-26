@@ -1,3 +1,4 @@
+import 'package:auri_app/shared/widgets/rotating_flow_icon.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import '../../../../core/theme/app_colors.dart';
@@ -15,39 +16,7 @@ class IntroOneScreen extends StatelessWidget {
           child: Column(
             children: [
               const Spacer(),
-              Container(
-                width: 120,
-                height: 120,
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  gradient: RadialGradient(
-                    colors: [
-                      AppColors.cyan.withValues(alpha: 0.15),
-                      Colors.transparent,
-                    ],
-                  ),
-                ),
-                child: Stack(
-                  alignment: Alignment.center,
-                  children: [
-                    const Icon(
-                      Icons.hexagon_outlined,
-                      size: 64,
-                      color: AppColors.cyan,
-                    ),
-                    Container(
-                      width: 110,
-                      height: 110,
-                      decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                        border: Border.all(
-                          color: AppColors.cyan.withValues(alpha: 0.25),
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
+              const RotatingGlowIcon(icon: Icons.code, color: AppColors.cyan),
               const SizedBox(height: 32),
               const Text(
                 "AURI'S JOURNEY",
@@ -105,12 +74,32 @@ class IntroOneScreen extends StatelessWidget {
                         borderRadius: BorderRadius.circular(14),
                       ),
                     ),
-                    child: const Text(
-                      'Next →',
-                      style: TextStyle(
-                        fontSize: 15,
-                        fontWeight: FontWeight.w800,
-                      ),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment:
+                          CrossAxisAlignment.center, // 👈 add this
+
+                      children: [
+                        Text(
+                          'Next',
+                          style: TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.w800,
+                          ),
+                        ),
+                        SizedBox(width: 6),
+
+                        Transform.translate(
+                          offset: const Offset(0, -3),
+                          child: const Text(
+                            '→',
+                            style: TextStyle(
+                              fontSize: 30,
+                              fontWeight: FontWeight.w800,
+                            ),
+                          ),
+                        ),
+                      ],
                     ),
                   ),
                 ),
@@ -179,11 +168,19 @@ class _IndicatorButton extends StatelessWidget {
         padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 8),
         child: AnimatedContainer(
           duration: const Duration(milliseconds: 200),
-          width: isActive ? 16 : 8,
+          width: isActive ? 24 : 8,
           height: 8,
           decoration: BoxDecoration(
             color: color,
             borderRadius: BorderRadius.circular(999),
+            boxShadow: isActive
+                ? [
+                    BoxShadow(
+                      color: color.withValues(alpha: 0.6),
+                      blurRadius: 6,
+                    ),
+                  ]
+                : [],
           ),
         ),
       ),

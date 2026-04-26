@@ -1,3 +1,4 @@
+import 'package:auri_app/shared/widgets/rotating_flow_icon.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -22,34 +23,9 @@ class IntroThreeScreen extends ConsumerWidget {
           child: Column(
             children: [
               const Spacer(),
-              Container(
-                width: 120,
-                height: 120,
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  gradient: RadialGradient(
-                    colors: [
-                      AppColors.amber.withValues(alpha: 0.15),
-                      Colors.transparent,
-                    ],
-                  ),
-                ),
-                child: Stack(
-                  alignment: Alignment.center,
-                  children: [
-                    const Icon(Icons.bolt, size: 60, color: AppColors.amber),
-                    Container(
-                      width: 110,
-                      height: 110,
-                      decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                        border: Border.all(
-                          color: AppColors.amber.withValues(alpha: 0.25),
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
+              const RotatingGlowIcon(
+                icon: Icons.auto_awesome,
+                color: AppColors.amber,
               ),
               const SizedBox(height: 32),
               const Text(
@@ -108,12 +84,31 @@ class IntroThreeScreen extends ConsumerWidget {
                         borderRadius: BorderRadius.circular(14),
                       ),
                     ),
-                    child: const Text(
-                      'Start Mission →',
-                      style: TextStyle(
-                        fontSize: 15,
-                        fontWeight: FontWeight.w800,
-                      ),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment:
+                          CrossAxisAlignment.center, // 👈 add this
+
+                      children: [
+                        Text(
+                          'Start Mission',
+                          style: TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.w800,
+                          ),
+                        ),
+                        SizedBox(width: 6),
+                        Transform.translate(
+                          offset: const Offset(0, -3),
+                          child: const Text(
+                            '→',
+                            style: TextStyle(
+                              fontSize: 30,
+                              fontWeight: FontWeight.w800,
+                            ),
+                          ),
+                        ),
+                      ],
                     ),
                   ),
                 ),
@@ -182,11 +177,19 @@ class _IndicatorButton extends StatelessWidget {
         padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 8),
         child: AnimatedContainer(
           duration: const Duration(milliseconds: 200),
-          width: isActive ? 16 : 8,
+          width: isActive ? 24 : 8,
           height: 8,
           decoration: BoxDecoration(
             color: color,
             borderRadius: BorderRadius.circular(999),
+            boxShadow: isActive
+                ? [
+                    BoxShadow(
+                      color: color.withValues(alpha: 0.6),
+                      blurRadius: 6,
+                    ),
+                  ]
+                : [],
           ),
         ),
       ),

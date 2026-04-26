@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-
+import 'dart:ui';
 import '../../../../core/theme/app_colors.dart';
 import '../../application/auth_state_provider.dart';
 
@@ -15,6 +15,9 @@ class LoginScreen extends ConsumerStatefulWidget {
 class _LoginScreenState extends ConsumerState<LoginScreen> {
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
+
+  static const Color signinAccent = AppColors.cyan;
+  static const Color signinAccent2 = AppColors.cyan2;
 
   @override
   void dispose() {
@@ -67,18 +70,47 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                       width: 88,
                       height: 88,
                       decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(20),
+                        borderRadius: BorderRadius.circular(14),
                         gradient: const RadialGradient(
-                          colors: [Color(0xFF0A3D5C), Color(0xFF030C18)],
+                          colors: [Color(0xFF140A3D), Color(0xFF03030A)],
                         ),
                         border: Border.all(
-                          color: AppColors.cyan.withValues(alpha: 0.35),
+                          color: signinAccent.withValues(alpha: 0.45),
                         ),
                       ),
-                      child: const Icon(
-                        Icons.memory_rounded,
-                        size: 42,
-                        color: AppColors.cyan,
+                      child: Stack(
+                        alignment: Alignment.center,
+                        children: [
+                          // 🌫️ Outer glow (big radius)
+                          ImageFiltered(
+                            imageFilter: ImageFilter.blur(
+                              sigmaX: 18,
+                              sigmaY: 18,
+                            ),
+                            child: Icon(
+                              Icons.login_rounded,
+                              size: 48,
+                              color: signinAccent.withValues(alpha: 0.25),
+                            ),
+                          ),
+
+                          // 🌫️ Inner glow (sharper)
+                          ImageFiltered(
+                            imageFilter: ImageFilter.blur(sigmaX: 8, sigmaY: 8),
+                            child: Icon(
+                              Icons.login_rounded,
+                              size: 46,
+                              color: signinAccent.withValues(alpha: 0.6),
+                            ),
+                          ),
+
+                          // 🔷 Main icon
+                          const Icon(
+                            Icons.login_rounded,
+                            size: 42,
+                            color: signinAccent,
+                          ),
+                        ],
                       ),
                     ),
                   ),
@@ -186,7 +218,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(14),
                         gradient: const LinearGradient(
-                          colors: [AppColors.cyan, AppColors.cyan2],
+                          colors: [signinAccent, signinAccent2],
                         ),
                       ),
                       child: ElevatedButton(
@@ -207,12 +239,28 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                                   strokeWidth: 2,
                                 ),
                               )
-                            : const Text(
-                                'Sign In →',
-                                style: TextStyle(
-                                  fontSize: 15,
-                                  fontWeight: FontWeight.w800,
-                                ),
+                            : Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  const Text(
+                                    'Sign in',
+                                    style: TextStyle(
+                                      fontSize: 15,
+                                      fontWeight: FontWeight.w800,
+                                    ),
+                                  ),
+                                  const SizedBox(width: 6),
+                                  Transform.translate(
+                                    offset: const Offset(0, -1),
+                                    child: const Text(
+                                      '→',
+                                      style: TextStyle(
+                                        fontSize: 24,
+                                        fontWeight: FontWeight.w800,
+                                      ),
+                                    ),
+                                  ),
+                                ],
                               ),
                       ),
                     ),

@@ -6,21 +6,21 @@ import '../../domain/models/level_state.dart';
 class MissionCompleteScreen extends StatelessWidget {
   final LevelState level;
   final bool isLastLevel;
-  final VoidCallback onNextMission;
-  final VoidCallback onReplayLevel;
   final Duration timeTaken;
   final int stepsUsed;
   final int optimalSteps;
+  final VoidCallback onNextMission;
+  final VoidCallback onReplayLevel;
 
   const MissionCompleteScreen({
     super.key,
     required this.level,
     required this.isLastLevel,
-    required this.onNextMission,
-    required this.onReplayLevel,
     required this.timeTaken,
     required this.stepsUsed,
     required this.optimalSteps,
+    required this.onNextMission,
+    required this.onReplayLevel,
   });
 
   String get formattedTime {
@@ -34,7 +34,6 @@ class MissionCompleteScreen extends StatelessWidget {
 
   String get efficiencyBadge {
     final extraSteps = stepsUsed - optimalSteps;
-
     if (extraSteps <= 0) return 'Optimal';
     return '+$extraSteps steps';
   }
@@ -45,276 +44,151 @@ class MissionCompleteScreen extends StatelessWidget {
       backgroundColor: AppColors.bg,
       body: SafeArea(
         child: ListView(
-          padding: const EdgeInsets.all(24),
+          padding: const EdgeInsets.fromLTRB(16, 14, 16, 18),
           children: [
             Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Expanded(
-                  child: Text(
-                    'SECTOR 1 · MISSION ${level.order}',
-                    style: const TextStyle(
-                      color: AppColors.textMuted,
-                      fontSize: 13,
-                      fontWeight: FontWeight.w800,
-                      letterSpacing: 1.1,
-                    ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        'SECTOR 1 · MISSION ${level.order}',
+                        style: const TextStyle(
+                          fontFamily: 'Exo2',
+                          color: AppColors.textMuted,
+                          fontSize: 11,
+                          fontWeight: FontWeight.w800,
+                          letterSpacing: 0.4,
+                        ),
+                      ),
+                      const SizedBox(height: 3),
+                      Text(
+                        level.title,
+                        style: const TextStyle(
+                          fontFamily: 'Exo2',
+                          color: AppColors.textSecondary,
+                          fontSize: 12,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                    ],
                   ),
                 ),
                 Text(
-                  '⚡ ${level.rewardXp} XP',
+                  '⚡ 2,480 XP',
                   style: const TextStyle(
+                    fontFamily: 'Orbitron',
                     color: AppColors.amber,
-                    fontSize: 16,
-                    fontWeight: FontWeight.w900,
+                    fontSize: 14,
+                    fontWeight: FontWeight.w700,
                   ),
                 ),
               ],
             ),
-            const SizedBox(height: 6),
-            Text(
-              level.title,
-              style: const TextStyle(
+
+            const SizedBox(height: 30),
+
+            const _SuccessRing(),
+
+            const SizedBox(height: 20),
+
+            const Text(
+              'MISSION COMPLETE',
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                fontFamily: 'Orbitron',
+                color: AppColors.textPrimary,
+                fontSize: 20,
+                fontWeight: FontWeight.w700,
+                letterSpacing: 0.8,
+              ),
+            ),
+
+            const SizedBox(height: 7),
+
+            const Text(
+              'Power Gate Restored!',
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                fontFamily: 'Exo2',
                 color: AppColors.textSecondary,
-                fontSize: 15,
+                fontSize: 12,
                 fontWeight: FontWeight.w600,
               ),
             ),
-            const SizedBox(height: 34),
 
-            Center(
-              child: Container(
-                width: 96,
-                height: 96,
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  border: Border.all(color: AppColors.green, width: 2),
-                  boxShadow: [
-                    BoxShadow(
-                      color: AppColors.green.withValues(alpha: 0.25),
-                      blurRadius: 26,
-                      spreadRadius: 4,
-                    ),
-                  ],
-                ),
-                child: const Icon(
-                  Icons.check_rounded,
-                  color: AppColors.green,
-                  size: 54,
-                ),
-              ),
-            ),
+            const SizedBox(height: 20),
 
-            const SizedBox(height: 34),
-            const Center(
-              child: Text(
-                'MISSION COMPLETE',
-                textAlign: TextAlign.center,
-                style: TextStyle(
-                  color: AppColors.textPrimary,
-                  fontSize: 28,
-                  fontWeight: FontWeight.w900,
-                  letterSpacing: 1.3,
-                ),
-              ),
-            ),
-            const SizedBox(height: 8),
-            const Center(
-              child: Text(
-                'Power Gate Restored!',
-                style: TextStyle(
-                  color: AppColors.textSecondary,
-                  fontSize: 16,
-                  fontWeight: FontWeight.w600,
-                ),
-              ),
-            ),
-            const SizedBox(height: 24),
-
-            Center(
-              child: Container(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 28,
-                  vertical: 14,
-                ),
-                decoration: BoxDecoration(
-                  color: AppColors.amber.withValues(alpha: 0.10),
-                  borderRadius: BorderRadius.circular(999),
-                  border: Border.all(
-                    color: AppColors.amber.withValues(alpha: 0.55),
-                  ),
-                  boxShadow: [
-                    BoxShadow(
-                      color: AppColors.amber.withValues(alpha: 0.22),
-                      blurRadius: 20,
-                    ),
-                  ],
-                ),
-                child: Text(
-                  '⚡ + ${level.rewardXp} XP',
-                  style: const TextStyle(
-                    color: AppColors.amber,
-                    fontSize: 20,
-                    fontWeight: FontWeight.w900,
-                  ),
-                ),
-              ),
-            ),
-
-            const SizedBox(height: 28),
-
-            Row(
-              children: [
-                Expanded(
-                  child: _StatCard(
-                    title: 'EFFICIENCY',
-                    value: '$stepsUsed',
-                    subtitle: 'Steps used',
-                    badge: efficiencyBadge,
-                  ),
-                ),
-                const SizedBox(width: 12),
-                Expanded(
-                  child: _StatCard(
-                    title: 'SPEED',
-                    value: formattedTime,
-                    subtitle: 'Time taken',
-                    badge: 'Fast',
-                    cyan: true,
-                  ),
-                ),
-              ],
-            ),
+            Center(child: _XpRewardPill(xp: level.rewardXp)),
 
             const SizedBox(height: 22),
 
-            Container(
-              padding: const EdgeInsets.all(20),
-              decoration: BoxDecoration(
-                color: AppColors.cyan.withValues(alpha: 0.06),
-                borderRadius: BorderRadius.circular(20),
-                border: Border.all(
-                  color: AppColors.cyan.withValues(alpha: 0.35),
-                ),
-              ),
-              child: const Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    '✦ CONCEPT MASTERED',
-                    style: TextStyle(
-                      color: AppColors.cyan,
-                      fontSize: 12,
-                      fontWeight: FontWeight.w900,
-                      letterSpacing: 1.4,
-                    ),
-                  ),
-                  SizedBox(height: 12),
-                  Text(
-                    'Sequential Reasoning',
-                    style: TextStyle(
-                      color: AppColors.textPrimary,
-                      fontSize: 21,
-                      fontWeight: FontWeight.w900,
-                    ),
-                  ),
-                  SizedBox(height: 8),
-                  Text(
-                    'You used ordered instructions to reach the target efficiently. Core skill unlocked.',
-                    style: TextStyle(
-                      color: AppColors.textSecondary,
-                      fontSize: 14,
-                      height: 1.5,
-                    ),
-                  ),
-                ],
-              ),
+            _MetricsCard(
+              stepsUsed: stepsUsed,
+              efficiencyBadge: efficiencyBadge,
+              timeTaken: formattedTime,
             ),
 
-            const SizedBox(height: 24),
+            const SizedBox(height: 14),
 
-            Row(
-              children: [
-                Text(
-                  'Level ${level.order}',
-                  style: const TextStyle(
-                    color: AppColors.textSecondary,
-                    fontWeight: FontWeight.w700,
-                  ),
-                ),
-                const Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 12),
-                  child: Text(
-                    '→',
-                    style: TextStyle(color: AppColors.textMuted),
-                  ),
-                ),
-                Text(
-                  isLastLevel ? 'Complete' : 'Level ${level.order + 1}',
-                  style: const TextStyle(
-                    color: AppColors.textSecondary,
-                    fontWeight: FontWeight.w700,
-                  ),
-                ),
-                const Spacer(),
-                Text(
-                  '+${level.rewardXp} XP',
-                  style: const TextStyle(
-                    color: AppColors.green,
-                    fontWeight: FontWeight.w900,
-                  ),
-                ),
-              ],
-            ),
-            const SizedBox(height: 8),
-            ClipRRect(
-              borderRadius: BorderRadius.circular(999),
-              child: LinearProgressIndicator(
-                value: isLastLevel ? 1 : 0.72,
-                minHeight: 6,
-                backgroundColor: AppColors.bg3,
-                color: AppColors.cyan,
-              ),
+            const _ConceptCard(),
+
+            const SizedBox(height: 18),
+
+            _XpProgressBar(
+              levelOrder: level.order,
+              isLastLevel: isLastLevel,
+              rewardXp: level.rewardXp,
             ),
 
-            const SizedBox(height: 28),
+            const SizedBox(height: 18),
 
             SizedBox(
-              height: 58,
+              height: 52,
               child: ElevatedButton(
                 onPressed: onNextMission,
                 style: ElevatedButton.styleFrom(
                   backgroundColor: AppColors.cyan,
                   foregroundColor: Colors.black,
                   shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(18),
+                    borderRadius: BorderRadius.circular(12),
                   ),
                 ),
                 child: Text(
                   isLastLevel ? 'Finish →' : 'Next Mission →',
                   style: const TextStyle(
-                    fontSize: 19,
+                    fontFamily: 'Exo2',
+                    fontSize: 15,
                     fontWeight: FontWeight.w900,
+                    letterSpacing: 0.4,
                   ),
                 ),
               ),
             ),
 
-            const SizedBox(height: 14),
+            const SizedBox(height: 10),
 
             SizedBox(
-              height: 58,
+              height: 52,
               child: OutlinedButton(
                 onPressed: onReplayLevel,
                 style: OutlinedButton.styleFrom(
                   foregroundColor: AppColors.textPrimary,
-                  side: const BorderSide(color: AppColors.border2),
+                  side: const BorderSide(color: AppColors.border2, width: 1.5),
+                  backgroundColor: Colors.white.withValues(alpha: 0.03),
                   shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(18),
+                    borderRadius: BorderRadius.circular(12),
                   ),
                 ),
                 child: const Text(
-                  '↻ Replay Level',
-                  style: TextStyle(fontSize: 17, fontWeight: FontWeight.w900),
+                  '↺ Replay Level',
+                  style: TextStyle(
+                    fontFamily: 'Exo2',
+                    fontSize: 13,
+                    fontWeight: FontWeight.w800,
+                  ),
                 ),
               ),
             ),
@@ -325,70 +199,434 @@ class MissionCompleteScreen extends StatelessWidget {
   }
 }
 
-class _StatCard extends StatelessWidget {
-  final String title;
-  final String value;
-  final String subtitle;
-  final String badge;
-  final bool cyan;
+class _SuccessRing extends StatelessWidget {
+  const _SuccessRing();
 
-  const _StatCard({
-    required this.title,
-    required this.value,
-    required this.subtitle,
-    required this.badge,
-    this.cyan = false,
+  @override
+  Widget build(BuildContext context) {
+    return Center(
+      child: TweenAnimationBuilder<double>(
+        tween: Tween(begin: 0.72, end: 1),
+        duration: const Duration(milliseconds: 600),
+        curve: Curves.easeOutBack,
+        builder: (context, value, child) {
+          return Transform.scale(
+            scale: value,
+            child: Container(
+              width: 88,
+              height: 88,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                color: AppColors.green.withValues(alpha: 0.06),
+                border: Border.all(
+                  color: AppColors.green.withValues(alpha: 0.35),
+                  width: 1.5,
+                ),
+                boxShadow: [
+                  BoxShadow(
+                    color: AppColors.green.withValues(alpha: 0.18),
+                    blurRadius: 14,
+                    spreadRadius: 1,
+                  ),
+                ],
+              ),
+              child: Center(
+                child: Container(
+                  width: 44,
+                  height: 44,
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    color: AppColors.green.withValues(alpha: 0.13),
+                    border: Border.all(color: AppColors.green, width: 1.5),
+                  ),
+                  child: const Icon(
+                    Icons.check_rounded,
+                    color: AppColors.green,
+                    size: 30,
+                  ),
+                ),
+              ),
+            ),
+          );
+        },
+      ),
+    );
+  }
+}
+
+class _XpRewardPill extends StatefulWidget {
+  final int xp;
+
+  const _XpRewardPill({required this.xp});
+
+  @override
+  State<_XpRewardPill> createState() => _XpRewardPillState();
+}
+
+class _XpRewardPillState extends State<_XpRewardPill>
+    with SingleTickerProviderStateMixin {
+  late final AnimationController _controller;
+
+  @override
+  void initState() {
+    super.initState();
+
+    _controller = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 1500),
+    )..repeat(reverse: true);
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return AnimatedBuilder(
+      animation: _controller,
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 26, vertical: 9),
+        decoration: BoxDecoration(
+          color: AppColors.amber.withValues(alpha: 0.12),
+          borderRadius: BorderRadius.circular(999),
+          border: Border.all(
+            color: AppColors.amber.withValues(alpha: 0.45),
+            width: 1,
+          ),
+        ),
+        child: Text(
+          '⚡ + ${widget.xp} XP',
+          style: const TextStyle(
+            fontFamily: 'Exo2',
+            color: AppColors.amber,
+            fontSize: 15,
+            fontWeight: FontWeight.w900,
+            letterSpacing: 0.4,
+          ),
+        ),
+      ),
+      builder: (context, child) {
+        final t = Curves.easeInOut.transform(_controller.value);
+
+        return Stack(
+          clipBehavior: Clip.none,
+          alignment: Alignment.center,
+          children: [
+            Positioned.fill(
+              child: DecoratedBox(
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(999),
+                  boxShadow: [
+                    BoxShadow(
+                      color: AppColors.amber.withValues(
+                        alpha: 0.12 + (t * 0.25),
+                      ),
+                      blurRadius: 8 + (t * 12),
+                      spreadRadius: 0.5 + (t * 1.2),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+            child!,
+          ],
+        );
+      },
+    );
+  }
+}
+
+class _MetricsCard extends StatelessWidget {
+  final int stepsUsed;
+  final String efficiencyBadge;
+  final String timeTaken;
+
+  const _MetricsCard({
+    required this.stepsUsed,
+    required this.efficiencyBadge,
+    required this.timeTaken,
   });
 
   @override
   Widget build(BuildContext context) {
-    final color = cyan ? AppColors.cyan : AppColors.green;
-
     return Container(
-      padding: const EdgeInsets.symmetric(vertical: 18),
+      margin: const EdgeInsets.symmetric(horizontal: 0),
       decoration: BoxDecoration(
-        color: AppColors.bg3.withValues(alpha: 0.75),
-        borderRadius: BorderRadius.circular(18),
-        border: Border.all(color: AppColors.border2),
+        color: AppColors.bg3,
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: AppColors.border),
       ),
-      child: Column(
+      child: Row(
         children: [
-          Text(
-            title,
-            style: TextStyle(
-              color: cyan ? AppColors.cyan : AppColors.textMuted,
-              fontSize: 12,
-              fontWeight: FontWeight.w900,
-              letterSpacing: 1.2,
+          Expanded(
+            child: _MetricColumn(
+              title: 'EFFICIENCY',
+              value: '$stepsUsed',
+              subtitle: 'Steps used',
+              badge: efficiencyBadge,
+              valueColor: AppColors.textPrimary,
+              badgeColor: efficiencyBadge == 'Optimal'
+                  ? AppColors.green
+                  : AppColors.amber,
             ),
           ),
-          const SizedBox(height: 12),
-          Text(
-            value,
-            style: TextStyle(
-              color: cyan ? AppColors.cyan : AppColors.textPrimary,
-              fontSize: 34,
-              fontWeight: FontWeight.w900,
-            ),
-          ),
-          Text(
-            subtitle,
-            style: const TextStyle(color: AppColors.textMuted, fontSize: 12),
-          ),
-          const SizedBox(height: 10),
           Container(
-            padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
-            decoration: BoxDecoration(
-              color: color.withValues(alpha: 0.15),
-              borderRadius: BorderRadius.circular(999),
-            ),
-            child: Text(
-              badge,
-              style: TextStyle(color: color, fontWeight: FontWeight.w900),
+            width: 1,
+            height: 130,
+            color: AppColors.border.withValues(alpha: 0.6),
+          ),
+          Expanded(
+            child: _MetricColumn(
+              title: 'SPEED',
+              value: timeTaken,
+              subtitle: 'Time taken',
+              badge: 'Fast',
+              valueColor: AppColors.cyan,
+              badgeColor: AppColors.cyan,
             ),
           ),
         ],
       ),
+    );
+  }
+}
+
+class _MetricColumn extends StatelessWidget {
+  final String title;
+  final String value;
+  final String subtitle;
+  final String badge;
+  final Color valueColor;
+  final Color badgeColor;
+
+  const _MetricColumn({
+    required this.title,
+    required this.value,
+    required this.subtitle,
+    required this.badge,
+    required this.valueColor,
+    required this.badgeColor,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 18, horizontal: 12),
+      child: Column(
+        children: [
+          Text(
+            title,
+            style: const TextStyle(
+              fontFamily: 'Exo2',
+              color: AppColors.textSecondary,
+              fontSize: 10,
+              fontWeight: FontWeight.w800,
+              letterSpacing: 1,
+            ),
+          ),
+          const SizedBox(height: 7),
+          Text(
+            value,
+            style: TextStyle(
+              fontFamily: 'Orbitron',
+              color: valueColor,
+              fontSize: 28,
+              fontWeight: FontWeight.w700,
+              height: 1,
+            ),
+          ),
+          const SizedBox(height: 4),
+          const Text(' ', style: TextStyle(fontSize: 1)),
+          Text(
+            subtitle,
+            style: const TextStyle(
+              fontFamily: 'Exo2',
+              color: AppColors.textMuted,
+              fontSize: 10,
+              fontWeight: FontWeight.w600,
+              letterSpacing: 0.4,
+            ),
+          ),
+          const SizedBox(height: 7),
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 11, vertical: 4),
+            decoration: BoxDecoration(
+              color: badgeColor.withValues(alpha: 0.14),
+              borderRadius: BorderRadius.circular(999),
+              boxShadow: [
+                BoxShadow(
+                  color: badgeColor.withValues(alpha: 0.10),
+                  blurRadius: 10,
+                ),
+              ],
+            ),
+            child: Text(
+              badge,
+              style: TextStyle(
+                fontFamily: 'Exo2',
+                color: badgeColor,
+                fontSize: 11,
+                fontWeight: FontWeight.w800,
+                letterSpacing: 0.3,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _ConceptCard extends StatelessWidget {
+  const _ConceptCard();
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.fromLTRB(16, 14, 16, 14),
+      decoration: BoxDecoration(
+        color: AppColors.cyan.withValues(alpha: 0.04),
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: AppColors.cyan.withValues(alpha: 0.18)),
+      ),
+      child: const Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            '✦ CONCEPT MASTERED',
+            style: TextStyle(
+              fontFamily: 'Exo2',
+              color: AppColors.cyan,
+              fontSize: 10,
+              fontWeight: FontWeight.w900,
+              letterSpacing: 1.5,
+            ),
+          ),
+          SizedBox(height: 7),
+          Text(
+            'Sequential Reasoning',
+            style: TextStyle(
+              fontFamily: 'Exo2',
+              color: AppColors.textPrimary,
+              fontSize: 15,
+              fontWeight: FontWeight.w900,
+            ),
+          ),
+          SizedBox(height: 5),
+          Text(
+            'You used ordered instructions to reach the target efficiently. Core skill unlocked.',
+            style: TextStyle(
+              fontFamily: 'Exo2',
+              color: AppColors.textSecondary,
+              fontSize: 12,
+              height: 1.6,
+              fontWeight: FontWeight.w500,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _XpProgressBar extends StatelessWidget {
+  final int levelOrder;
+  final bool isLastLevel;
+  final int rewardXp;
+
+  const _XpProgressBar({
+    required this.levelOrder,
+    required this.isLastLevel,
+    required this.rewardXp,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final nextLabel = isLastLevel ? 'Complete' : 'Level ${levelOrder + 1}';
+
+    return Column(
+      children: [
+        Row(
+          children: [
+            Text(
+              'Level $levelOrder',
+              style: const TextStyle(
+                fontFamily: 'Exo2',
+                color: AppColors.textSecondary,
+                fontSize: 10,
+                fontWeight: FontWeight.w700,
+              ),
+            ),
+            const Padding(
+              padding: EdgeInsets.symmetric(horizontal: 7),
+              child: Text(
+                '→',
+                style: TextStyle(color: AppColors.textMuted, fontSize: 13),
+              ),
+            ),
+            Text(
+              nextLabel,
+              style: const TextStyle(
+                fontFamily: 'Exo2',
+                color: AppColors.textSecondary,
+                fontSize: 12,
+                fontWeight: FontWeight.w700,
+              ),
+            ),
+            const Spacer(),
+            Text(
+              '+$rewardXp XP',
+              style: const TextStyle(
+                fontFamily: 'Exo2',
+                color: AppColors.green,
+                fontSize: 12,
+                fontWeight: FontWeight.w900,
+              ),
+            ),
+          ],
+        ),
+        const SizedBox(height: 6),
+        ClipRRect(
+          borderRadius: BorderRadius.circular(999),
+          child: TweenAnimationBuilder<double>(
+            tween: Tween(begin: 0.30, end: isLastLevel ? 1 : 0.74),
+            duration: const Duration(milliseconds: 1000),
+            curve: Curves.easeOut,
+            builder: (context, value, child) {
+              return Container(
+                height: 6,
+                decoration: BoxDecoration(
+                  color: AppColors.bg4,
+                  borderRadius: BorderRadius.circular(999),
+                ),
+                child: Align(
+                  alignment: Alignment.centerLeft,
+                  child: FractionallySizedBox(
+                    widthFactor: value,
+                    alignment: Alignment.centerLeft,
+                    child: Container(
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(999),
+                        gradient: LinearGradient(
+                          colors: [
+                            AppColors.cyan,
+                            AppColors.purple.withValues(alpha: 0.85),
+                          ],
+                          begin: Alignment.centerLeft,
+                          end: Alignment.centerRight,
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              );
+            },
+          ),
+        ),
+      ],
     );
   }
 }

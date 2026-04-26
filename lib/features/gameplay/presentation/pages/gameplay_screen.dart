@@ -17,6 +17,7 @@ import '../widgets/command_palette.dart';
 import '../widgets/game_action_bar.dart';
 import '../widgets/game_grid.dart';
 import 'mission_complete_screen.dart';
+import '../../application/hint_analyzer.dart';
 
 class GameplayScreen extends ConsumerStatefulWidget {
   final LevelState level;
@@ -29,6 +30,8 @@ class GameplayScreen extends ConsumerStatefulWidget {
 
 class _GameplayScreenState extends ConsumerState<GameplayScreen> {
   bool _isAnimating = false;
+  String? _latestEchoHint;
+  bool _latestHintIsRepeated = false;
 
   @override
   void initState() {
@@ -42,11 +45,11 @@ class _GameplayScreenState extends ConsumerState<GameplayScreen> {
   String _echoMessage() {
     final executionState = ref.read(executionStateProvider);
 
-    if (executionState.status == ExecutionStatus.running) {
+    if (executionState.status == ExecutionStatus.running || _isAnimating) {
       return 'Executing command sequence...';
     }
 
-    return widget.level.learningObjective;
+    return _latestEchoHint ?? widget.level.learningObjective;
   }
 
   @override
@@ -65,6 +68,11 @@ class _GameplayScreenState extends ConsumerState<GameplayScreen> {
         .read(executionStateProvider.notifier)
         .resetFromLevel(widget.level, preserveAttemptCount: false);
     ref.read(commandSequenceProvider.notifier).clearSequence();
+
+    setState(() {
+      _latestEchoHint = null;
+      _latestHintIsRepeated = false;
+    });
   }
 
   Future<void> _showPauseDialog() async {
@@ -653,6 +661,74 @@ class _GameplayScreenState extends ConsumerState<GameplayScreen> {
     }
   }
 
+  Future<void> _showReflectionModal() async {
+    await showDialog<void>(
+      context: context,
+      barrierDismissible: false,
+      builder: (context) {
+        return Dialog(
+          backgroundColor: Colors.transparent,
+          child: Container(
+            padding: const EdgeInsets.all(24),
+            decoration: BoxDecoration(
+              color: AppColors.bg3,
+              borderRadius: BorderRadius.circular(20),
+              border: Border.all(color: AppColors.cyan.withValues(alpha: 0.4)),
+            ),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                const Text(
+                  'PAUSE & THINK',
+                  style: TextStyle(
+                    fontFamily: 'Orbitron',
+                    color: AppColors.textPrimary,
+                    fontSize: 18,
+                    fontWeight: FontWeight.w800,
+                    letterSpacing: 1,
+                  ),
+                ),
+                const SizedBox(height: 14),
+                Text(
+                  widget.level.reflectionPrompt,
+                  textAlign: TextAlign.center,
+                  style: const TextStyle(
+                    fontFamily: 'Exo2',
+                    color: AppColors.textSecondary,
+                    fontSize: 14,
+                    height: 1.6,
+                  ),
+                ),
+                const SizedBox(height: 24),
+                SizedBox(
+                  width: double.infinity,
+                  height: 48,
+                  child: ElevatedButton(
+                    onPressed: () => Navigator.pop(context),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: AppColors.cyan,
+                      foregroundColor: Colors.black,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                    ),
+                    child: const Text(
+                      'Continue',
+                      style: TextStyle(
+                        fontFamily: 'Exo2',
+                        fontWeight: FontWeight.w900,
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
+
   Future<void> _runSequenceAnimated() async {
     if (_isAnimating) return;
 
@@ -749,15 +825,38 @@ class _GameplayScreenState extends ConsumerState<GameplayScreen> {
         ),
       );
     } else if (finalState.status == ExecutionStatus.failure) {
+      final hintAnalyzer = const HintAnalyzer();
+
+      final analysis = hintAnalyzer.analyze(
+        userCommands: commands,
+        optimalSolution: widget.level.optimalSolution,
+      );
+
+      final analyzerHint = hintAnalyzer.messageFor(analysis);
+
       final hint = nextAttemptCount <= 1
           ? widget.level.firstFailureHint
-          : widget.level.repeatedFailureHint;
+          : analysis.type == HintErrorType.correct
+          ? widget.level.repeatedFailureHint
+          : analyzerHint;
+
+      final isRepeatedFailure = nextAttemptCount > 1;
 
       ref.read(executionStateProvider.notifier).resetFromLevel(widget.level);
 
+      setState(() {
+        _latestEchoHint = hint;
+        _latestHintIsRepeated = isRepeatedFailure;
+      });
+
+      if (nextAttemptCount == 2) {
+        await _showReflectionModal();
+        return;
+      }
+
       await _showFailureOverlay(
         hint: hint,
-        isRepeatedFailure: nextAttemptCount > 1,
+        isRepeatedFailure: isRepeatedFailure,
       );
     }
   }
@@ -1118,19 +1217,12 @@ class _GameplayScreenState extends ConsumerState<GameplayScreen> {
                       ),
                       GestureDetector(
                         onTap: () {
-                          final executionState = ref.read(
-                            executionStateProvider,
-                          );
-                          final isRepeatedFailure =
-                              executionState.attemptCount > 1;
-
-                          final hint = isRepeatedFailure
-                              ? widget.level.repeatedFailureHint
-                              : widget.level.firstFailureHint;
+                          final hint =
+                              _latestEchoHint ?? widget.level.firstFailureHint;
 
                           _showFailureDialog(
                             hint: hint,
-                            isRepeatedFailure: isRepeatedFailure,
+                            isRepeatedFailure: _latestHintIsRepeated,
                           );
                         },
                         child: Container(

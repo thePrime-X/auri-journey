@@ -203,51 +203,287 @@ class _GameplayScreenState extends ConsumerState<GameplayScreen> {
   }
 
   Future<void> _showFailureDialog({required String hint}) async {
-    await showDialog<void>(
+    bool isExactHintUnlocked = false;
+
+    await showModalBottomSheet<void>(
       context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      barrierColor: Colors.black.withValues(alpha: 0.55),
       builder: (context) {
-        return AlertDialog(
-          backgroundColor: AppColors.bg2,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(20),
-          ),
-          title: const Row(
-            children: [
-              Text('⚠️', style: TextStyle(fontSize: 22)),
-              SizedBox(width: 10),
-              Expanded(
-                child: Text(
-                  'Mission Failed',
-                  style: TextStyle(
-                    color: AppColors.textPrimary,
-                    fontWeight: FontWeight.w800,
+        return StatefulBuilder(
+          builder: (context, setModalState) {
+            return Padding(
+              padding: const EdgeInsets.fromLTRB(20, 0, 20, 20),
+              child: Container(
+                padding: const EdgeInsets.fromLTRB(16, 14, 16, 18),
+                decoration: BoxDecoration(
+                  color: AppColors.bg3,
+                  borderRadius: BorderRadius.circular(22),
+                  border: Border.all(
+                    color: AppColors.cyan.withValues(alpha: 0.65),
+                  ),
+                  boxShadow: [
+                    BoxShadow(
+                      color: AppColors.cyan.withValues(alpha: 0.18),
+                      blurRadius: 24,
+                      offset: const Offset(0, -8),
+                    ),
+                    BoxShadow(
+                      color: Colors.black.withValues(alpha: 0.45),
+                      blurRadius: 28,
+                      offset: const Offset(0, 14),
+                    ),
+                  ],
+                ),
+                child: SafeArea(
+                  top: false,
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Row(
+                        children: [
+                          Container(
+                            width: 24,
+                            height: 24,
+                            decoration: BoxDecoration(
+                              color: AppColors.cyan.withValues(alpha: 0.12),
+                              borderRadius: BorderRadius.circular(7),
+                            ),
+                            child: const Center(
+                              child: Icon(
+                                Icons.lightbulb,
+                                color: AppColors.amber,
+                                size: 15,
+                              ),
+                            ),
+                          ),
+                          const SizedBox(width: 8),
+                          const Expanded(
+                            child: Text(
+                              'ECHO TERMINAL',
+                              style: TextStyle(
+                                color: AppColors.cyan,
+                                fontSize: 11,
+                                fontWeight: FontWeight.w900,
+                                letterSpacing: 1.2,
+                              ),
+                            ),
+                          ),
+                          GestureDetector(
+                            onTap: () => Navigator.of(context).pop(),
+                            child: Icon(
+                              Icons.close_rounded,
+                              color: AppColors.textMuted.withValues(alpha: 0.8),
+                              size: 20,
+                            ),
+                          ),
+                        ],
+                      ),
+
+                      const SizedBox(height: 18),
+
+                      Container(
+                        width: double.infinity,
+                        padding: const EdgeInsets.all(13),
+                        decoration: BoxDecoration(
+                          color: AppColors.cyan.withValues(alpha: 0.055),
+                          borderRadius: BorderRadius.circular(12),
+                          border: Border.all(
+                            color: AppColors.cyan.withValues(alpha: 0.32),
+                          ),
+                        ),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            const Text(
+                              'HINT 1 · GENERAL',
+                              style: TextStyle(
+                                color: AppColors.cyan,
+                                fontSize: 9,
+                                fontWeight: FontWeight.w900,
+                                letterSpacing: 0.9,
+                              ),
+                            ),
+                            const SizedBox(height: 8),
+                            Text(
+                              hint,
+                              style: const TextStyle(
+                                color: AppColors.textPrimary,
+                                fontSize: 11,
+                                height: 1.55,
+                                fontWeight: FontWeight.w700,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+
+                      const SizedBox(height: 12),
+
+                      AnimatedContainer(
+                        duration: const Duration(milliseconds: 220),
+                        width: double.infinity,
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 14,
+                          vertical: 16,
+                        ),
+                        decoration: BoxDecoration(
+                          color: isExactHintUnlocked
+                              ? AppColors.amber.withValues(alpha: 0.055)
+                              : Colors.white.withValues(alpha: 0.015),
+                          borderRadius: BorderRadius.circular(12),
+                          border: Border.all(
+                            color: isExactHintUnlocked
+                                ? AppColors.amber.withValues(alpha: 0.38)
+                                : AppColors.border2.withValues(alpha: 0.75),
+                          ),
+                        ),
+                        child: isExactHintUnlocked
+                            ? Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  const Text(
+                                    'HINT 2 · EXACT SEQUENCE',
+                                    style: TextStyle(
+                                      color: AppColors.amber,
+                                      fontSize: 9,
+                                      fontWeight: FontWeight.w900,
+                                      letterSpacing: 0.9,
+                                    ),
+                                  ),
+                                  const SizedBox(height: 12),
+                                  Wrap(
+                                    spacing: 8,
+                                    runSpacing: 8,
+                                    children: widget.level.optimalSolution
+                                        .map(_buildExactHintCommandChip)
+                                        .toList(),
+                                  ),
+                                ],
+                              )
+                            : Column(
+                                children: [
+                                  Icon(
+                                    Icons.lock_rounded,
+                                    color: AppColors.amber.withValues(
+                                      alpha: 0.9,
+                                    ),
+                                    size: 18,
+                                  ),
+                                  const SizedBox(height: 8),
+                                  const Text(
+                                    'HINT 2 · EXACT SEQUENCE',
+                                    style: TextStyle(
+                                      color: AppColors.textMuted,
+                                      fontSize: 9,
+                                      fontWeight: FontWeight.w900,
+                                      letterSpacing: 0.9,
+                                    ),
+                                  ),
+                                  const SizedBox(height: 10),
+                                  GestureDetector(
+                                    onTap: () {
+                                      setModalState(() {
+                                        isExactHintUnlocked = true;
+                                      });
+                                    },
+                                    child: Container(
+                                      padding: const EdgeInsets.symmetric(
+                                        horizontal: 14,
+                                        vertical: 7,
+                                      ),
+                                      decoration: BoxDecoration(
+                                        color: AppColors.amber.withValues(
+                                          alpha: 0.08,
+                                        ),
+                                        borderRadius: BorderRadius.circular(
+                                          999,
+                                        ),
+                                        border: Border.all(
+                                          color: AppColors.amber.withValues(
+                                            alpha: 0.45,
+                                          ),
+                                        ),
+                                      ),
+                                      child: const Text(
+                                        'Unlock for 10 XP',
+                                        style: TextStyle(
+                                          color: AppColors.amber,
+                                          fontSize: 10,
+                                          fontWeight: FontWeight.w900,
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                      ),
+                    ],
                   ),
                 ),
               ),
-            ],
-          ),
-          content: Text(
-            hint,
-            style: const TextStyle(color: AppColors.textSecondary, height: 1.5),
-          ),
-          actions: [
-            ElevatedButton(
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-              style: ElevatedButton.styleFrom(
-                backgroundColor: AppColors.red,
-                foregroundColor: Colors.white,
-              ),
-              child: const Text(
-                'Try Again',
-                style: TextStyle(fontWeight: FontWeight.w800),
-              ),
-            ),
-          ],
+            );
+          },
         );
       },
     );
+  }
+
+  Widget _buildExactHintCommandChip(CommandType command) {
+    final label = _hintCommandLabel(command);
+    final color = _hintCommandColor(command);
+
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+      decoration: BoxDecoration(
+        color: color.withValues(alpha: 0.10),
+        borderRadius: BorderRadius.circular(10),
+        border: Border.all(color: color.withValues(alpha: 0.35)),
+      ),
+      child: Text(
+        label,
+        style: TextStyle(
+          color: color,
+          fontSize: 11,
+          fontWeight: FontWeight.w900,
+        ),
+      ),
+    );
+  }
+
+  String _hintCommandLabel(CommandType command) {
+    switch (command) {
+      case CommandType.moveForward:
+        return '↑ Forward';
+      case CommandType.turnLeft:
+        return '↰ Left';
+      case CommandType.turnRight:
+        return '↱ Right';
+      case CommandType.ifPathClear:
+        return '◇ If Clear';
+      case CommandType.loop:
+        return '↻ Loop';
+      case CommandType.loopUntil:
+        return '⟳ Loop Until';
+    }
+  }
+
+  Color _hintCommandColor(CommandType command) {
+    switch (command) {
+      case CommandType.moveForward:
+        return AppColors.cyan;
+      case CommandType.turnLeft:
+        return AppColors.purple;
+      case CommandType.turnRight:
+        return AppColors.amber;
+      case CommandType.ifPathClear:
+        return AppColors.green;
+      case CommandType.loop:
+        return AppColors.red;
+      case CommandType.loopUntil:
+        return AppColors.textMuted;
+    }
   }
 
   Future<void> _runSequenceAnimated() async {

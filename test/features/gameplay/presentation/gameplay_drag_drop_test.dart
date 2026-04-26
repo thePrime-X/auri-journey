@@ -43,7 +43,8 @@ void main() {
       ),
     );
 
-    await tester.pumpAndSettle();
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 300));
 
     expect(container.read(commandSequenceProvider), [null, null, null]);
 
@@ -70,7 +71,8 @@ void main() {
       ),
     );
 
-    await tester.pumpAndSettle();
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 300));
 
     container
         .read(commandSequenceProvider.notifier)

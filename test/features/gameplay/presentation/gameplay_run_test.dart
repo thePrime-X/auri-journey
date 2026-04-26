@@ -48,8 +48,8 @@ void main() {
       ),
     );
 
-    await tester.pumpAndSettle();
-
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 300));
     container
         .read(commandSequenceProvider.notifier)
         .fillSlot(index: 0, command: CommandType.moveForward);

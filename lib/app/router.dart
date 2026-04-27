@@ -7,16 +7,17 @@ import '../features/auth/presentation/pages/loading_screen.dart';
 import '../features/auth/presentation/pages/login_screen.dart';
 import '../features/auth/presentation/pages/signup_screen.dart';
 import '../features/dashboard/presentation/pages/dashboard_screen.dart';
-import '../features/onboarding/application/onboarding_provider.dart';
+// import '../features/onboarding/application/onboarding_provider.dart';
 import '../features/onboarding/presentation/pages/intro_one_screen.dart';
 import '../features/onboarding/presentation/pages/intro_three_screen.dart';
 import '../features/onboarding/presentation/pages/intro_two_screen.dart';
 import '../features/dashboard/presentation/pages/profile_screen.dart';
 import '../features/dashboard/presentation/pages/settings_screen.dart';
+import '../core/services/local_preferences_provider.dart';
 
 final goRouterProvider = Provider<GoRouter>((ref) {
   final authState = ref.watch(authStateProvider);
-  final onboardingCompleted = ref.watch(onboardingCompletedProvider);
+  final onboardingCompletedAsync = ref.watch(hasCompletedOnboardingProvider);
 
   return GoRouter(
     initialLocation: '/intro-1',
@@ -95,6 +96,15 @@ final goRouterProvider = Provider<GoRouter>((ref) {
     redirect: (BuildContext context, GoRouterState state) {
       final location = state.matchedLocation;
       final isAuthenticated = authState.isAuthenticated;
+      final onboardingCompleted = onboardingCompletedAsync.when(
+        data: (value) => value,
+        loading: () => false,
+        error: (error, stackTrace) => false,
+      );
+
+      if (onboardingCompletedAsync.isLoading && location != '/loading') {
+        return '/loading';
+      }
 
       final isIntroRoute =
           location == '/intro-1' ||

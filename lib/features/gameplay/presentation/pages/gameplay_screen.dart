@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../../auth/application/auth_state_provider.dart';
+import '../../application/firestore_provider.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../application/command_sequence_provider.dart';
 import '../../application/current_level_provider.dart';
@@ -781,6 +783,20 @@ class _GameplayScreenState extends ConsumerState<GameplayScreen> {
       final commands = sequence.whereType<CommandType>().toList();
 
       if (!mounted) return;
+
+      final authState = ref.read(authStateProvider);
+      final user = authState.user;
+
+      if (user != null) {
+        final progressService = ref.read(progressFirestoreServiceProvider);
+
+        await progressService.saveLevelCompletion(
+          uid: user.uid,
+          levelId: widget.level.id,
+          movesUsed: commands.length,
+          hintsUsed: 0,
+        );
+      }
 
       await Navigator.of(context).push(
         MaterialPageRoute(

@@ -9,6 +9,6 @@ Players guide **Auri**, a small robot, by building simple command sequences to s
 - spatial reasoning  
 - algorithmic thinking  
 
-<!-- Designed as a **mobile-first experience**, the game delivers short, focused puzzles that encourage active problem-solving rather than passive interaction.
+Designed as a **mobile-first experience**, the game delivers short, focused puzzles that encourage active problem-solving rather than passive interaction.
 
-This project is currently in MVP stage, with core gameplay centered around command-based movement, step-by-step execution, and adaptive feedback. -->
+This project is currently in MVP stage, with core gameplay centered around command-based movement, step-by-step execution, and adaptive feedback.

@@ -4,11 +4,18 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../application/onboarding_provider.dart';
+import '../../../../core/services/local_preferences_provider.dart';
 
 class IntroThreeScreen extends ConsumerWidget {
   const IntroThreeScreen({super.key});
 
-  void _finishOnboarding(BuildContext context, WidgetRef ref) {
+  Future<void> _finishOnboarding(BuildContext context, WidgetRef ref) async {
+    final prefs = ref.read(localPreferencesServiceProvider);
+
+    await prefs.setHasCompletedOnboarding(true);
+
+    if (!context.mounted) return;
+
     ref.read(onboardingCompletedProvider.notifier).completeOnboarding();
     context.go('/login');
   }

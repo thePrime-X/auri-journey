@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-
+import '../../application/firestore_provider.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../application/command_sequence_provider.dart';
 import '../../application/current_level_provider.dart';
@@ -32,6 +33,8 @@ class _GameplayScreenState extends ConsumerState<GameplayScreen> {
   bool _isAnimating = false;
   String? _latestEchoHint;
   bool _latestHintIsRepeated = false;
+  int _hintsUsed = 0;
+  bool _usedExactHint = false;
 
   @override
   void initState() {
@@ -72,6 +75,8 @@ class _GameplayScreenState extends ConsumerState<GameplayScreen> {
     setState(() {
       _latestEchoHint = null;
       _latestHintIsRepeated = false;
+      _hintsUsed = 0;
+      _usedExactHint = false;
     });
   }
 
@@ -226,6 +231,12 @@ class _GameplayScreenState extends ConsumerState<GameplayScreen> {
     required String hint,
     required bool isRepeatedFailure,
   }) async {
+    if (mounted) {
+      setState(() {
+        _hintsUsed += 1;
+      });
+    }
+
     bool isExactHintUnlocked = false;
 
     await showModalBottomSheet<void>(
@@ -411,6 +422,10 @@ class _GameplayScreenState extends ConsumerState<GameplayScreen> {
                                     onTap: () {
                                       setModalState(() {
                                         isExactHintUnlocked = true;
+                                      });
+
+                                      setState(() {
+                                        _usedExactHint = true;
                                       });
                                     },
                                     child: Container(
@@ -779,6 +794,26 @@ class _GameplayScreenState extends ConsumerState<GameplayScreen> {
       final currentIndex = ref.read(currentLevelIndexProvider);
       final isLastLevel = currentIndex >= levels.length - 1;
       final commands = sequence.whereType<CommandType>().toList();
+
+      final nextLevelId = isLastLevel
+          ? widget.level.id
+          : levels[currentIndex + 1].id;
+
+      final uid = FirebaseAuth.instance.currentUser?.uid;
+
+      if (uid != null) {
+        await ref
+            .read(progressFirestoreServiceProvider)
+            .saveMissionCompletion(
+              uid: uid,
+              level: widget.level,
+              nextLevelId: nextLevelId,
+              movesUsed: commands.length,
+              hintsUsed: _hintsUsed,
+              playTimeSeconds: timeTaken.inSeconds,
+              usedExactHint: _usedExactHint,
+            );
+      }
 
       if (!mounted) return;
 

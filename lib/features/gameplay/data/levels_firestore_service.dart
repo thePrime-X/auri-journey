@@ -1,5 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'dart:developer' as developer;
+import '../../../core/utils/app_logger.dart';
 
 class LevelsFirestoreService {
   final FirebaseFirestore _firestore;
@@ -12,10 +12,9 @@ class LevelsFirestoreService {
         .where('isPublished', isEqualTo: true) // ✅ REQUIRED
         .orderBy('order')
         .get();
-
-    developer.log(
-      'Loaded levels from Firestore: ${snapshot.docs.length}',
-      name: 'Firestore',
+    AppLogger.success(
+      'Loaded ${snapshot.docs.length} published levels',
+      tag: 'Firestore',
     );
 
     return snapshot.docs.map((doc) => doc.data()).toList();

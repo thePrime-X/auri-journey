@@ -1,16 +1,18 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../../core/theme/app_colors.dart';
+import '../../../../features/profile/application/user_profile_provider.dart';
 
-class ProfileScreen extends StatefulWidget {
+class ProfileScreen extends ConsumerStatefulWidget {
   const ProfileScreen({super.key});
 
   @override
-  State<ProfileScreen> createState() => _ProfileScreenState();
+  ConsumerState<ProfileScreen> createState() => _ProfileScreenState();
 }
 
-class _ProfileScreenState extends State<ProfileScreen>
+class _ProfileScreenState extends ConsumerState<ProfileScreen>
     with SingleTickerProviderStateMixin {
   late final AnimationController _avatarPulseController;
 
@@ -32,6 +34,8 @@ class _ProfileScreenState extends State<ProfileScreen>
 
   @override
   Widget build(BuildContext context) {
+    final profileAsync = ref.watch(userProfileProvider);
+
     return Scaffold(
       backgroundColor: AppColors.bg,
       body: SafeArea(
@@ -70,15 +74,37 @@ class _ProfileScreenState extends State<ProfileScreen>
 
             const SizedBox(height: 22),
 
-            const Center(
-              child: Text(
-                '@commander_auri',
-                style: TextStyle(
-                  color: AppColors.textPrimary,
-                  fontSize: 24,
-                  fontWeight: FontWeight.w900,
-                  letterSpacing: 1.1,
-                  shadows: [Shadow(color: Colors.white24, blurRadius: 12)],
+            Center(
+              child: profileAsync.when(
+                loading: () => const Text(
+                  '@commander_auri',
+                  style: TextStyle(
+                    color: AppColors.textPrimary,
+                    fontSize: 24,
+                    fontWeight: FontWeight.w900,
+                    letterSpacing: 1.1,
+                    shadows: [Shadow(color: Colors.white24, blurRadius: 12)],
+                  ),
+                ),
+                error: (error, stackTrace) => const Text(
+                  '@commander_auri',
+                  style: TextStyle(
+                    color: AppColors.textPrimary,
+                    fontSize: 24,
+                    fontWeight: FontWeight.w900,
+                    letterSpacing: 1.1,
+                    shadows: [Shadow(color: Colors.white24, blurRadius: 12)],
+                  ),
+                ),
+                data: (profile) => Text(
+                  '@${profile?.displayName ?? 'commander_auri'}',
+                  style: const TextStyle(
+                    color: AppColors.textPrimary,
+                    fontSize: 24,
+                    fontWeight: FontWeight.w900,
+                    letterSpacing: 1.1,
+                    shadows: [Shadow(color: Colors.white24, blurRadius: 12)],
+                  ),
                 ),
               ),
             ),
@@ -119,13 +145,33 @@ class _ProfileScreenState extends State<ProfileScreen>
                     ),
                   ],
                 ),
-                child: const Text(
-                  '⚡ 2,480 XP   |   Level 12',
-                  style: TextStyle(
-                    fontFamily: 'Exo2',
-                    color: AppColors.amber,
-                    fontSize: 13,
-                    fontWeight: FontWeight.w700,
+                child: profileAsync.when(
+                  loading: () => const Text(
+                    '⚡ 0 XP   |   Level 1',
+                    style: TextStyle(
+                      fontFamily: 'Exo2',
+                      color: AppColors.amber,
+                      fontSize: 13,
+                      fontWeight: FontWeight.w700,
+                    ),
+                  ),
+                  error: (error, stackTrace) => const Text(
+                    '⚡ 0 XP   |   Level 1',
+                    style: TextStyle(
+                      fontFamily: 'Exo2',
+                      color: AppColors.amber,
+                      fontSize: 13,
+                      fontWeight: FontWeight.w700,
+                    ),
+                  ),
+                  data: (profile) => Text(
+                    '⚡ ${profile?.totalXP ?? 0} XP   |   Level ${profile?.displayLevel ?? 1}',
+                    style: const TextStyle(
+                      fontFamily: 'Exo2',
+                      color: AppColors.amber,
+                      fontSize: 13,
+                      fontWeight: FontWeight.w700,
+                    ),
                   ),
                 ),
               ),
@@ -133,44 +179,136 @@ class _ProfileScreenState extends State<ProfileScreen>
 
             const SizedBox(height: 74),
 
-            const Row(
-              children: [
-                Expanded(
-                  child: _ProfileStatCard(
-                    value: '12',
-                    label: 'LEVEL',
-                    color: AppColors.cyan,
+            profileAsync.when(
+              loading: () => const Row(
+                children: [
+                  Expanded(
+                    child: _ProfileStatCard(
+                      value: '1',
+                      label: 'LEVEL',
+                      color: AppColors.cyan,
+                    ),
                   ),
-                ),
-                SizedBox(width: 16),
-                Expanded(
-                  child: _ProfileStatCard(
-                    value: '7',
-                    label: 'DAY STREAK',
-                    color: AppColors.amber,
+                  SizedBox(width: 16),
+                  Expanded(
+                    child: _ProfileStatCard(
+                      value: '1',
+                      label: 'DAY STREAK',
+                      color: AppColors.amber,
+                    ),
                   ),
-                ),
-              ],
+                ],
+              ),
+              error: (error, stackTrace) => const Row(
+                children: [
+                  Expanded(
+                    child: _ProfileStatCard(
+                      value: '1',
+                      label: 'LEVEL',
+                      color: AppColors.cyan,
+                    ),
+                  ),
+                  SizedBox(width: 16),
+                  Expanded(
+                    child: _ProfileStatCard(
+                      value: '1',
+                      label: 'DAY STREAK',
+                      color: AppColors.amber,
+                    ),
+                  ),
+                ],
+              ),
+              data: (profile) {
+                final level = profile?.displayLevel ?? 1;
+                final streak = profile?.streakDays ?? 1;
+
+                return Row(
+                  children: [
+                    Expanded(
+                      child: _ProfileStatCard(
+                        value: '$level',
+                        label: 'LEVEL',
+                        color: AppColors.cyan,
+                      ),
+                    ),
+                    const SizedBox(width: 16),
+                    Expanded(
+                      child: _ProfileStatCard(
+                        value: '$streak',
+                        label: 'DAY STREAK',
+                        color: AppColors.amber,
+                      ),
+                    ),
+                  ],
+                );
+              },
             ),
+
             const SizedBox(height: 16),
-            const Row(
-              children: [
-                Expanded(
-                  child: _ProfileStatCard(
-                    value: '34',
-                    label: 'MISSIONS',
-                    color: AppColors.purple,
+
+            profileAsync.when(
+              loading: () => const Row(
+                children: [
+                  Expanded(
+                    child: _ProfileStatCard(
+                      value: '1',
+                      label: 'MISSIONS',
+                      color: AppColors.purple,
+                    ),
                   ),
-                ),
-                SizedBox(width: 16),
-                Expanded(
-                  child: _ProfileStatCard(
-                    value: '4ʰ 12ᵐ',
-                    label: 'PLAY TIME',
-                    color: AppColors.green,
+                  SizedBox(width: 16),
+                  Expanded(
+                    child: _ProfileStatCard(
+                      value: '0m',
+                      label: 'PLAY TIME',
+                      color: AppColors.green,
+                    ),
                   ),
-                ),
-              ],
+                ],
+              ),
+              error: (error, stackTrace) => const Row(
+                children: [
+                  Expanded(
+                    child: _ProfileStatCard(
+                      value: '1',
+                      label: 'MISSIONS',
+                      color: AppColors.purple,
+                    ),
+                  ),
+                  SizedBox(width: 16),
+                  Expanded(
+                    child: _ProfileStatCard(
+                      value: '0m',
+                      label: 'PLAY TIME',
+                      color: AppColors.green,
+                    ),
+                  ),
+                ],
+              ),
+              data: (profile) {
+                final missions = profile?.puzzlesCompleted ?? 1;
+                final playTime = profile?.formattedPlayTime ?? '0m';
+
+                return Row(
+                  children: [
+                    Expanded(
+                      child: _ProfileStatCard(
+                        value: '$missions',
+                        label: 'MISSIONS',
+                        color: AppColors.purple,
+                      ),
+                    ),
+                    const SizedBox(width: 16),
+                    Expanded(
+                      child: _ProfileStatCard(
+                        value: playTime,
+                        label: 'PLAY TIME',
+                        color: AppColors.green,
+                      ),
+                    ),
+                  ],
+                );
+              },
             ),
 
             const SizedBox(height: 26),
@@ -222,25 +360,104 @@ class _ProfileScreenState extends State<ProfileScreen>
 
             const _SectionTitle(title: 'SKILL MAP'),
             const SizedBox(height: 13),
-            const _SkillRow(
-              label: 'Sequences',
-              value: 0.90,
-              color: AppColors.cyan,
-            ),
-            const _SkillRow(
-              label: 'Conditions',
-              value: 0.65,
-              color: AppColors.purple,
-            ),
-            const _SkillRow(
-              label: 'Loops',
-              value: 0.40,
-              color: AppColors.amber,
-            ),
-            const _SkillRow(
-              label: 'Debugging',
-              value: 0.55,
-              color: AppColors.red,
+            profileAsync.when(
+              loading: () => const Column(
+                children: [
+                  _SkillRow(
+                    label: 'Sequences',
+                    value: 0.90,
+                    color: AppColors.cyan,
+                  ),
+                  _SkillRow(
+                    label: 'Conditions',
+                    value: 0.10,
+                    color: AppColors.purple,
+                    isLocked: true,
+                  ),
+                  _SkillRow(
+                    label: 'Loops',
+                    value: 0.10,
+                    color: AppColors.amber,
+                    isLocked: true,
+                  ),
+                  _SkillRow(
+                    label: 'Debugging',
+                    value: 0.10,
+                    color: AppColors.red,
+                    isLocked: true,
+                  ),
+                ],
+              ),
+              error: (error, stackTrace) => const Column(
+                children: [
+                  _SkillRow(
+                    label: 'Sequences',
+                    value: 0.90,
+                    color: AppColors.cyan,
+                  ),
+                  _SkillRow(
+                    label: 'Conditions',
+                    value: 0.10,
+                    color: AppColors.purple,
+                    isLocked: true,
+                  ),
+                  _SkillRow(
+                    label: 'Loops',
+                    value: 0.10,
+                    color: AppColors.amber,
+                    isLocked: true,
+                  ),
+                  _SkillRow(
+                    label: 'Debugging',
+                    value: 0.10,
+                    color: AppColors.red,
+                    isLocked: true,
+                  ),
+                ],
+              ),
+              data: (profile) {
+                final skillStats =
+                    profile?.skillStats ??
+                    const {
+                      'sequences': 0,
+                      'conditions': 10,
+                      'loops': 10,
+                      'debugging': 10,
+                    };
+
+                double skillValue(String key) {
+                  final value = skillStats[key] ?? 0;
+                  return value.clamp(0, 100) / 100;
+                }
+
+                return Column(
+                  children: [
+                    _SkillRow(
+                      label: 'Sequences',
+                      value: skillValue('sequences'),
+                      color: AppColors.cyan,
+                    ),
+                    _SkillRow(
+                      label: 'Conditions',
+                      value: skillValue('conditions'),
+                      color: AppColors.purple,
+                      isLocked: true,
+                    ),
+                    _SkillRow(
+                      label: 'Loops',
+                      value: skillValue('loops'),
+                      color: AppColors.amber,
+                      isLocked: true,
+                    ),
+                    _SkillRow(
+                      label: 'Debugging',
+                      value: skillValue('debugging'),
+                      color: AppColors.red,
+                      isLocked: true,
+                    ),
+                  ],
+                );
+              },
             ),
 
             const SizedBox(height: 26),
@@ -253,33 +470,65 @@ class _ProfileScreenState extends State<ProfileScreen>
               child: ListView(
                 scrollDirection: Axis.horizontal,
                 physics: const BouncingScrollPhysics(),
-                children: const [
+                children: [
                   _Achievement(
                     icon: '🏆',
                     label: 'First\nMission',
                     color: AppColors.cyan,
-                    isUnlocked: true,
+                    isUnlocked: profileAsync.when(
+                      data: (profile) =>
+                          profile?.achievements['firstMission'] == true,
+                      loading: () => false,
+                      error: (error, stackTrace) => false,
+                    ),
                   ),
-                  SizedBox(width: 12),
-                  _Achievement(
-                    icon: '∞',
-                    label: 'Loop\nMaster',
-                    color: AppColors.purple,
-                    isUnlocked: true,
-                  ),
-                  SizedBox(width: 12),
+                  const SizedBox(width: 12),
                   _Achievement(
                     icon: '⚡',
-                    label: 'Speed\nRunner',
+                    label: '100\nXP',
                     color: AppColors.amber,
-                    isUnlocked: true,
+                    isUnlocked: profileAsync.when(
+                      data: (profile) =>
+                          profile?.achievements['earned100Xp'] == true,
+                      loading: () => false,
+                      error: (error, stackTrace) => false,
+                    ),
                   ),
-                  SizedBox(width: 12),
+                  const SizedBox(width: 12),
                   _Achievement(
-                    icon: '',
-                    label: 'Level\n10',
-                    color: AppColors.textMuted,
-                    isUnlocked: false,
+                    icon: '✓',
+                    label: 'Perfect\nRun',
+                    color: AppColors.green,
+                    isUnlocked: profileAsync.when(
+                      data: (profile) =>
+                          profile?.achievements['perfectSolution'] == true,
+                      loading: () => false,
+                      error: (error, stackTrace) => false,
+                    ),
+                  ),
+                  const SizedBox(width: 12),
+                  _Achievement(
+                    icon: '🔥',
+                    label: '3 Day\nStreak',
+                    color: AppColors.red,
+                    isUnlocked: profileAsync.when(
+                      data: (profile) =>
+                          profile?.achievements['threeDayStreak'] == true,
+                      loading: () => false,
+                      error: (error, stackTrace) => false,
+                    ),
+                  ),
+                  const SizedBox(width: 12),
+                  _Achievement(
+                    icon: '✦',
+                    label: 'No Hint\nWin',
+                    color: AppColors.purple,
+                    isUnlocked: profileAsync.when(
+                      data: (profile) =>
+                          profile?.achievements['noHintWin'] == true,
+                      loading: () => false,
+                      error: (error, stackTrace) => false,
+                    ),
                   ),
                 ],
               ),
@@ -555,11 +804,13 @@ class _SkillRow extends StatelessWidget {
   final String label;
   final double value;
   final Color color;
+  final bool isLocked;
 
   const _SkillRow({
     required this.label,
     required this.value,
     required this.color,
+    this.isLocked = false,
   });
 
   @override
@@ -570,13 +821,28 @@ class _SkillRow extends StatelessWidget {
         children: [
           SizedBox(
             width: 88,
-            child: Text(
-              label,
-              style: const TextStyle(
-                color: AppColors.textPrimary,
-                fontSize: 12,
-                fontWeight: FontWeight.w900,
-              ),
+            child: Row(
+              children: [
+                Flexible(
+                  child: Text(
+                    label,
+                    overflow: TextOverflow.ellipsis,
+                    style: const TextStyle(
+                      color: AppColors.textPrimary,
+                      fontSize: 12,
+                      fontWeight: FontWeight.w900,
+                    ),
+                  ),
+                ),
+                if (isLocked) ...[
+                  const SizedBox(width: 4),
+                  Icon(
+                    Icons.lock_rounded,
+                    size: 12,
+                    color: AppColors.textMuted.withValues(alpha: 0.85),
+                  ),
+                ],
+              ],
             ),
           ),
           Expanded(

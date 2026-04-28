@@ -6,11 +6,20 @@ import 'package:auri_app/features/gameplay/domain/models/direction.dart';
 import 'package:auri_app/features/gameplay/domain/models/execution_status.dart';
 import 'package:auri_app/features/gameplay/domain/models/level_state.dart';
 import 'package:auri_app/features/gameplay/presentation/pages/gameplay_screen.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_core_platform_interface/test.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {
+  TestWidgetsFlutterBinding.ensureInitialized();
+
+  setUpAll(() async {
+    setupFirebaseCoreMocks();
+    await Firebase.initializeApp();
+  });
+
   const testLevel = LevelState(
     id: 'test_level',
     title: 'Test Level',
@@ -38,7 +47,6 @@ void main() {
     tester,
   ) async {
     final container = ProviderContainer();
-
     addTearDown(container.dispose);
 
     await tester.pumpWidget(
@@ -50,6 +58,7 @@ void main() {
 
     await tester.pump();
     await tester.pump(const Duration(milliseconds: 600));
+
     container
         .read(commandSequenceProvider.notifier)
         .fillSlot(index: 0, command: CommandType.moveForward);
@@ -70,7 +79,6 @@ void main() {
 
     await tester.tap(runButton);
 
-    // Let all animation timers and dialog frames finish.
     for (int i = 0; i < 10; i++) {
       await tester.pump(const Duration(milliseconds: 400));
     }

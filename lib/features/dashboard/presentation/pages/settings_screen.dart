@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-
+import 'package:firebase_auth/firebase_auth.dart';
+import '../../../../features/profile/application/user_profile_provider.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../auth/application/auth_state_provider.dart';
+import '../../../../shared/widgets/privacy_policy_dialog.dart';
 
 class SettingsScreen extends ConsumerWidget {
   const SettingsScreen({super.key});
@@ -18,6 +20,8 @@ class SettingsScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final profileAsync = ref.watch(userProfileProvider);
+
     return Scaffold(
       backgroundColor: AppColors.bg,
       body: SafeArea(
@@ -87,13 +91,38 @@ class SettingsScreen extends ConsumerWidget {
             _SettingsCard(
               children: [
                 _SettingsRow(
+                  icon: Icons.privacy_tip_outlined,
+                  title: profileAsync.when(
+                    data: (profile) => profile?.policyAccepted == true
+                        ? 'Privacy Policy · Agreed'
+                        : 'Privacy Policy',
+                    loading: () => 'Privacy Policy',
+                    error: (error, stackTrace) => 'Privacy Policy',
+                  ),
+                  trailing: const Icon(
+                    Icons.chevron_right_rounded,
+                    color: AppColors.textMuted,
+                  ),
+                  onTap: () {
+                    showDialog<void>(
+                      context: context,
+                      builder: (context) {
+                        return const PrivacyPolicyDialog(
+                          showAgreeButton: false,
+                        );
+                      },
+                    );
+                  },
+                ),
+                const _DividerLine(),
+                _SettingsRow(
                   icon: Icons.person_outline_rounded,
                   title: 'Edit Profile',
                   trailing: const Icon(
                     Icons.chevron_right_rounded,
                     color: AppColors.textMuted,
                   ),
-                  onTap: () {},
+                  onTap: () => context.go('/edit-profile'),
                 ),
                 const _DividerLine(),
                 _SettingsRow(
@@ -101,7 +130,48 @@ class SettingsScreen extends ConsumerWidget {
                   title: 'Reset Progress',
                   titleColor: AppColors.red,
                   iconColor: AppColors.red,
-                  onTap: () {},
+                  onTap: () async {
+                    final shouldReset = await showDialog<bool>(
+                      context: context,
+                      builder: (context) {
+                        return AlertDialog(
+                          backgroundColor: AppColors.bg3,
+                          title: const Text('Reset Progress?'),
+                          content: const Text(
+                            'This will reset XP, completed missions, streak, skills, and achievements.',
+                          ),
+                          actions: [
+                            TextButton(
+                              onPressed: () => Navigator.pop(context, false),
+                              child: const Text('Cancel'),
+                            ),
+                            TextButton(
+                              onPressed: () => Navigator.pop(context, true),
+                              child: const Text(
+                                'Reset',
+                                style: TextStyle(color: AppColors.red),
+                              ),
+                            ),
+                          ],
+                        );
+                      },
+                    );
+
+                    if (shouldReset != true) return;
+
+                    final uid = FirebaseAuth.instance.currentUser?.uid;
+                    if (uid == null) return;
+
+                    await ref
+                        .read(userProfileServiceProvider)
+                        .resetProgress(uid);
+
+                    if (context.mounted) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(content: Text('Progress reset.')),
+                      );
+                    }
+                  },
                 ),
                 const _DividerLine(),
                 _SettingsRow(

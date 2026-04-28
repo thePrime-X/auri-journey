@@ -21,7 +21,7 @@ final goRouterProvider = Provider<GoRouter>((ref) {
   final onboardingCompletedAsync = ref.watch(hasCompletedOnboardingProvider);
 
   return GoRouter(
-    initialLocation: '/intro-1',
+    initialLocation: '/loading',
     routes: <RouteBase>[
       GoRoute(
         path: '/intro-1',
@@ -104,15 +104,13 @@ final goRouterProvider = Provider<GoRouter>((ref) {
     redirect: (BuildContext context, GoRouterState state) {
       final location = state.matchedLocation;
       final isAuthenticated = authState.isAuthenticated;
-      final onboardingCompleted = onboardingCompletedAsync.when(
-        data: (value) => value,
-        loading: () => false,
-        error: (error, stackTrace) => false,
-      );
+      final isLoadingRoute = location == '/loading';
 
-      if (onboardingCompletedAsync.isLoading && location != '/loading') {
-        return '/loading';
+      if (onboardingCompletedAsync.isLoading) {
+        return location == '/loading' ? null : '/loading';
       }
+
+      final onboardingCompleted = onboardingCompletedAsync.value ?? false;
 
       final isIntroRoute =
           location == '/intro-1' ||
@@ -123,7 +121,6 @@ final goRouterProvider = Provider<GoRouter>((ref) {
 
       final isDashboardRoute = location == '/dashboard';
       final isGameplayRoute = location == '/gameplay';
-      final isLoadingRoute = location == '/loading';
 
       if (!onboardingCompleted && !isIntroRoute) {
         return '/intro-1';
@@ -139,6 +136,14 @@ final goRouterProvider = Provider<GoRouter>((ref) {
 
       if (isAuthenticated && isAuthRoute) {
         return '/dashboard';
+      }
+
+      if (isLoadingRoute && !onboardingCompletedAsync.isLoading) {
+        if (!onboardingCompleted) {
+          return '/intro-1';
+        }
+
+        return isAuthenticated ? '/dashboard' : '/login';
       }
 
       if (isLoadingRoute) {

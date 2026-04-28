@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../../../../core/theme/app_colors.dart';
-import '../../application/onboarding_provider.dart';
 import '../../../../core/services/local_preferences_provider.dart';
 
 class IntroThreeScreen extends ConsumerWidget {
@@ -14,9 +13,11 @@ class IntroThreeScreen extends ConsumerWidget {
 
     await prefs.setHasCompletedOnboarding(true);
 
+    // 🔥 THIS IS THE KEY FIX
+    ref.invalidate(hasCompletedOnboardingProvider);
+
     if (!context.mounted) return;
 
-    ref.read(onboardingCompletedProvider.notifier).completeOnboarding();
     context.go('/login');
   }
 
@@ -93,8 +94,7 @@ class IntroThreeScreen extends ConsumerWidget {
                     ),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.center,
-                      crossAxisAlignment:
-                          CrossAxisAlignment.center, // 👈 add this
+                      crossAxisAlignment: CrossAxisAlignment.center,
 
                       children: [
                         Text(

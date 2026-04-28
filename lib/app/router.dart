@@ -14,6 +14,7 @@ import '../features/onboarding/presentation/pages/intro_two_screen.dart';
 import '../features/dashboard/presentation/pages/profile_screen.dart';
 import '../features/dashboard/presentation/pages/settings_screen.dart';
 import '../core/services/local_preferences_provider.dart';
+import '../features/dashboard/presentation/pages/edit_profile_screen.dart';
 
 final goRouterProvider = Provider<GoRouter>((ref) {
   final authState = ref.watch(authStateProvider);
@@ -83,6 +84,13 @@ final goRouterProvider = Provider<GoRouter>((ref) {
         name: 'settings',
         builder: (BuildContext context, GoRouterState state) {
           return const SettingsScreen();
+        },
+      ),
+      GoRoute(
+        path: '/edit-profile',
+        name: 'edit-profile',
+        builder: (BuildContext context, GoRouterState state) {
+          return const EditProfileScreen();
         },
       ),
       GoRoute(

@@ -56,11 +56,37 @@ class AuthRepository {
 
     await _firestore.collection('users').doc(user.uid).set({
       'displayName': displayName,
+      'email': trimmedEmail,
       'createdAt': FieldValue.serverTimestamp(),
       'lastLoginAt': FieldValue.serverTimestamp(),
+      'lastActiveDate': FieldValue.serverTimestamp(),
+
       'currentLevel': 'level_1',
       'totalXP': 0,
       'puzzlesCompleted': 0,
+      'streakDays': 1,
+      'totalPlayTimeSeconds': 0,
+
+      'completedLevelIds': <String>[],
+
+      'skillStats': {
+        'sequences': 0,
+        'conditions': 10,
+        'loops': 10,
+        'debugging': 10,
+      },
+
+      'achievements': {
+        'firstMission': false,
+        'fiveMissions': false,
+        'earned100Xp': false,
+        'perfectSolution': false,
+        'threeDayStreak': false,
+        'noHintWin': false,
+      },
+
+      'policyAccepted': true,
+      'policyAcceptedAt': FieldValue.serverTimestamp(),
     });
 
     return credential;

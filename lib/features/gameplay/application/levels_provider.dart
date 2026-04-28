@@ -1,26 +1,28 @@
 import 'dart:convert';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter/foundation.dart';
 import '../domain/models/level_state.dart';
 import '../domain/models/coordinate.dart';
 import '../domain/models/command_type.dart';
 import '../domain/models/direction.dart';
 import '../application/firestore_provider.dart';
+import '../../../core/utils/app_logger.dart';
 
 final levelsProvider = FutureProvider<List<LevelState>>((ref) async {
   try {
     final service = ref.read(levelsFirestoreServiceProvider);
     final firestoreData = await service.fetchLevels();
 
-    debugPrint('🔥 Loaded levels from Firestore'); // 👈 HERE
-
+    AppLogger.success('Loaded levels from Firestore', tag: 'Levels');
     return firestoreData
         .map<LevelState>((levelJson) => _parseLevel(levelJson))
         .toList();
   } catch (e) {
-    debugPrint('📦 Loaded levels from local JSON fallback'); // 👈 HERE
-    debugPrint('Error: $e'); // 👈 optional but VERY useful
+    AppLogger.warning(
+      'Firestore failed. Loading local JSON fallback.',
+      tag: 'Levels',
+    );
+    AppLogger.error('Level fetch error', tag: 'Levels', error: e);
 
     final jsonString = await rootBundle.loadString('assets/data/levels.json');
     final List<dynamic> data = json.decode(jsonString);

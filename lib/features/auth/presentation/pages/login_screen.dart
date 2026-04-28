@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import 'dart:ui';
 import '../../../../core/theme/app_colors.dart';
 import '../../application/auth_state_provider.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 class LoginScreen extends ConsumerStatefulWidget {
   const LoginScreen({super.key});
@@ -34,6 +35,33 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
 
   void _goToSignup() {
     context.push('/signup');
+  }
+
+  Future<void> _sendPasswordResetEmail() async {
+    final email = emailController.text.trim();
+
+    if (email.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Enter your email address first.')),
+      );
+      return;
+    }
+
+    try {
+      await FirebaseAuth.instance.sendPasswordResetEmail(email: email);
+
+      if (!mounted) return;
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Password reset email sent.')),
+      );
+    } on FirebaseAuthException catch (e) {
+      if (!mounted) return;
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(e.message ?? 'Unable to send reset email.')),
+      );
+    }
   }
 
   @override
@@ -201,12 +229,17 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                   Align(
                     alignment: Alignment.centerRight,
                     child: TextButton(
-                      onPressed: () {},
+                      onPressed: _sendPasswordResetEmail,
+                      style: TextButton.styleFrom(
+                        foregroundColor: AppColors.cyan,
+                        padding: EdgeInsets.zero,
+                      ),
                       child: const Text(
                         'Forgot password?',
                         style: TextStyle(
                           color: AppColors.cyan,
-                          fontWeight: FontWeight.w600,
+                          fontSize: 12,
+                          fontWeight: FontWeight.w800,
                         ),
                       ),
                     ),
@@ -278,7 +311,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                       GestureDetector(
                         onTap: _goToSignup,
                         child: const Text(
-                          'Sign up',
+                          ' Sign up',
                           style: TextStyle(
                             color: AppColors.cyan,
                             fontWeight: FontWeight.w700,

@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-
 import 'dart:ui';
+
 import '../../../../core/theme/app_colors.dart';
+import '../../../../shared/widgets/privacy_policy_dialog.dart';
 import '../../application/auth_state_provider.dart';
 
 class SignupScreen extends ConsumerStatefulWidget {
@@ -22,6 +23,24 @@ class _SignupScreenState extends ConsumerState<SignupScreen> {
   static const Color signupAccent = AppColors.purple;
   static const Color signupAccent2 = AppColors.purple2;
 
+  bool _policyAccepted = false;
+
+  Future<void> _showPolicyDialog() async {
+    final accepted = await showDialog<bool>(
+      context: context,
+      barrierDismissible: false,
+      builder: (context) {
+        return const PrivacyPolicyDialog(showAgreeButton: true);
+      },
+    );
+
+    if (accepted == true) {
+      setState(() {
+        _policyAccepted = true;
+      });
+    }
+  }
+
   @override
   void dispose() {
     emailController.dispose();
@@ -31,6 +50,11 @@ class _SignupScreenState extends ConsumerState<SignupScreen> {
   }
 
   Future<void> _signup() async {
+    if (!_policyAccepted) {
+      await _showPolicyDialog();
+      return;
+    }
+
     if (passwordController.text != confirmPasswordController.text) {
       ScaffoldMessenger.of(
         context,
@@ -93,32 +117,27 @@ class _SignupScreenState extends ConsumerState<SignupScreen> {
                       child: Stack(
                         alignment: Alignment.center,
                         children: [
-                          // 🌫️ Outer glow (big radius)
                           ImageFiltered(
                             imageFilter: ImageFilter.blur(
                               sigmaX: 18,
                               sigmaY: 18,
                             ),
                             child: Icon(
-                              Icons.login_rounded,
+                              Icons.rocket_launch,
                               size: 48,
                               color: signupAccent.withValues(alpha: 0.25),
                             ),
                           ),
-
-                          // 🌫️ Inner glow (sharper)
                           ImageFiltered(
                             imageFilter: ImageFilter.blur(sigmaX: 8, sigmaY: 8),
                             child: Icon(
-                              Icons.login_rounded,
+                              Icons.rocket_launch,
                               size: 46,
                               color: signupAccent.withValues(alpha: 0.6),
                             ),
                           ),
-
-                          // 🔷 Main icon
                           const Icon(
-                            Icons.login_rounded,
+                            Icons.rocket_launch,
                             size: 42,
                             color: signupAccent,
                           ),
@@ -191,6 +210,35 @@ class _SignupScreenState extends ConsumerState<SignupScreen> {
 
                   const SizedBox(height: 22),
 
+                  Row(
+                    children: [
+                      Checkbox(
+                        value: _policyAccepted,
+                        activeColor: AppColors.purple,
+                        onChanged: (_) => _showPolicyDialog(),
+                      ),
+                      Expanded(
+                        child: GestureDetector(
+                          onTap: _showPolicyDialog,
+                          child: Text(
+                            _policyAccepted
+                                ? 'Privacy & Data Policy accepted'
+                                : 'Read and accept Privacy & Data Policy',
+                            style: TextStyle(
+                              color: _policyAccepted
+                                  ? AppColors.green
+                                  : AppColors.textSecondary,
+                              fontSize: 12,
+                              fontWeight: FontWeight.w700,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+
+                  const SizedBox(height: 14),
+
                   SizedBox(
                     height: 54,
                     child: DecoratedBox(
@@ -201,7 +249,9 @@ class _SignupScreenState extends ConsumerState<SignupScreen> {
                         ),
                       ),
                       child: ElevatedButton(
-                        onPressed: authState.isLoading ? null : _signup,
+                        onPressed: authState.isLoading || !_policyAccepted
+                            ? null
+                            : _signup,
                         style: ElevatedButton.styleFrom(
                           backgroundColor: Colors.transparent,
                           shadowColor: Colors.transparent,
@@ -259,7 +309,7 @@ class _SignupScreenState extends ConsumerState<SignupScreen> {
                       GestureDetector(
                         onTap: _goToLogin,
                         child: const Text(
-                          'Sign in',
+                          ' Sign in',
                           style: TextStyle(
                             color: signupAccent,
                             fontWeight: FontWeight.w700,

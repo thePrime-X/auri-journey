@@ -7,8 +7,16 @@ import '../../../../core/theme/app_colors.dart';
 import '../../../auth/application/auth_state_provider.dart';
 import '../../../../shared/widgets/privacy_policy_dialog.dart';
 
-class SettingsScreen extends ConsumerWidget {
+class SettingsScreen extends ConsumerStatefulWidget {
   const SettingsScreen({super.key});
+
+  @override
+  ConsumerState<SettingsScreen> createState() => _SettingsScreenState();
+}
+
+class _SettingsScreenState extends ConsumerState<SettingsScreen> {
+  bool _soundEnabled = true;
+  bool _hapticEnabled = false;
 
   Future<void> _logout(BuildContext context, WidgetRef ref) async {
     await ref.read(authStateProvider.notifier).logout();
@@ -19,7 +27,7 @@ class SettingsScreen extends ConsumerWidget {
   }
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  Widget build(BuildContext context) {
     final profileAsync = ref.watch(userProfileProvider);
 
     return Scaffold(
@@ -73,13 +81,23 @@ class SettingsScreen extends ConsumerWidget {
                 _SettingsRow(
                   icon: Icons.volume_up_rounded,
                   title: 'Sound Effects',
-                  trailing: _TogglePill(isOn: true),
+                  trailing: _TogglePill(isOn: _soundEnabled),
+                  onTap: () {
+                    setState(() {
+                      _soundEnabled = !_soundEnabled;
+                    });
+                  },
                 ),
                 const _DividerLine(),
                 _SettingsRow(
                   icon: Icons.vibration_rounded,
                   title: 'Haptic Feedback',
-                  trailing: _TogglePill(isOn: false),
+                  trailing: _TogglePill(isOn: _hapticEnabled),
+                  onTap: () {
+                    setState(() {
+                      _hapticEnabled = !_hapticEnabled;
+                    });
+                  },
                 ),
               ],
             ),

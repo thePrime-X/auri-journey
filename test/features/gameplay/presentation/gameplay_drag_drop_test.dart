@@ -7,6 +7,7 @@ import 'package:auri_app/features/gameplay/presentation/pages/gameplay_screen.da
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:auri_app/features/profile/application/user_profile_provider.dart';
 
 void main() {
   const testLevel = LevelState(
@@ -33,7 +34,13 @@ void main() {
   );
 
   testWidgets('adding command fills first empty sequence slot', (tester) async {
-    final container = ProviderContainer();
+    final container = ProviderContainer(
+      overrides: [
+        userProfileProvider.overrideWith((ref) {
+          return Stream.value(null);
+        }),
+      ],
+    );
     addTearDown(container.dispose);
 
     await tester.pumpWidget(
@@ -60,8 +67,13 @@ void main() {
   });
 
   testWidgets('clear resets sequence to three empty slots', (tester) async {
-    final container = ProviderContainer();
-
+    final container = ProviderContainer(
+      overrides: [
+        userProfileProvider.overrideWith((ref) {
+          return Stream.value(null);
+        }),
+      ],
+    );
     addTearDown(container.dispose);
 
     await tester.pumpWidget(

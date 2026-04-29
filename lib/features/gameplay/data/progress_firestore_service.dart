@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 import '../domain/models/level_state.dart';
+import '../../../core/services/offline_progress_queue_service.dart';
 
 class ProgressFirestoreService {
   final FirebaseFirestore _firestore;
@@ -117,6 +118,41 @@ class ProgressFirestoreService {
         'achievements': updatedAchievements,
       });
     });
+  }
+
+  Future<void> saveMissionCompletionWithFallback({
+    required String uid,
+    required LevelState level,
+    required int movesUsed,
+    required int hintsUsed,
+    required int playTimeSeconds,
+    required bool usedExactHint,
+    required String nextLevelId,
+    required OfflineProgressQueueService queue,
+  }) async {
+    try {
+      await saveMissionCompletion(
+        uid: uid,
+        level: level,
+        nextLevelId: nextLevelId,
+        movesUsed: movesUsed,
+        hintsUsed: hintsUsed,
+        playTimeSeconds: playTimeSeconds,
+        usedExactHint: usedExactHint,
+      );
+    } catch (e) {
+      await queue.addItem({
+        'type': 'missionCompletion',
+        'uid': uid,
+        'levelId': level.id,
+        'movesUsed': movesUsed,
+        'hintsUsed': hintsUsed,
+        'playTimeSeconds': playTimeSeconds,
+        'usedExactHint': usedExactHint,
+        'nextLevelId': nextLevelId,
+        'createdAt': DateTime.now().toIso8601String(),
+      });
+    }
   }
 
   static const Map<String, bool> _defaultAchievements = {

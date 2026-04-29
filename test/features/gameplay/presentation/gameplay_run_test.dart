@@ -11,6 +11,7 @@ import 'package:firebase_core_platform_interface/test.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:auri_app/features/profile/application/user_profile_provider.dart';
 
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
@@ -46,7 +47,13 @@ void main() {
   testWidgets('RUN executes command sequence and reaches success', (
     tester,
   ) async {
-    final container = ProviderContainer();
+    final container = ProviderContainer(
+      overrides: [
+        userProfileProvider.overrideWith((ref) {
+          return Stream.value(null);
+        }),
+      ],
+    );
     addTearDown(container.dispose);
 
     await tester.pumpWidget(

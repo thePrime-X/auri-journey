@@ -20,6 +20,7 @@ import '../widgets/game_grid.dart';
 import 'mission_complete_screen.dart';
 import '../../application/hint_analyzer.dart';
 import '../../../../core/services/offline_progress_queue_provider.dart';
+import '../../../../features/profile/application/user_profile_provider.dart';
 
 class GameplayScreen extends ConsumerStatefulWidget {
   final LevelState level;
@@ -36,10 +37,13 @@ class _GameplayScreenState extends ConsumerState<GameplayScreen> {
   bool _latestHintIsRepeated = false;
   int _hintsUsed = 0;
   bool _usedExactHint = false;
+  late DateTime _levelStartedAt;
 
   @override
   void initState() {
     super.initState();
+
+    _levelStartedAt = DateTime.now();
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _resetLevelState();
@@ -796,11 +800,21 @@ class _GameplayScreenState extends ConsumerState<GameplayScreen> {
       final isLastLevel = currentIndex >= levels.length - 1;
       final commands = sequence.whereType<CommandType>().toList();
 
+      final sessionTime = DateTime.now().difference(_levelStartedAt).inSeconds;
+
       final nextLevelId = isLastLevel
           ? widget.level.id
           : levels[currentIndex + 1].id;
 
       final uid = FirebaseAuth.instance.currentUser?.uid;
+
+      final previousProfile = await ref.read(userProfileProvider.future);
+      final previousTotalXp = previousProfile?.totalXP ?? 0;
+      final alreadyCompleted =
+          previousProfile?.completedLevelIds.contains(widget.level.id) ?? false;
+
+      final earnedXpForDisplay = alreadyCompleted ? 0 : widget.level.rewardXp;
+      final totalXpForDisplay = previousTotalXp + earnedXpForDisplay;
 
       if (uid != null) {
         final queue = ref.read(offlineProgressQueueServiceProvider);
@@ -813,10 +827,18 @@ class _GameplayScreenState extends ConsumerState<GameplayScreen> {
               nextLevelId: nextLevelId,
               movesUsed: commands.length,
               hintsUsed: _hintsUsed,
-              playTimeSeconds: timeTaken.inSeconds,
+              playTimeSeconds: sessionTime,
               usedExactHint: _usedExactHint,
               queue: queue,
             );
+      }
+
+      final updatedProfile = await ref.read(userProfileProvider.future);
+
+      if (uid != null && updatedProfile != null) {
+        if (updatedProfile.achievements['firstMission'] == true) {
+          await _showAchievementUnlockedPopup('firstMission');
+        }
       }
 
       if (!mounted) return;
@@ -830,6 +852,9 @@ class _GameplayScreenState extends ConsumerState<GameplayScreen> {
               timeTaken: timeTaken,
               stepsUsed: commands.length,
               optimalSteps: widget.level.optimalSolution.length,
+              earnedXp: earnedXpForDisplay,
+              totalXp: totalXpForDisplay,
+
               onNextMission: () {
                 if (isLastLevel) {
                   Navigator.of(context).pop();
@@ -842,6 +867,8 @@ class _GameplayScreenState extends ConsumerState<GameplayScreen> {
                       .resetFromLevel(widget.level);
 
                   ref.read(commandSequenceProvider.notifier).clearSequence();
+
+                  _levelStartedAt = DateTime.now();
                   return;
                 }
 
@@ -849,6 +876,8 @@ class _GameplayScreenState extends ConsumerState<GameplayScreen> {
 
                 ref.read(currentLevelIndexProvider.notifier).state =
                     currentIndex + 1;
+
+                _levelStartedAt = DateTime.now();
               },
               onReplayLevel: () {
                 Navigator.of(context).pop();
@@ -858,6 +887,8 @@ class _GameplayScreenState extends ConsumerState<GameplayScreen> {
                     .resetFromLevel(widget.level);
 
                 ref.read(commandSequenceProvider.notifier).clearSequence();
+
+                _levelStartedAt = DateTime.now();
               },
             );
           },
@@ -922,12 +953,172 @@ class _GameplayScreenState extends ConsumerState<GameplayScreen> {
     return commandOrderIndex == executionState.currentStepIndex;
   }
 
+  String _achievementTitle(String key) {
+    switch (key) {
+      case 'firstMission':
+        return 'First Mission';
+      case 'earned100Xp':
+        return '100 XP';
+      case 'perfectSolution':
+        return 'Perfect Run';
+      case 'threeDayStreak':
+        return '3 Day Streak';
+      case 'noHintWin':
+        return 'No Hint Win';
+      case 'fiveMissions':
+        return 'Explorer';
+      default:
+        return 'Achievement';
+    }
+  }
+
+  IconData _achievementIcon(String key) {
+    switch (key) {
+      case 'firstMission':
+        return Icons.emoji_events_rounded;
+      case 'earned100Xp':
+        return Icons.bolt_rounded;
+      case 'perfectSolution':
+        return Icons.check_circle_rounded;
+      case 'threeDayStreak':
+        return Icons.local_fire_department_rounded;
+      case 'noHintWin':
+        return Icons.visibility_off_rounded;
+      case 'fiveMissions':
+        return Icons.explore_rounded;
+      default:
+        return Icons.star_rounded;
+    }
+  }
+
+  Future<void> _showAchievementUnlockedPopup(String achievementKey) async {
+    await showDialog<void>(
+      context: context,
+      barrierDismissible: true,
+      builder: (context) {
+        return Dialog(
+          backgroundColor: Colors.transparent,
+          insetPadding: const EdgeInsets.all(28),
+          child: TweenAnimationBuilder<double>(
+            tween: Tween(begin: 0.85, end: 1),
+            duration: const Duration(milliseconds: 360),
+            curve: Curves.easeOutBack,
+            builder: (context, scale, child) {
+              return Transform.scale(scale: scale, child: child);
+            },
+            child: Container(
+              padding: const EdgeInsets.all(22),
+              decoration: BoxDecoration(
+                color: AppColors.bg3,
+                borderRadius: BorderRadius.circular(22),
+                border: Border.all(
+                  color: AppColors.amber.withValues(alpha: 0.55),
+                ),
+                boxShadow: [
+                  BoxShadow(
+                    color: AppColors.amber.withValues(alpha: 0.24),
+                    blurRadius: 26,
+                    spreadRadius: 2,
+                  ),
+                  BoxShadow(
+                    color: Colors.black.withValues(alpha: 0.45),
+                    blurRadius: 28,
+                    offset: const Offset(0, 14),
+                  ),
+                ],
+              ),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  const Text(
+                    'ACHIEVEMENT UNLOCKED',
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      fontFamily: 'Orbitron',
+                      color: AppColors.amber,
+                      fontSize: 15,
+                      fontWeight: FontWeight.w800,
+                      letterSpacing: 1.1,
+                    ),
+                  ),
+                  const SizedBox(height: 18),
+                  Container(
+                    width: 68,
+                    height: 68,
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      color: AppColors.amber.withValues(alpha: 0.12),
+                      border: Border.all(color: AppColors.amber, width: 1.5),
+                      boxShadow: [
+                        BoxShadow(
+                          color: AppColors.amber.withValues(alpha: 0.30),
+                          blurRadius: 20,
+                          spreadRadius: 2,
+                        ),
+                      ],
+                    ),
+                    child: Icon(
+                      _achievementIcon(achievementKey),
+                      color: AppColors.amber,
+                      size: 34,
+                    ),
+                  ),
+                  const SizedBox(height: 16),
+                  Text(
+                    _achievementTitle(achievementKey),
+                    textAlign: TextAlign.center,
+                    style: const TextStyle(
+                      color: AppColors.textPrimary,
+                      fontSize: 20,
+                      fontWeight: FontWeight.w900,
+                    ),
+                  ),
+                  const SizedBox(height: 8),
+                  const Text(
+                    'Your progress has been recorded.',
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      color: AppColors.textSecondary,
+                      fontSize: 12,
+                      height: 1.5,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                  const SizedBox(height: 20),
+                  SizedBox(
+                    width: double.infinity,
+                    height: 46,
+                    child: ElevatedButton(
+                      onPressed: () => Navigator.pop(context),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: AppColors.amber,
+                        foregroundColor: Colors.black,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(14),
+                        ),
+                      ),
+                      child: const Text(
+                        'Nice!',
+                        style: TextStyle(fontWeight: FontWeight.w900),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final executionState = ref.watch(executionStateProvider);
     final Coordinate auriPosition = executionState.currentPosition;
     final auriDirection = executionState.direction;
     final sequence = ref.watch(commandSequenceProvider);
+    final profileAsync = ref.watch(userProfileProvider);
 
     return Scaffold(
       backgroundColor: AppColors.bg,
@@ -979,17 +1170,82 @@ class _GameplayScreenState extends ConsumerState<GameplayScreen> {
                     ],
                   ),
                 ),
-                Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: const [
-                    Icon(Icons.bolt, color: AppColors.amber, size: 16),
-                    SizedBox(width: 4),
-                    Text(
-                      '2,289',
-                      style: TextStyle(
-                        color: AppColors.amber,
-                        fontWeight: FontWeight.w800,
-                        fontSize: 12,
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.end,
+                  children: [
+                    Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        const Icon(
+                          Icons.bolt,
+                          color: AppColors.amber,
+                          size: 16,
+                        ),
+                        const SizedBox(width: 4),
+                        profileAsync.when(
+                          loading: () => const Text(
+                            '...',
+                            style: TextStyle(
+                              color: AppColors.amber,
+                              fontWeight: FontWeight.w800,
+                              fontSize: 16,
+                            ),
+                          ),
+                          error: (error, stackTrace) => const Text(
+                            '0',
+                            style: TextStyle(
+                              color: AppColors.amber,
+                              fontWeight: FontWeight.w800,
+                              fontSize: 16,
+                            ),
+                          ),
+                          data: (profile) {
+                            final xp = profile?.totalXP ?? 0;
+
+                            return Text(
+                              xp.toString(),
+                              style: const TextStyle(
+                                color: AppColors.amber,
+                                fontWeight: FontWeight.w800,
+                                fontSize: 16,
+                              ),
+                            );
+                          },
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 8),
+                    GestureDetector(
+                      onTap: _showPauseDialog,
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 10,
+                          vertical: 6,
+                        ),
+                        decoration: BoxDecoration(
+                          color: AppColors.bg3,
+                          borderRadius: BorderRadius.circular(999),
+                          border: Border.all(color: AppColors.border),
+                        ),
+                        child: const Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Icon(
+                              Icons.pause_rounded,
+                              color: AppColors.textSecondary,
+                              size: 14,
+                            ),
+                            SizedBox(width: 4),
+                            Text(
+                              'Pause',
+                              style: TextStyle(
+                                color: AppColors.textSecondary,
+                                fontSize: 11,
+                                fontWeight: FontWeight.w800,
+                              ),
+                            ),
+                          ],
+                        ),
                       ),
                     ),
                   ],

@@ -11,6 +11,8 @@ class MissionCompleteScreen extends StatelessWidget {
   final int optimalSteps;
   final VoidCallback onNextMission;
   final VoidCallback onReplayLevel;
+  final int earnedXp;
+  final int totalXp;
 
   const MissionCompleteScreen({
     super.key,
@@ -21,6 +23,8 @@ class MissionCompleteScreen extends StatelessWidget {
     required this.optimalSteps,
     required this.onNextMission,
     required this.onReplayLevel,
+    required this.earnedXp,
+    required this.totalXp,
   });
 
   String get formattedTime {
@@ -77,7 +81,7 @@ class MissionCompleteScreen extends StatelessWidget {
                   ),
                 ),
                 Text(
-                  '⚡ 2,480 XP',
+                  '⚡ $totalXp XP',
                   style: const TextStyle(
                     fontFamily: 'Orbitron',
                     color: AppColors.amber,
@@ -121,7 +125,7 @@ class MissionCompleteScreen extends StatelessWidget {
 
             const SizedBox(height: 20),
 
-            Center(child: _XpRewardPill(xp: level.rewardXp)),
+            Center(child: _XpRewardPill(xp: earnedXp)),
 
             const SizedBox(height: 22),
 

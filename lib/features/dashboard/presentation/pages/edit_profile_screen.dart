@@ -13,63 +13,63 @@ class EditProfileScreen extends ConsumerStatefulWidget {
   ConsumerState<EditProfileScreen> createState() => _EditProfileScreenState();
 }
 
-class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
+class _EditProfileScreenState extends ConsumerState<EditProfileScreen>
+    with SingleTickerProviderStateMixin {
   final _nameController = TextEditingController();
-  final _passwordController = TextEditingController();
+  late final AnimationController _avatarPulseController;
 
   bool _isSaving = false;
   bool _hasLoadedInitialName = false;
 
   @override
+  void initState() {
+    super.initState();
+
+    _avatarPulseController = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 1800),
+    )..repeat();
+  }
+
+  @override
   void dispose() {
     _nameController.dispose();
-    _passwordController.dispose();
+    _avatarPulseController.dispose();
     super.dispose();
   }
 
   Future<void> _save() async {
     final uid = FirebaseAuth.instance.currentUser?.uid;
-
     if (uid == null) return;
+
+    final newName = _nameController.text.trim();
+
+    if (newName.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Username cannot be empty.')),
+      );
+      return;
+    }
 
     setState(() => _isSaving = true);
 
     try {
-      final newName = _nameController.text.trim();
-      final newPassword = _passwordController.text.trim();
-
-      if (newName.isNotEmpty) {
-        await ref
-            .read(userProfileServiceProvider)
-            .updateDisplayName(uid: uid, displayName: newName);
-      }
-
-      if (newPassword.isNotEmpty) {
-        await FirebaseAuth.instance.currentUser!.updatePassword(newPassword);
-      }
+      await ref
+          .read(userProfileServiceProvider)
+          .updateDisplayName(uid: uid, displayName: newName);
 
       if (!mounted) return;
 
       ScaffoldMessenger.of(
         context,
-      ).showSnackBar(const SnackBar(content: Text('Profile updated.')));
+      ).showSnackBar(const SnackBar(content: Text('Username updated.')));
 
       context.go('/profile');
-    } on FirebaseAuthException catch (e) {
-      if (!mounted) return;
-
-      final message = e.code == 'requires-recent-login'
-          ? 'Please log out and log in again before changing your password.'
-          : e.message ?? 'Unable to update password.';
-
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(SnackBar(content: Text(message)));
     } catch (_) {
       if (!mounted) return;
 
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Unable to update profile.')),
+        const SnackBar(content: Text('Unable to update username.')),
       );
     } finally {
       if (mounted) {
@@ -131,12 +131,65 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
               ],
             ),
 
-            const SizedBox(height: 32),
+            const SizedBox(height: 28),
+
+            _ProfileAvatar(controller: _avatarPulseController),
+
+            const SizedBox(height: 18),
+
+            profileAsync.when(
+              loading: () => const Center(
+                child: Text(
+                  '@commander',
+                  style: TextStyle(
+                    color: AppColors.textPrimary,
+                    fontSize: 22,
+                    fontWeight: FontWeight.w900,
+                  ),
+                ),
+              ),
+              error: (error, stackTrace) => const Center(
+                child: Text(
+                  '@commander',
+                  style: TextStyle(
+                    color: AppColors.textPrimary,
+                    fontSize: 22,
+                    fontWeight: FontWeight.w900,
+                  ),
+                ),
+              ),
+              data: (profile) => Center(
+                child: Text(
+                  '@${profile?.displayName ?? 'commander'}',
+                  style: const TextStyle(
+                    color: AppColors.textPrimary,
+                    fontSize: 22,
+                    fontWeight: FontWeight.w900,
+                  ),
+                ),
+              ),
+            ),
+
+            const SizedBox(height: 4),
+
+            const Center(
+              child: Text(
+                'COMMANDER',
+                style: TextStyle(
+                  color: AppColors.textMuted,
+                  fontSize: 11,
+                  fontWeight: FontWeight.w800,
+                  letterSpacing: 2.6,
+                ),
+              ),
+            ),
+
+            const SizedBox(height: 34),
 
             const Text(
               'USERNAME',
               style: TextStyle(
-                color: AppColors.cyan,
+                color: AppColors.purple,
                 fontSize: 11,
                 fontWeight: FontWeight.w900,
                 letterSpacing: 1.8,
@@ -156,36 +209,10 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
               ),
             ),
 
-            const SizedBox(height: 26),
-
-            const Text(
-              'PASSWORD',
-              style: TextStyle(
-                color: AppColors.cyan,
-                fontSize: 11,
-                fontWeight: FontWeight.w900,
-                letterSpacing: 1.8,
-              ),
-            ),
             const SizedBox(height: 10),
 
-            TextField(
-              controller: _passwordController,
-              obscureText: true,
-              style: const TextStyle(color: AppColors.textPrimary),
-              decoration: const InputDecoration(
-                hintText: 'New password',
-                prefixIcon: Icon(
-                  Icons.lock_outline_rounded,
-                  color: AppColors.textMuted,
-                ),
-              ),
-            ),
-
-            const SizedBox(height: 8),
-
             const Text(
-              'Leave password empty if you only want to update your username.',
+              'This name will appear on your profile and dashboard.',
               style: TextStyle(
                 color: AppColors.textMuted,
                 fontSize: 11,
@@ -200,7 +227,7 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
               child: ElevatedButton(
                 onPressed: _isSaving ? null : _save,
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: AppColors.cyan,
+                  backgroundColor: AppColors.purple,
                   foregroundColor: Colors.black,
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(14),
@@ -226,6 +253,104 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
             ),
           ],
         ),
+      ),
+    );
+  }
+}
+
+class _ProfileAvatar extends StatelessWidget {
+  final AnimationController controller;
+
+  const _ProfileAvatar({required this.controller});
+
+  @override
+  Widget build(BuildContext context) {
+    return Center(
+      child: AnimatedBuilder(
+        animation: controller,
+        builder: (context, child) {
+          final pulse = controller.value;
+          final pulseOpacity = (1 - pulse).clamp(0.0, 1.0);
+          final pulseSize = 110 + (pulse * 26);
+
+          return SizedBox(
+            width: 138,
+            height: 124,
+            child: Stack(
+              alignment: Alignment.center,
+              clipBehavior: Clip.none,
+              children: [
+                Opacity(
+                  opacity: pulseOpacity * 0.45,
+                  child: Container(
+                    width: pulseSize,
+                    height: pulseSize,
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      border: Border.all(
+                        color: AppColors.purple.withValues(alpha: 0.7),
+                        width: 2,
+                      ),
+                    ),
+                  ),
+                ),
+                Container(
+                  width: 106,
+                  height: 106,
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    color: AppColors.bg3.withValues(alpha: 0.75),
+                    border: Border.all(color: AppColors.purple, width: 3),
+                    boxShadow: [
+                      BoxShadow(
+                        color: AppColors.purple.withValues(alpha: 0.5),
+                        blurRadius: 24,
+                        spreadRadius: 2,
+                      ),
+                    ],
+                  ),
+                  child: Center(
+                    child: Container(
+                      width: 42,
+                      height: 42,
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(12),
+                        border: Border.all(color: AppColors.purple, width: 2.2),
+                        color: AppColors.bg.withValues(alpha: 0.35),
+                      ),
+                      child: Center(
+                        child: Icon(
+                          Icons.android_rounded,
+                          size: 26,
+                          color: AppColors.purple,
+                          shadows: [
+                            Shadow(
+                              color: AppColors.purple.withValues(alpha: 0.6),
+                              blurRadius: 10,
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+                Positioned(
+                  right: 17,
+                  bottom: 18,
+                  child: Container(
+                    width: 23,
+                    height: 23,
+                    decoration: BoxDecoration(
+                      color: AppColors.green,
+                      shape: BoxShape.circle,
+                      border: Border.all(color: AppColors.bg, width: 3),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          );
+        },
       ),
     );
   }

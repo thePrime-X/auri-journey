@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 
 import '../../../../core/theme/app_colors.dart';
 import '../../../../features/profile/application/user_profile_provider.dart';
+import '../../../../core/utils/time_formatter.dart';
 
 class ProfileScreen extends ConsumerStatefulWidget {
   const ProfileScreen({super.key});
@@ -15,6 +16,9 @@ class ProfileScreen extends ConsumerStatefulWidget {
 class _ProfileScreenState extends ConsumerState<ProfileScreen>
     with SingleTickerProviderStateMixin {
   late final AnimationController _avatarPulseController;
+
+  Map<String, bool> _lastAchievements = {};
+  bool _hasLoadedAchievementsOnce = false;
 
   @override
   void initState() {
@@ -32,9 +36,198 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen>
     super.dispose();
   }
 
+  String _achievementTitle(String key) {
+    switch (key) {
+      case 'firstMission':
+        return 'First Mission';
+      case 'earned100Xp':
+        return '100 XP';
+      case 'perfectSolution':
+        return 'Perfect Run';
+      case 'threeDayStreak':
+        return '3 Day Streak';
+      case 'noHintWin':
+        return 'No Hint Win';
+      case 'fiveMissions':
+        return 'Explorer';
+      default:
+        return 'Achievement';
+    }
+  }
+
+  IconData _achievementIcon(String key) {
+    switch (key) {
+      case 'firstMission':
+        return Icons.emoji_events_rounded;
+      case 'earned100Xp':
+        return Icons.bolt_rounded;
+      case 'perfectSolution':
+        return Icons.check_circle_rounded;
+      case 'threeDayStreak':
+        return Icons.local_fire_department_rounded;
+      case 'noHintWin':
+        return Icons.visibility_off_rounded;
+      case 'fiveMissions':
+        return Icons.explore_rounded;
+      default:
+        return Icons.star_rounded;
+    }
+  }
+
+  void _checkAchievementUnlocks(Map<String, bool> achievements) {
+    if (!_hasLoadedAchievementsOnce) {
+      _lastAchievements = Map<String, bool>.from(achievements);
+      _hasLoadedAchievementsOnce = true;
+      return;
+    }
+
+    for (final entry in achievements.entries) {
+      final wasUnlocked = _lastAchievements[entry.key] == true;
+      final isUnlocked = entry.value == true;
+
+      if (!wasUnlocked && isUnlocked) {
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          if (mounted) {
+            _showAchievementUnlockedPopup(entry.key);
+          }
+        });
+        break;
+      }
+    }
+
+    _lastAchievements = Map<String, bool>.from(achievements);
+  }
+
+  Future<void> _showAchievementUnlockedPopup(String achievementKey) async {
+    await showDialog<void>(
+      context: context,
+      barrierDismissible: true,
+      builder: (context) {
+        return Dialog(
+          backgroundColor: Colors.transparent,
+          insetPadding: const EdgeInsets.all(28),
+          child: TweenAnimationBuilder<double>(
+            tween: Tween(begin: 0.85, end: 1),
+            duration: const Duration(milliseconds: 360),
+            curve: Curves.easeOutBack,
+            builder: (context, scale, child) {
+              return Transform.scale(scale: scale, child: child);
+            },
+            child: Container(
+              padding: const EdgeInsets.all(22),
+              decoration: BoxDecoration(
+                color: AppColors.bg3,
+                borderRadius: BorderRadius.circular(22),
+                border: Border.all(
+                  color: AppColors.amber.withValues(alpha: 0.55),
+                ),
+                boxShadow: [
+                  BoxShadow(
+                    color: AppColors.amber.withValues(alpha: 0.24),
+                    blurRadius: 26,
+                    spreadRadius: 2,
+                  ),
+                  BoxShadow(
+                    color: Colors.black.withValues(alpha: 0.45),
+                    blurRadius: 28,
+                    offset: const Offset(0, 14),
+                  ),
+                ],
+              ),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  const Text(
+                    'ACHIEVEMENT UNLOCKED',
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      fontFamily: 'Orbitron',
+                      color: AppColors.amber,
+                      fontSize: 15,
+                      fontWeight: FontWeight.w800,
+                      letterSpacing: 1.1,
+                    ),
+                  ),
+                  const SizedBox(height: 18),
+                  Container(
+                    width: 68,
+                    height: 68,
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      color: AppColors.amber.withValues(alpha: 0.12),
+                      border: Border.all(color: AppColors.amber, width: 1.5),
+                      boxShadow: [
+                        BoxShadow(
+                          color: AppColors.amber.withValues(alpha: 0.30),
+                          blurRadius: 20,
+                          spreadRadius: 2,
+                        ),
+                      ],
+                    ),
+                    child: Icon(
+                      _achievementIcon(achievementKey),
+                      color: AppColors.amber,
+                      size: 34,
+                    ),
+                  ),
+                  const SizedBox(height: 16),
+                  Text(
+                    _achievementTitle(achievementKey),
+                    textAlign: TextAlign.center,
+                    style: const TextStyle(
+                      color: AppColors.textPrimary,
+                      fontSize: 20,
+                      fontWeight: FontWeight.w900,
+                    ),
+                  ),
+                  const SizedBox(height: 8),
+                  const Text(
+                    'Your progress has been recorded.',
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      color: AppColors.textSecondary,
+                      fontSize: 12,
+                      height: 1.5,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                  const SizedBox(height: 20),
+                  SizedBox(
+                    width: double.infinity,
+                    height: 46,
+                    child: ElevatedButton(
+                      onPressed: () => Navigator.pop(context),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: AppColors.amber,
+                        foregroundColor: Colors.black,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(14),
+                        ),
+                      ),
+                      child: const Text(
+                        'Nice!',
+                        style: TextStyle(fontWeight: FontWeight.w900),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final profileAsync = ref.watch(userProfileProvider);
+
+    profileAsync.whenData((profile) {
+      if (profile != null) {
+        _checkAchievementUnlocks(profile.achievements);
+      }
+    });
 
     return Scaffold(
       backgroundColor: AppColors.bg,
@@ -287,7 +480,9 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen>
               ),
               data: (profile) {
                 final missions = profile?.puzzlesCompleted ?? 1;
-                final playTime = profile?.formattedPlayTime ?? '0m';
+                final playTime = formatPlayTime(
+                  profile?.totalPlayTimeSeconds ?? 0,
+                );
 
                 return Row(
                   children: [
@@ -465,73 +660,51 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen>
             const _SectionTitle(title: 'ACHIEVEMENTS'),
             const SizedBox(height: 13),
 
-            SizedBox(
-              height: 98,
-              child: ListView(
-                scrollDirection: Axis.horizontal,
-                physics: const BouncingScrollPhysics(),
-                children: [
-                  _Achievement(
-                    icon: '🏆',
-                    label: 'First\nMission',
-                    color: AppColors.cyan,
-                    isUnlocked: profileAsync.when(
-                      data: (profile) =>
-                          profile?.achievements['firstMission'] == true,
-                      loading: () => false,
-                      error: (error, stackTrace) => false,
-                    ),
+            profileAsync.when(
+              loading: () => const SizedBox(height: 98),
+              error: (error, stackTrace) => const SizedBox(height: 98),
+              data: (profile) {
+                final achievements = profile?.achievements ?? {};
+
+                return SizedBox(
+                  height: 98,
+                  child: ListView(
+                    scrollDirection: Axis.horizontal,
+                    physics: const BouncingScrollPhysics(),
+                    children: [
+                      _Achievement(
+                        icon: Icons.emoji_events_rounded,
+                        label: 'First\nMission',
+                        unlocked: achievements['firstMission'] == true,
+                      ),
+                      const SizedBox(width: 12),
+                      _Achievement(
+                        icon: Icons.bolt_rounded,
+                        label: '100\nXP',
+                        unlocked: achievements['earned100Xp'] == true,
+                      ),
+                      const SizedBox(width: 12),
+                      _Achievement(
+                        icon: Icons.check_circle_rounded,
+                        label: 'Perfect\nRun',
+                        unlocked: achievements['perfectSolution'] == true,
+                      ),
+                      const SizedBox(width: 12),
+                      _Achievement(
+                        icon: Icons.local_fire_department_rounded,
+                        label: '3 Day\nStreak',
+                        unlocked: achievements['threeDayStreak'] == true,
+                      ),
+                      const SizedBox(width: 12),
+                      _Achievement(
+                        icon: Icons.visibility_off_rounded,
+                        label: 'No Hint\nWin',
+                        unlocked: achievements['noHintWin'] == true,
+                      ),
+                    ],
                   ),
-                  const SizedBox(width: 12),
-                  _Achievement(
-                    icon: '⚡',
-                    label: '100\nXP',
-                    color: AppColors.amber,
-                    isUnlocked: profileAsync.when(
-                      data: (profile) =>
-                          profile?.achievements['earned100Xp'] == true,
-                      loading: () => false,
-                      error: (error, stackTrace) => false,
-                    ),
-                  ),
-                  const SizedBox(width: 12),
-                  _Achievement(
-                    icon: '✓',
-                    label: 'Perfect\nRun',
-                    color: AppColors.green,
-                    isUnlocked: profileAsync.when(
-                      data: (profile) =>
-                          profile?.achievements['perfectSolution'] == true,
-                      loading: () => false,
-                      error: (error, stackTrace) => false,
-                    ),
-                  ),
-                  const SizedBox(width: 12),
-                  _Achievement(
-                    icon: '🔥',
-                    label: '3 Day\nStreak',
-                    color: AppColors.red,
-                    isUnlocked: profileAsync.when(
-                      data: (profile) =>
-                          profile?.achievements['threeDayStreak'] == true,
-                      loading: () => false,
-                      error: (error, stackTrace) => false,
-                    ),
-                  ),
-                  const SizedBox(width: 12),
-                  _Achievement(
-                    icon: '✦',
-                    label: 'No Hint\nWin',
-                    color: AppColors.purple,
-                    isUnlocked: profileAsync.when(
-                      data: (profile) =>
-                          profile?.achievements['noHintWin'] == true,
-                      loading: () => false,
-                      error: (error, stackTrace) => false,
-                    ),
-                  ),
-                ],
-              ),
+                );
+              },
             ),
 
             const SizedBox(height: 26),
@@ -875,83 +1048,115 @@ class _SkillRow extends StatelessWidget {
   }
 }
 
-class _Achievement extends StatelessWidget {
-  final String icon;
+class _Achievement extends StatefulWidget {
+  final IconData icon;
   final String label;
-  final Color color;
-  final bool isUnlocked;
+  final bool unlocked;
 
   const _Achievement({
     required this.icon,
     required this.label,
-    required this.color,
-    required this.isUnlocked,
+    required this.unlocked,
   });
 
   @override
+  State<_Achievement> createState() => _AchievementState();
+}
+
+class _AchievementState extends State<_Achievement>
+    with SingleTickerProviderStateMixin {
+  late final AnimationController _controller;
+  late final Animation<double> _glow;
+
+  @override
+  void initState() {
+    super.initState();
+
+    _controller = AnimationController(
+      vsync: this,
+      duration: const Duration(seconds: 2),
+    );
+
+    _glow = Tween<double>(
+      begin: 0.2,
+      end: 0.6,
+    ).animate(CurvedAnimation(parent: _controller, curve: Curves.easeInOut));
+
+    if (widget.unlocked) {
+      _controller.repeat(reverse: true);
+    }
+  }
+
+  @override
+  void didUpdateWidget(covariant _Achievement oldWidget) {
+    super.didUpdateWidget(oldWidget);
+
+    if (widget.unlocked && !_controller.isAnimating) {
+      _controller.repeat(reverse: true);
+    }
+
+    if (!widget.unlocked && _controller.isAnimating) {
+      _controller.stop();
+    }
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
-    return Opacity(
-      opacity: isUnlocked ? 1 : 0.25,
-      child: SizedBox(
-        width: 56,
-        child: Column(
+    final baseColor = widget.unlocked
+        ? AppColors.cyan
+        : AppColors.textMuted.withValues(alpha: 0.3);
+
+    return AnimatedBuilder(
+      animation: _glow,
+      builder: (context, child) {
+        final glowStrength = widget.unlocked ? _glow.value : 0.0;
+
+        return Column(
           children: [
             Container(
-              width: 56,
-              height: 56,
+              width: 54,
+              height: 54,
               decoration: BoxDecoration(
-                color: isUnlocked
-                    ? color.withValues(alpha: 0.10)
-                    : AppColors.bg4,
-                borderRadius: BorderRadius.circular(14),
+                shape: BoxShape.circle,
+                color: widget.unlocked
+                    ? AppColors.cyan.withValues(alpha: 0.12)
+                    : AppColors.bg3,
                 border: Border.all(
-                  color: isUnlocked
-                      ? color.withValues(alpha: 0.45)
-                      : AppColors.border2,
-                  width: 1.5,
+                  color: widget.unlocked
+                      ? AppColors.cyan.withValues(alpha: 0.4)
+                      : AppColors.border2.withValues(alpha: 0.4),
                 ),
-                boxShadow: isUnlocked
+                boxShadow: widget.unlocked
                     ? [
                         BoxShadow(
-                          color: color.withValues(alpha: 0.15),
-                          blurRadius: 12,
+                          color: AppColors.cyan.withValues(alpha: glowStrength),
+                          blurRadius: 16,
+                          spreadRadius: 2,
                         ),
                       ]
-                    : null,
+                    : [],
               ),
-              child: Center(
-                child: isUnlocked
-                    ? Text(
-                        icon,
-                        style: TextStyle(
-                          color: color,
-                          fontSize: 24,
-                          fontWeight: FontWeight.w900,
-                        ),
-                      )
-                    : const Icon(
-                        Icons.lock_rounded,
-                        color: AppColors.textMuted,
-                        size: 24,
-                      ),
-              ),
+              child: Icon(widget.icon, color: baseColor, size: 22),
             ),
-            const SizedBox(height: 8),
+            const SizedBox(height: 6),
             Text(
-              label,
-              textAlign: TextAlign.center,
+              widget.label,
               style: TextStyle(
-                color: isUnlocked
-                    ? AppColors.textSecondary
-                    : AppColors.textMuted,
-                fontSize: 9,
-                height: 1.25,
-                fontWeight: FontWeight.w800,
+                color: baseColor,
+                fontSize: 10,
+                fontWeight: FontWeight.w700,
               ),
+              textAlign: TextAlign.center,
             ),
           ],
-        ),
-      ),
+        );
+      },
     );
   }
 }

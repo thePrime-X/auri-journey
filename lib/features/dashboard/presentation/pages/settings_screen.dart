@@ -6,6 +6,7 @@ import '../../../../features/profile/application/user_profile_provider.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../auth/application/auth_state_provider.dart';
 import '../../../../shared/widgets/privacy_policy_dialog.dart';
+import '../../../../features/gameplay/application/daily_challenge_state_provider.dart';
 
 class SettingsScreen extends ConsumerStatefulWidget {
   const SettingsScreen({super.key});
@@ -183,6 +184,19 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                     await ref
                         .read(userProfileServiceProvider)
                         .resetProgress(uid);
+
+                    ref
+                            .read(completedDailyChallengeDateProvider.notifier)
+                            .state =
+                        null;
+                    ref.read(isDailyChallengeModeProvider.notifier).state =
+                        false;
+                    ref.read(dailyChallengeLevelIdsProvider.notifier).state =
+                        const [];
+                    ref
+                            .read(currentDailyChallengeIndexProvider.notifier)
+                            .state =
+                        0;
 
                     if (context.mounted) {
                       ScaffoldMessenger.of(context).showSnackBar(

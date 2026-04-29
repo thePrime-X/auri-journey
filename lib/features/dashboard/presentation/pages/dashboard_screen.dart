@@ -11,6 +11,8 @@ import '../../../../core/services/connectivity_provider.dart';
 import '../../../../core/services/sync_status_provider.dart';
 import '../../../../core/services/offline_progress_queue_provider.dart';
 import '../../../../shared/widgets/sync_status_badge.dart';
+import '../../../../features/gameplay/application/daily_challenge_provider.dart';
+import '../../../../features/gameplay/application/daily_challenge_state_provider.dart';
 
 class DashboardScreen extends ConsumerWidget {
   const DashboardScreen({super.key});
@@ -21,6 +23,8 @@ class DashboardScreen extends ConsumerWidget {
     final currentLevelIndex = ref.watch(currentLevelIndexProvider);
     final profileAsync = ref.watch(userProfileProvider);
     final syncStatus = ref.watch(syncStatusProvider);
+    final dailyChallengeAsync = ref.watch(dailyChallengeProvider);
+    final completedDailyDate = ref.watch(completedDailyChallengeDateProvider);
 
     ref.listen(levelsProvider, (previous, next) {
       next.whenData((levels) async {
@@ -215,75 +219,240 @@ class DashboardScreen extends ConsumerWidget {
 
                 const SizedBox(height: 18),
 
-                Container(
-                  padding: const EdgeInsets.all(14),
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(14),
-                    border: Border.all(
-                      color: AppColors.green.withValues(alpha: 0.25),
+                dailyChallengeAsync.when(
+                  loading: () => Container(
+                    padding: const EdgeInsets.all(14),
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(14),
+                      border: Border.all(
+                        color: AppColors.green.withValues(alpha: 0.25),
+                      ),
+                      color: AppColors.green.withValues(alpha: 0.06),
                     ),
-                    color: AppColors.green.withValues(alpha: 0.06),
+                    child: const Text(
+                      'Loading daily challenge...',
+                      style: TextStyle(
+                        color: AppColors.textSecondary,
+                        fontSize: 12,
+                      ),
+                    ),
                   ),
-                  child: const Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Row(
-                        children: [
-                          Expanded(
-                            child: Text(
-                              'DAILY CHALLENGE',
+                  error: (error, stackTrace) => Container(
+                    padding: const EdgeInsets.all(14),
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(14),
+                      border: Border.all(
+                        color: AppColors.red.withValues(alpha: 0.25),
+                      ),
+                      color: AppColors.red.withValues(alpha: 0.06),
+                    ),
+                    child: const Text(
+                      'Daily challenge unavailable.',
+                      style: TextStyle(
+                        color: AppColors.textSecondary,
+                        fontSize: 12,
+                      ),
+                    ),
+                  ),
+                  data: (challenge) {
+                    if (challenge == null) {
+                      return Container(
+                        padding: const EdgeInsets.all(14),
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(14),
+                          border: Border.all(
+                            color: AppColors.green.withValues(alpha: 0.25),
+                          ),
+                          color: AppColors.green.withValues(alpha: 0.06),
+                        ),
+                        child: const Text(
+                          'No daily challenge available today.',
+                          style: TextStyle(
+                            color: AppColors.textSecondary,
+                            fontSize: 12,
+                          ),
+                        ),
+                      );
+                    }
+
+                    final today = DateTime.now();
+                    final todayKey =
+                        '${today.year}-${today.month.toString().padLeft(2, '0')}-${today.day.toString().padLeft(2, '0')}';
+
+                    if (completedDailyDate == todayKey) {
+                      return Container(
+                        padding: const EdgeInsets.all(14),
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(14),
+                          border: Border.all(
+                            color: AppColors.green.withValues(alpha: 0.25),
+                          ),
+                          color: AppColors.green.withValues(alpha: 0.06),
+                        ),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Row(
+                              children: [
+                                const Expanded(
+                                  child: Text(
+                                    'DAILY CHALLENGE',
+                                    style: TextStyle(
+                                      color: AppColors.green,
+                                      fontSize: 10,
+                                      fontWeight: FontWeight.w800,
+                                      letterSpacing: 1.3,
+                                    ),
+                                  ),
+                                ),
+                                Container(
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 10,
+                                    vertical: 4,
+                                  ),
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(12),
+                                    border: Border.all(
+                                      color: AppColors.green.withValues(
+                                        alpha: 0.25,
+                                      ),
+                                    ),
+                                    color: AppColors.green.withValues(
+                                      alpha: 0.12,
+                                    ),
+                                  ),
+                                  child: const Text(
+                                    'Done',
+                                    style: TextStyle(
+                                      color: AppColors.green,
+                                      fontSize: 10,
+                                      fontWeight: FontWeight.w700,
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                            const SizedBox(height: 8),
+                            const Text(
+                              'Circuit restored for today',
                               style: TextStyle(
-                                color: AppColors.green,
-                                fontSize: 10,
-                                fontWeight: FontWeight.w800,
-                                letterSpacing: 1.3,
+                                color: AppColors.textPrimary,
+                                fontSize: 15,
+                                fontWeight: FontWeight.w700,
                               ),
                             ),
+                            const SizedBox(height: 4),
+                            const Text(
+                              'Come back tomorrow for a new challenge.',
+                              style: TextStyle(
+                                color: AppColors.textMuted,
+                                fontSize: 11,
+                              ),
+                            ),
+                          ],
+                        ),
+                      );
+                    }
+
+                    final safeChallenge = challenge;
+
+                    return GestureDetector(
+                      onTap: () {
+                        ref
+                                .read(dailyChallengeLevelIdsProvider.notifier)
+                                .state =
+                            safeChallenge.levelIds;
+
+                        ref
+                                .read(
+                                  currentDailyChallengeIndexProvider.notifier,
+                                )
+                                .state =
+                            0;
+
+                        ref.read(isDailyChallengeModeProvider.notifier).state =
+                            true;
+
+                        context.go('/gameplay');
+                      },
+                      child: Container(
+                        padding: const EdgeInsets.all(14),
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(14),
+                          border: Border.all(
+                            color: AppColors.green.withValues(alpha: 0.25),
                           ),
-                          _ReadyPill(),
-                        ],
-                      ),
-                      SizedBox(height: 8),
-                      Text(
-                        'Sort array in 3 moves',
-                        style: TextStyle(
-                          color: AppColors.textPrimary,
-                          fontSize: 15,
-                          fontWeight: FontWeight.w700,
+                          color: AppColors.green.withValues(alpha: 0.06),
+                        ),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            const Row(
+                              children: [
+                                Expanded(
+                                  child: Text(
+                                    'DAILY CHALLENGE',
+                                    style: TextStyle(
+                                      color: AppColors.green,
+                                      fontSize: 10,
+                                      fontWeight: FontWeight.w800,
+                                      letterSpacing: 1.3,
+                                    ),
+                                  ),
+                                ),
+                                _ReadyPill(),
+                              ],
+                            ),
+                            const SizedBox(height: 8),
+                            Text(
+                              safeChallenge.title,
+                              style: const TextStyle(
+                                color: AppColors.textPrimary,
+                                fontSize: 15,
+                                fontWeight: FontWeight.w700,
+                              ),
+                            ),
+                            const SizedBox(height: 4),
+                            Text(
+                              '${safeChallenge.description} · +${safeChallenge.rewardXp} XP',
+                              style: const TextStyle(
+                                color: AppColors.textMuted,
+                                fontSize: 11,
+                              ),
+                            ),
+                          ],
                         ),
                       ),
-                      SizedBox(height: 4),
-                      Text(
-                        '⟳ Resets soon',
-                        style: TextStyle(
-                          color: AppColors.textMuted,
-                          fontSize: 11,
-                        ),
-                      ),
-                    ],
-                  ),
+                    );
+                  },
                 ),
 
                 const SizedBox(height: 16),
 
                 levelsAsync.when(
                   data: (levels) {
-                    if (levels.isEmpty) {
+                    final mainLevels = levels
+                        .where((level) => level.id.startsWith('level_'))
+                        .toList();
+
+                    if (mainLevels.isEmpty) {
                       return const SizedBox.shrink();
                     }
 
                     final profileCurrentLevel = profile?.currentLevel;
                     final profileLevelIndex = profileCurrentLevel == null
                         ? currentLevelIndex
-                        : levels.indexWhere((l) => l.id == profileCurrentLevel);
+                        : mainLevels.indexWhere(
+                            (l) => l.id == profileCurrentLevel,
+                          );
 
                     final safeIndex =
                         (profileLevelIndex == -1
                                 ? currentLevelIndex
                                 : profileLevelIndex)
-                            .clamp(0, levels.length - 1);
+                            .clamp(0, mainLevels.length - 1);
 
-                    final level = levels[safeIndex];
+                    final level = mainLevels[safeIndex];
 
                     return Container(
                       padding: const EdgeInsets.all(16),
@@ -379,6 +548,28 @@ class DashboardScreen extends ConsumerWidget {
                                         )
                                         .state =
                                     safeIndex;
+
+                                ref
+                                        .read(
+                                          isDailyChallengeModeProvider.notifier,
+                                        )
+                                        .state =
+                                    false;
+                                ref
+                                        .read(
+                                          dailyChallengeLevelIdsProvider
+                                              .notifier,
+                                        )
+                                        .state =
+                                    const [];
+                                ref
+                                        .read(
+                                          currentDailyChallengeIndexProvider
+                                              .notifier,
+                                        )
+                                        .state =
+                                    0;
+
                                 context.go('/gameplay');
                               },
                               style: ElevatedButton.styleFrom(

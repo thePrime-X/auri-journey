@@ -21,6 +21,8 @@ import 'mission_complete_screen.dart';
 import '../../application/hint_analyzer.dart';
 import '../../../../core/services/offline_progress_queue_provider.dart';
 import '../../../../features/profile/application/user_profile_provider.dart';
+import 'daily_challenge_complete_screen.dart';
+import '../../application/daily_challenge_state_provider.dart';
 
 class GameplayScreen extends ConsumerStatefulWidget {
   final LevelState level;
@@ -795,10 +797,16 @@ class _GameplayScreenState extends ConsumerState<GameplayScreen> {
     if (!mounted) return;
 
     if (finalState.status == ExecutionStatus.success) {
-      final levels = await ref.read(levelsProvider.future);
+      final allLevels = await ref.read(levelsProvider.future);
+      final levels = allLevels
+          .where((level) => level.id.startsWith('level_'))
+          .toList();
+
       final currentIndex = ref.read(currentLevelIndexProvider);
       final isLastLevel = currentIndex >= levels.length - 1;
+
       final commands = sequence.whereType<CommandType>().toList();
+      final isDailyMode = ref.read(isDailyChallengeModeProvider);
 
       final sessionTime = DateTime.now().difference(_levelStartedAt).inSeconds;
 
@@ -813,35 +821,82 @@ class _GameplayScreenState extends ConsumerState<GameplayScreen> {
       final alreadyCompleted =
           previousProfile?.completedLevelIds.contains(widget.level.id) ?? false;
 
-      final earnedXpForDisplay = alreadyCompleted ? 0 : widget.level.rewardXp;
-      final totalXpForDisplay = previousTotalXp + earnedXpForDisplay;
+      final earnedXpForDisplay = isDailyMode
+          ? widget.level.rewardXp
+          : alreadyCompleted
+          ? 0
+          : widget.level.rewardXp;
 
+      final totalXpForDisplay = previousTotalXp + earnedXpForDisplay;
       if (uid != null) {
         final queue = ref.read(offlineProgressQueueServiceProvider);
 
-        await ref
-            .read(progressFirestoreServiceProvider)
-            .saveMissionCompletionWithFallback(
-              uid: uid,
-              level: widget.level,
-              nextLevelId: nextLevelId,
-              movesUsed: commands.length,
-              hintsUsed: _hintsUsed,
-              playTimeSeconds: sessionTime,
-              usedExactHint: _usedExactHint,
-              queue: queue,
-            );
+        if (isDailyMode) {
+          await ref
+              .read(progressFirestoreServiceProvider)
+              .saveDailyChallengeCompletion(
+                uid: uid,
+                rewardXp: widget.level.rewardXp,
+                playTimeSeconds: sessionTime,
+              );
+        } else {
+          await ref
+              .read(progressFirestoreServiceProvider)
+              .saveMissionCompletionWithFallback(
+                uid: uid,
+                level: widget.level,
+                nextLevelId: nextLevelId,
+                movesUsed: commands.length,
+                hintsUsed: _hintsUsed,
+                playTimeSeconds: sessionTime,
+                usedExactHint: _usedExactHint,
+                queue: queue,
+              );
+        }
       }
 
       final updatedProfile = await ref.read(userProfileProvider.future);
 
       if (uid != null && updatedProfile != null) {
-        if (updatedProfile.achievements['firstMission'] == true) {
+        final wasFirstMissionUnlocked =
+            previousProfile?.achievements['firstMission'] == true;
+
+        final isFirstMissionUnlocked =
+            updatedProfile.achievements['firstMission'] == true;
+
+        if (!wasFirstMissionUnlocked && isFirstMissionUnlocked) {
           await _showAchievementUnlockedPopup('firstMission');
         }
       }
 
       if (!mounted) return;
+
+      if (isDailyMode) {
+        final today = DateTime.now();
+        final todayKey =
+            '${today.year}-${today.month.toString().padLeft(2, '0')}-${today.day.toString().padLeft(2, '0')}';
+
+        ref.read(completedDailyChallengeDateProvider.notifier).state = todayKey;
+        ref.read(isDailyChallengeModeProvider.notifier).state = false;
+        ref.read(dailyChallengeLevelIdsProvider.notifier).state = const [];
+        ref.read(currentDailyChallengeIndexProvider.notifier).state = 0;
+
+        if (!mounted) return;
+
+        await Navigator.of(context).push(
+          MaterialPageRoute(
+            builder: (_) => DailyChallengeCompleteScreen(
+              rewardXp: earnedXpForDisplay,
+              totalXp: totalXpForDisplay,
+              timeTaken: timeTaken,
+              stepsUsed: commands.length,
+              optimalSteps: widget.level.optimalSolution.length,
+            ),
+          ),
+        );
+
+        return;
+      }
 
       await Navigator.of(context).push(
         MaterialPageRoute(

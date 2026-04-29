@@ -27,10 +27,19 @@ class AuthRepository {
     final snapshot = await userDoc.get();
 
     if (snapshot.exists) {
-      await userDoc.update({'lastLoginAt': FieldValue.serverTimestamp()});
+      final data = snapshot.data()!;
+
+      await userDoc.update({
+        'displayName': data['displayName'],
+        'createdAt': data['createdAt'],
+        'lastLoginAt': FieldValue.serverTimestamp(),
+        'currentLevel': data['currentLevel'],
+        'totalXP': data['totalXP'],
+        'puzzlesCompleted': data['puzzlesCompleted'],
+      });
     }
 
-    return credential;
+    return credential; // ✅ REQUIRED
   }
 
   Future<UserCredential> signup({

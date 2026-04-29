@@ -8,6 +8,9 @@ import '../../../../features/gameplay/application/current_level_provider.dart';
 import '../../../../features/profile/application/user_profile_provider.dart';
 import '../../../../core/services/offline_progress_sync_provider.dart';
 import '../../../../core/services/connectivity_provider.dart';
+import '../../../../core/services/sync_status_provider.dart';
+import '../../../../core/services/offline_progress_queue_provider.dart';
+import '../../../../shared/widgets/sync_status_badge.dart';
 
 class DashboardScreen extends ConsumerWidget {
   const DashboardScreen({super.key});
@@ -17,25 +20,68 @@ class DashboardScreen extends ConsumerWidget {
     final levelsAsync = ref.watch(levelsProvider);
     final currentLevelIndex = ref.watch(currentLevelIndexProvider);
     final profileAsync = ref.watch(userProfileProvider);
+    final syncStatus = ref.watch(syncStatusProvider);
 
     ref.listen(levelsProvider, (previous, next) {
-      next.whenData((levels) {
-        ref
+      next.whenData((levels) async {
+        final queueCount = await ref
+            .read(offlineProgressQueueServiceProvider)
+            .count();
+
+        if (queueCount <= 0) {
+          ref.read(syncStatusProvider.notifier).setStatus(SyncStatus.offline);
+          return;
+        }
+
+        ref.read(syncStatusProvider.notifier).setStatus(SyncStatus.offline);
+
+        await ref
             .read(offlineProgressSyncServiceProvider)
             .syncQueuedProgress(levels: levels);
+
+        final remainingCount = await ref
+            .read(offlineProgressQueueServiceProvider)
+            .count();
+
+        ref
+            .read(syncStatusProvider.notifier)
+            .setStatus(
+              remainingCount > 0 ? SyncStatus.queued : SyncStatus.synced,
+            );
       });
     });
 
     ref.listen(connectivityStreamProvider, (previous, next) {
-      next.whenData((isConnected) {
-        if (isConnected) {
+      next.whenData((isConnected) async {
+        if (!isConnected) {
+          ref.read(syncStatusProvider.notifier).setStatus(SyncStatus.offline);
+          return;
+        }
+
+        final queueCount = await ref
+            .read(offlineProgressQueueServiceProvider)
+            .count();
+
+        if (queueCount > 0) {
+          ref.read(syncStatusProvider.notifier).setStatus(SyncStatus.syncing);
+
           final levels = ref.read(levelsProvider).value;
           if (levels != null) {
-            ref
+            await ref
                 .read(offlineProgressSyncServiceProvider)
                 .syncQueuedProgress(levels: levels);
           }
         }
+
+        final remainingCount = await ref
+            .read(offlineProgressQueueServiceProvider)
+            .count();
+
+        ref
+            .read(syncStatusProvider.notifier)
+            .setStatus(
+              remainingCount > 0 ? SyncStatus.queued : SyncStatus.synced,
+            );
       });
     });
 
@@ -89,6 +135,10 @@ class DashboardScreen extends ConsumerWidget {
                         ],
                       ),
                     ),
+
+                    SyncStatusBadge(status: syncStatus),
+                    const SizedBox(width: 8),
+
                     Container(
                       padding: const EdgeInsets.symmetric(
                         horizontal: 10,

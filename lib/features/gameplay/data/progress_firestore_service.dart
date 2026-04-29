@@ -8,6 +8,44 @@ class ProgressFirestoreService {
 
   ProgressFirestoreService(this._firestore);
 
+  Future<void> saveDailyChallengeCompletion({
+    required String uid,
+    required int rewardXp,
+    required int playTimeSeconds,
+  }) async {
+    final userRef = _firestore.collection('users').doc(uid);
+
+    await _firestore.runTransaction((transaction) async {
+      final userSnapshot = await transaction.get(userRef);
+
+      if (!userSnapshot.exists) {
+        throw Exception('User profile not found.');
+      }
+
+      final userData = userSnapshot.data() ?? {};
+
+      final currentXp = _toInt(userData['totalXP']);
+      final currentPlayTime = _toInt(userData['totalPlayTimeSeconds']);
+      final currentStreak = _toInt(userData['streakDays']);
+
+      final now = DateTime.now();
+      final previousActiveDate = _toDateTime(userData['lastActiveDate']);
+
+      final updatedStreak = _calculateStreak(
+        currentStreak: currentStreak,
+        previousActiveDate: previousActiveDate,
+        now: now,
+      );
+
+      transaction.update(userRef, {
+        'totalXP': currentXp + rewardXp,
+        'totalPlayTimeSeconds': currentPlayTime + playTimeSeconds,
+        'streakDays': updatedStreak,
+        'lastActiveDate': Timestamp.fromDate(now),
+      });
+    });
+  }
+
   Future<void> saveMissionCompletion({
     required String uid,
     required LevelState level,

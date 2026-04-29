@@ -19,6 +19,7 @@ import '../widgets/game_action_bar.dart';
 import '../widgets/game_grid.dart';
 import 'mission_complete_screen.dart';
 import '../../application/hint_analyzer.dart';
+import '../../../../core/services/offline_progress_queue_provider.dart';
 
 class GameplayScreen extends ConsumerStatefulWidget {
   final LevelState level;
@@ -802,9 +803,11 @@ class _GameplayScreenState extends ConsumerState<GameplayScreen> {
       final uid = FirebaseAuth.instance.currentUser?.uid;
 
       if (uid != null) {
+        final queue = ref.read(offlineProgressQueueServiceProvider);
+
         await ref
             .read(progressFirestoreServiceProvider)
-            .saveMissionCompletion(
+            .saveMissionCompletionWithFallback(
               uid: uid,
               level: widget.level,
               nextLevelId: nextLevelId,
@@ -812,6 +815,7 @@ class _GameplayScreenState extends ConsumerState<GameplayScreen> {
               hintsUsed: _hintsUsed,
               playTimeSeconds: timeTaken.inSeconds,
               usedExactHint: _usedExactHint,
+              queue: queue,
             );
       }
 

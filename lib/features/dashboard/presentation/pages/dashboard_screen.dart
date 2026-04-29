@@ -6,6 +6,7 @@ import '../../../../core/theme/app_colors.dart';
 import '../../../../features/gameplay/application/levels_provider.dart';
 import '../../../../features/gameplay/application/current_level_provider.dart';
 import '../../../../features/profile/application/user_profile_provider.dart';
+import '../../../../core/services/offline_progress_sync_provider.dart';
 
 class DashboardScreen extends ConsumerWidget {
   const DashboardScreen({super.key});
@@ -15,6 +16,14 @@ class DashboardScreen extends ConsumerWidget {
     final levelsAsync = ref.watch(levelsProvider);
     final currentLevelIndex = ref.watch(currentLevelIndexProvider);
     final profileAsync = ref.watch(userProfileProvider);
+
+    ref.listen(levelsProvider, (previous, next) {
+      next.whenData((levels) {
+        ref
+            .read(offlineProgressSyncServiceProvider)
+            .syncQueuedProgress(levels: levels);
+      });
+    });
 
     return Scaffold(
       backgroundColor: AppColors.bg,

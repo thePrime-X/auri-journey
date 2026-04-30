@@ -914,15 +914,13 @@ class _GameplayScreenState extends ConsumerState<GameplayScreen> {
                 if (isLastLevel) {
                   Navigator.of(context).pop();
 
-                  ref.read(currentLevelIndexProvider.notifier).state =
-                      levels.length - 1;
-
                   ref
                       .read(executionStateProvider.notifier)
                       .resetFromLevel(widget.level);
 
                   ref.read(commandSequenceProvider.notifier).clearSequence();
 
+                  context.go('/dashboard');
                   _levelStartedAt = DateTime.now();
                   return;
                 }

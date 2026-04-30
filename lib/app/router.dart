@@ -1,13 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+
 import '../features/gameplay/presentation/pages/gameplay_loader_screen.dart';
 import '../features/auth/application/auth_state_provider.dart';
 import '../features/auth/presentation/pages/loading_screen.dart';
 import '../features/auth/presentation/pages/login_screen.dart';
 import '../features/auth/presentation/pages/signup_screen.dart';
 import '../features/dashboard/presentation/pages/dashboard_screen.dart';
-// import '../features/onboarding/application/onboarding_provider.dart';
 import '../features/onboarding/presentation/pages/intro_one_screen.dart';
 import '../features/onboarding/presentation/pages/intro_three_screen.dart';
 import '../features/onboarding/presentation/pages/intro_two_screen.dart';
@@ -17,7 +18,7 @@ import '../core/services/local_preferences_provider.dart';
 import '../features/dashboard/presentation/pages/edit_profile_screen.dart';
 
 final goRouterProvider = Provider<GoRouter>((ref) {
-  final authState = ref.watch(authStateProvider);
+  final authState = ref.read(authStateProvider);
   final onboardingCompletedAsync = ref.watch(hasCompletedOnboardingProvider);
 
   return GoRouter(
@@ -103,7 +104,9 @@ final goRouterProvider = Provider<GoRouter>((ref) {
     ],
     redirect: (BuildContext context, GoRouterState state) {
       final location = state.matchedLocation;
-      final isAuthenticated = authState.isAuthenticated;
+      final isAuthenticated =
+          authState.isAuthenticated ||
+          FirebaseAuth.instance.currentUser != null;
       final isLoadingRoute = location == '/loading';
 
       if (onboardingCompletedAsync.isLoading) {

@@ -28,16 +28,25 @@ class DashboardScreen extends ConsumerWidget {
 
     ref.listen(levelsProvider, (previous, next) {
       next.whenData((levels) async {
+        final isConnected = await ref
+            .read(connectivityServiceProvider)
+            .isConnectedNow();
+
+        if (!isConnected) {
+          ref.read(syncStatusProvider.notifier).setStatus(SyncStatus.offline);
+          return;
+        }
+
         final queueCount = await ref
             .read(offlineProgressQueueServiceProvider)
             .count();
 
         if (queueCount <= 0) {
-          ref.read(syncStatusProvider.notifier).setStatus(SyncStatus.offline);
+          ref.read(syncStatusProvider.notifier).setStatus(SyncStatus.synced);
           return;
         }
 
-        ref.read(syncStatusProvider.notifier).setStatus(SyncStatus.offline);
+        ref.read(syncStatusProvider.notifier).setStatus(SyncStatus.syncing);
 
         await ref
             .read(offlineProgressSyncServiceProvider)
@@ -55,6 +64,42 @@ class DashboardScreen extends ConsumerWidget {
       });
     });
 
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      final isConnected = await ref
+          .read(connectivityServiceProvider)
+          .isConnectedNow();
+
+      if (!isConnected) {
+        ref.read(syncStatusProvider.notifier).setStatus(SyncStatus.offline);
+        return;
+      }
+
+      final queueCount = await ref
+          .read(offlineProgressQueueServiceProvider)
+          .count();
+
+      if (queueCount <= 0) {
+        ref.read(syncStatusProvider.notifier).setStatus(SyncStatus.synced);
+        return;
+      }
+
+      ref.read(syncStatusProvider.notifier).setStatus(SyncStatus.syncing);
+
+      final levels = ref.read(levelsProvider).value;
+      if (levels != null) {
+        await ref
+            .read(offlineProgressSyncServiceProvider)
+            .syncQueuedProgress(levels: levels);
+      }
+
+      final remaining = await ref
+          .read(offlineProgressQueueServiceProvider)
+          .count();
+
+      ref
+          .read(syncStatusProvider.notifier)
+          .setStatus(remaining > 0 ? SyncStatus.queued : SyncStatus.synced);
+    });
     ref.listen(connectivityStreamProvider, (previous, next) {
       next.whenData((isConnected) async {
         if (!isConnected) {

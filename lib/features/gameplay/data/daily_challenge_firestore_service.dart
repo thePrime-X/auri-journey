@@ -7,12 +7,10 @@ class DailyChallengeFirestoreService {
 
   DailyChallengeFirestoreService(this._firestore);
 
-  Future<DailyChallenge?> fetchTodayChallenge() async {
-    final todayKey = _todayKey();
-
+  Future<DailyChallenge?> fetchChallengeForDay(int dayNumber) async {
     final snapshot = await _firestore
         .collection('dailyChallenges')
-        .where('dateKey', isEqualTo: todayKey)
+        .where('dayNumber', isEqualTo: dayNumber)
         .where('isActive', isEqualTo: true)
         .limit(1)
         .get();
@@ -24,14 +22,5 @@ class DailyChallengeFirestoreService {
     final doc = snapshot.docs.first;
 
     return DailyChallenge.fromFirestore(id: doc.id, data: doc.data());
-  }
-
-  String _todayKey() {
-    final now = DateTime.now();
-
-    final month = now.month.toString().padLeft(2, '0');
-    final day = now.day.toString().padLeft(2, '0');
-
-    return '${now.year}-$month-$day';
   }
 }

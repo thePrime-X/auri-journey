@@ -39,7 +39,15 @@ final authRepositoryProvider = Provider<AuthRepository>((ref) {
 
 class AuthStateNotifier extends Notifier<AuthState> {
   @override
-  AuthState build() => const AuthState.initial();
+  AuthState build() {
+    final currentUser = FirebaseAuth.instance.currentUser;
+
+    return AuthState(
+      isAuthenticated: currentUser != null,
+      isLoading: false,
+      errorMessage: null,
+    );
+  }
 
   Future<void> login({required String email, required String password}) async {
     state = state.copyWith(isLoading: true, errorMessage: null);

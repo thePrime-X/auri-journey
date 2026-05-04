@@ -313,7 +313,7 @@ lib/
 │
 └── shared/
     └── widgets/
-
+```
 
 ## 🧩 Core Domain Models
 
@@ -483,6 +483,7 @@ The project was tested using both automated checks and manual QA.
 ```bash
 flutter analyze
 flutter test
+```
 
 ## 🧪 Manual QA Coverage
 
@@ -564,7 +565,7 @@ Future versions of the application can extend the MVP in the following ways:
 
 This project was developed by a team of three Bachelor of Computer Science students. Responsibilities were divided across UI/UX design, gameplay logic, backend integration, testing, documentation, and project management. Major decisions were reviewed collaboratively throughout development.
 
-### Mohammad Shahid
+### MohammadShahid
 
 Primary responsibilities:
 
@@ -597,7 +598,7 @@ Primary responsibilities:
 - Button clickability testing
 - Documentation contribution
 
-### Dinsu Bakhyt
+### Dinislam
 
 Primary responsibilities:
 
@@ -621,13 +622,13 @@ All team members contributed to level design, survey distribution, manual testin
 
 ## 📷 Screenshots
 
-The following screenshots demonstrate the main user journey and core system functionality of *Auri’s Journey*. Each screenshot should be inserted below its corresponding figure caption.
+The following screenshots demonstrate the main user journey and core system functionality of *Auri’s Journey*. 
 
 ### Figure 1. Onboarding Progression Screen
 
 This screen introduces users to the progression system of *Auri’s Journey*. It explains how XP, programming concepts, and sector unlocking are used to motivate continued learning and skill development.
 
-![Figure 1. Onboarding Progression Screen](path/to/onboarding_progression_screen.png)
+![Figure 1. Onboarding Progression Screen](docs/screenshots/figure-1.png)
 
 ---
 
@@ -635,7 +636,7 @@ This screen introduces users to the progression system of *Auri’s Journey*. It
 
 The sign-in screen allows returning users to authenticate with an email and password. This interface connects the application to Firebase Authentication and provides access to personalized learning progress.
 
-![Figure 2. User Sign-In Interface](path/to/user_sign_in_interface.png)
+![Figure 2. User Sign-In Interface](docs/screenshots/figure-2.png)
 
 ---
 
@@ -643,7 +644,7 @@ The sign-in screen allows returning users to authenticate with an email and pass
 
 The registration screen allows new users to create an account and requires acceptance of the Privacy and Data Policy before account creation. This supports ethical data handling and user consent.
 
-![Figure 3. User Registration and Policy Agreement Screen](path/to/user_registration_policy_screen.png)
+![Figure 3. User Registration and Policy Agreement Screen](docs/screenshots/figure-3.png)
 
 ---
 
@@ -651,7 +652,7 @@ The registration screen allows new users to create an account and requires accep
 
 The dashboard provides an overview of the user’s current progress, including total XP, synchronization status, daily challenge state, current mission, and mission completion progress.
 
-![Figure 4. Main Dashboard Interface](path/to/main_dashboard_interface.png)
+![Figure 4. Main Dashboard Interface](docs/screenshots/figure-4.png)
 
 ---
 
@@ -659,7 +660,7 @@ The dashboard provides an overview of the user’s current progress, including t
 
 The gameplay screen presents the core puzzle interaction. Users construct command sequences using visual command blocks, execute them on a 5×5 grid, and receive feedback through the Echo hint system.
 
-![Figure 5. Gameplay Execution Interface](path/to/gameplay_execution_interface.png)
+![Figure 5. Gameplay Execution Interface](docs/screenshots/figure-5.png)
 
 ---
 
@@ -667,7 +668,7 @@ The gameplay screen presents the core puzzle interaction. Users construct comman
 
 The mission completion screen summarizes the result of a successful level attempt. It displays earned XP, execution efficiency, completion time, mastered concept, and progression toward the next mission.
 
-![Figure 6. Mission Completion and Performance Summary Screen](path/to/mission_completion_summary_screen.png)
+![Figure 6. Mission Completion and Performance Summary Screen](docs/screenshots/figure-6.png)
 
 ---
 
@@ -675,7 +676,7 @@ The mission completion screen summarizes the result of a successful level attemp
 
 The profile screen displays accumulated learning progress, including total XP, current level, completed missions, playtime, and learning insights. This view helps users track their development over time.
 
-![Figure 7(a). User Profile and Learning Progress Overview](path/to/user_profile_overview.png)
+![Figure 7(a). User Profile and Learning Progress Overview](docs/screenshots/figure-7a.png)
 
 ---
 
@@ -683,7 +684,7 @@ The profile screen displays accumulated learning progress, including total XP, c
 
 The skill map visualizes the user’s development across programming-related concepts. Achievements provide additional motivation by rewarding milestones such as first mission completion, optimal solutions, and no-hint wins.
 
-![Figure 7(b). Skill Map and Achievement Tracking Interface](path/to/skill_map_achievement_tracking.png)
+![Figure 7(b). Skill Map and Achievement Tracking Interface](docs/screenshots/figure-7b.png)
 
 ---
 
@@ -691,7 +692,7 @@ The skill map visualizes the user’s development across programming-related con
 
 The settings screen provides access to user preferences, privacy policy information, profile editing, progress reset, and logout functionality. This supports user control and basic account management.
 
-![Figure 8. Settings and User Preferences Screen](path/to/settings_user_preferences_screen.png)
+![Figure 8. Settings and User Preferences Screen](docs/screenshots/figure-8.png)
 
 ---
 

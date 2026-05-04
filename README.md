@@ -313,7 +313,7 @@ lib/
 │
 └── shared/
     └── widgets/
-
+```
 
 ## 🧩 Core Domain Models
 
@@ -483,3 +483,220 @@ The project was tested using both automated checks and manual QA.
 ```bash
 flutter analyze
 flutter test
+```
+
+## 🧪 Manual QA Coverage
+
+| Test Area | Validation |
+|---|---|
+| Onboarding flow | Verified that first-time users see onboarding and returning users do not. |
+| Signup and login | Verified account creation, login, logout, and session restoration. |
+| Dashboard loading | Verified XP, progress, current mission, daily challenge, and sync status display. |
+| Mission completion | Verified successful command execution, XP reward, and mission completion screen. |
+| Mission replay | Verified that replaying completed missions does not grant duplicate XP. |
+| Failure and hints | Verified first-failure hints, repeated-failure reflection, and exact hint behavior. |
+| Daily challenge | Verified XP-only reward, completed daily state, and separation from main mission progress. |
+| Profile updates | Verified XP, missions, playtime, skill map, and achievements display. |
+| Reset progress | Verified that XP, missions, skills, achievements, and daily state reset correctly. |
+| Offline synchronization | Verified offline progress queueing and synchronization on reconnect. |
+| Firestore rules | Verified user-owned access, read-only levels, and read-only daily challenges. |
+| UI responsiveness | Verified screen layout, button visibility, scrolling behavior, and absence of major overflow issues. |
+
+---
+
+## ✅ MVP Scope
+
+The current MVP supports the following functionality:
+
+| Area | MVP Capability |
+|---|---|
+| Authentication | Signup, login, logout, and persistent user sessions. |
+| Onboarding | First-time user onboarding stored locally. |
+| Level loading | Firestore-based level loading with local fallback support. |
+| Gameplay | Grid-based puzzle missions using visual command blocks. |
+| Execution | Step-by-step execution of command sequences. |
+| Validation | Boundary detection, obstacle collision detection, success detection, and failure detection. |
+| Feedback | Echo hints, reflection prompts, repeated-failure guidance, and exact hint support. |
+| Progression | XP, completed missions, current level, replay protection, streak, and playtime tracking. |
+| Profile | User profile, skill map, achievements, and progress summary. |
+| Daily challenge | Optional XP-based challenge separate from main progression. |
+| Settings | Edit profile name, reset progress, privacy policy access, logout, and visual preference toggles. |
+| Offline support | Local progress queue and synchronization when connectivity returns. |
+| Security | Firestore rules for user-owned data and read-only system content. |
+
+---
+
+## 🚧 Current Limitations
+
+The MVP intentionally keeps the scope focused on beginner-friendly sequencing and puzzle-based logic.
+
+| Limitation | Description |
+|---|---|
+| Limited main levels | The MVP includes a small number of main missions to demonstrate the core learning flow. |
+| Sequencing-focused gameplay | The current playable mechanics focus mainly on movement sequencing. |
+| Loops and conditions are future mechanics | Loop and conditional commands are represented as future concepts but are not yet playable in the MVP. |
+| Daily challenges are predefined | Daily challenge content is prepared in advance rather than generated automatically. |
+| No ML-based personalization | The Echo hint system is rule-based rather than machine-learning based. |
+| No educator dashboard | The MVP does not include a teacher or administrator analytics dashboard. |
+| Authentication requires internet | New login attempts require internet access through Firebase Authentication. |
+
+---
+
+## 🚀 Future Work
+
+Future versions of the application can extend the MVP in the following ways:
+
+| Future Improvement | Description |
+|---|---|
+| More missions and sectors | Expand the number of levels and introduce additional learning stages. |
+| Playable loop commands | Add loop-based command blocks and levels focused on repetition. |
+| Playable condition commands | Add conditional logic such as `IF_PATH_CLEAR`. |
+| Debugging-focused levels | Add levels where users identify and correct flawed command sequences. |
+| Educator dashboard | Provide teachers with class progress, completion rates, and learning analytics. |
+| Advanced daily challenges | Add rotating daily content, streak rewards, and more varied challenge types. |
+| ML-based adaptive hints | Use learner behavior patterns to provide more personalized feedback. |
+| Richer achievements | Add more milestone-based and concept-based achievements. |
+| Detailed learning analytics | Track attempts, hint effectiveness, average solve time, and improvement over time. |
+| Cloud-based level editor | Allow educators or administrators to create and publish new levels through a web interface. |
+
+---
+
+## 👥 Team Contribution
+
+This project was developed by a team of three Bachelor of Computer Science students. Responsibilities were divided across UI/UX design, gameplay logic, backend integration, testing, documentation, and project management. Major decisions were reviewed collaboratively throughout development.
+
+### MohammadShahid
+
+Primary responsibilities:
+
+- Literature review contribution
+- UI/UX design
+- Figma mockups
+- Visual theme design
+- Color and typography selection
+- Command block visual design
+- 5×5 grid interface design
+- Main screen layout design
+- Mission grid layout design
+- UI visibility testing
+- Interface polish
+
+### Chingis
+
+Primary responsibilities:
+
+- Literature review contribution
+- Gameplay logic
+- Execution flow design
+- Execution engine behavior
+- Movement and collision logic
+- Drag-and-drop interaction
+- Route configuration and route guards
+- Echo hint behavior
+- System diagrams
+- Gameplay interaction testing
+- Button clickability testing
+- Documentation contribution
+
+### Dinislam
+
+Primary responsibilities:
+
+- Literature review contribution
+- Firebase project configuration
+- Firebase Authentication integration
+- Firestore database design
+- Firestore security rules
+- User profile creation
+- Riverpod architecture
+- Level loading
+- Local level fallback
+- Offline progress queue
+- Synchronization on reconnect
+- Automated testing
+- Documentation contribution
+
+All team members contributed to level design, survey distribution, manual testing, feedback review, and iterative improvement of the final MVP.
+
+---
+
+## 📷 Screenshots
+
+The following screenshots demonstrate the main user journey and core system functionality of *Auri’s Journey*. 
+
+### Figure 1. Onboarding Progression Screen
+
+This screen introduces users to the progression system of *Auri’s Journey*. It explains how XP, programming concepts, and sector unlocking are used to motivate continued learning and skill development.
+
+![Figure 1. Onboarding Progression Screen](docs/screenshots/figure-1.png)
+
+---
+
+### Figure 2. User Sign-In Interface
+
+The sign-in screen allows returning users to authenticate with an email and password. This interface connects the application to Firebase Authentication and provides access to personalized learning progress.
+
+![Figure 2. User Sign-In Interface](docs/screenshots/figure-2.png)
+
+---
+
+### Figure 3. User Registration and Policy Agreement Screen
+
+The registration screen allows new users to create an account and requires acceptance of the Privacy and Data Policy before account creation. This supports ethical data handling and user consent.
+
+![Figure 3. User Registration and Policy Agreement Screen](docs/screenshots/figure-3.png)
+
+---
+
+### Figure 4. Main Dashboard Interface
+
+The dashboard provides an overview of the user’s current progress, including total XP, synchronization status, daily challenge state, current mission, and mission completion progress.
+
+![Figure 4. Main Dashboard Interface](docs/screenshots/figure-4.png)
+
+---
+
+### Figure 5. Gameplay Execution Interface
+
+The gameplay screen presents the core puzzle interaction. Users construct command sequences using visual command blocks, execute them on a 5×5 grid, and receive feedback through the Echo hint system.
+
+![Figure 5. Gameplay Execution Interface](docs/screenshots/figure-5.png)
+
+---
+
+### Figure 6. Mission Completion and Performance Summary Screen
+
+The mission completion screen summarizes the result of a successful level attempt. It displays earned XP, execution efficiency, completion time, mastered concept, and progression toward the next mission.
+
+![Figure 6. Mission Completion and Performance Summary Screen](docs/screenshots/figure-6.png)
+
+---
+
+### Figure 7(a). User Profile and Learning Progress Overview
+
+The profile screen displays accumulated learning progress, including total XP, current level, completed missions, playtime, and learning insights. This view helps users track their development over time.
+
+![Figure 7(a). User Profile and Learning Progress Overview](docs/screenshots/figure-7a.png)
+
+---
+
+### Figure 7(b). Skill Map and Achievement Tracking Interface
+
+The skill map visualizes the user’s development across programming-related concepts. Achievements provide additional motivation by rewarding milestones such as first mission completion, optimal solutions, and no-hint wins.
+
+![Figure 7(b). Skill Map and Achievement Tracking Interface](docs/screenshots/figure-7b.png)
+
+---
+
+### Figure 8. Settings and User Preferences Screen
+
+The settings screen provides access to user preferences, privacy policy information, profile editing, progress reset, and logout functionality. This supports user control and basic account management.
+
+![Figure 8. Settings and User Preferences Screen](docs/screenshots/figure-8.png)
+
+---
+
+## 📄 License
+
+This project was developed for academic purposes as part of a diploma project. Usage, modification, and distribution should follow the guidelines agreed upon by the project team and university requirements.
+
